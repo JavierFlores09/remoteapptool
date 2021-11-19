@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7BC847D1-41F9-493F-831B-97645E84CB9E}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>RemoteApp.Tool.New</RootNamespace>
+    <AssemblyName>RemoteApp.Tool.New</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>RemoteApp.Tool.New.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>add-window.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IconLib, Version=0.74.3.0, Culture=neutral, PublicKeyToken=9c8a655eb595762a, processorArchitecture=MSIL">
+      <HintPath>..\remoteapp-tool\packages\IconLib.0.74.3\lib\net40\IconLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AdminRelauncher.cs" />
+    <Compile Include="ApplicationEvents.cs" />
+    <Compile Include="Forms.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="HelpSystem.cs" />
+    <Compile Include="IconModule.cs" />
+    <Compile Include="LocalFtaModule.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteAppAboutWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemoteAppAboutWindow.Designer.cs">
+      <DependentUpon>RemoteAppAboutWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteAppCreateClientConnection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemoteAppCreateClientConnection.Designer.cs">
+      <DependentUpon>RemoteAppCreateClientConnection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteAppEditWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemoteAppEditWindow.Designer.cs">
+      <DependentUpon>RemoteAppEditWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteAppFileTypeAssociation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemoteAppFileTypeAssociation.Designer.cs">
+      <DependentUpon>RemoteAppFileTypeAssociation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteAppFunctions.cs" />
+    <Compile Include="RemoteAppHostOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemoteAppHostOptions.Designer.cs">
+      <DependentUpon>RemoteAppHostOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteAppIconPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemoteAppIconPicker.Designer.cs">
+      <DependentUpon>RemoteAppIconPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteAppMainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemoteAppMainWindow.Designer.cs">
+      <DependentUpon>RemoteAppMainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteAppMainWindowBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="UserSettings.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="RemoteAppAboutWindow.resx">
+      <DependentUpon>RemoteAppAboutWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RemoteAppCreateClientConnection.resx">
+      <DependentUpon>RemoteAppCreateClientConnection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RemoteAppEditWindow.resx">
+      <DependentUpon>RemoteAppEditWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RemoteAppFileTypeAssociation.resx">
+      <DependentUpon>RemoteAppFileTypeAssociation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RemoteAppHostOptions.resx">
+      <DependentUpon>RemoteAppHostOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RemoteAppIconPicker.resx">
+      <DependentUpon>RemoteAppIconPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RemoteAppMainWindow.resx">
+      <DependentUpon>RemoteAppMainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>RemoteApp_Tool.My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include=".editorconfig" />
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="RemoteApp Tool_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="add-window.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LockChecker\LockChecker.vbproj">
+      <Project>{029c010d-728b-4b87-b54a-08b2bbf49bd7}</Project>
+      <Name>LockChecker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RDP2MSILib\RDP2MSILib.vbproj">
+      <Project>{e1cb5f9c-230f-4967-8f19-335f8e4a4906}</Project>
+      <Name>RDP2MSILib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RDP2MSI\RDP2MSI.vbproj">
+      <Project>{1001a958-40db-4444-9cd7-09d1188072d1}</Project>
+      <Name>RDP2MSI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RDPFileLib\RDPFileLib.vbproj">
+      <Project>{258307d5-a407-4622-bf1a-bdca8e3d2faa}</Project>
+      <Name>RDPFileLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RDPSign\RDPSign.vbproj">
+      <Project>{57dabb69-b1d3-445f-91e7-b0412abac218}</Project>
+      <Name>RDPSign</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemoteAppLib\RemoteAppLib.vbproj">
+      <Project>{785b6808-b2fe-4c18-9d63-6dab46482374}</Project>
+      <Name>RemoteAppLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
