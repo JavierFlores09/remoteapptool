@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace RemoteApp.Tool.New
@@ -16,9 +15,9 @@ namespace RemoteApp.Tool.New
 
         private void RemoteAppAboutWindow_Load(object sender, EventArgs e)
         {
-            Text = $"About {Assembly.GetExecutingAssembly().GetName().Name}";
-            TitleLabel.Text = Assembly.GetExecutingAssembly().GetName().Name;
-            VersionLabel.Text = $"Version {Assembly.GetExecutingAssembly().GetName().Version}";
+            Text = $"About {Application.ProductName}";
+            TitleLabel.Text = Application.ProductName;
+            VersionLabel.Text = $"Version {Application.ProductVersion}";
         }
 
         private void SiteLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
