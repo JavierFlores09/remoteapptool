@@ -7,6 +7,7 @@ This fork is solely based on converting the solution to C#. Because, I am experi
 
 ## Roadmap
 - [x] Convert GUI to C#
+- [ ] Write unit tests for libraries
 - [ ] Convert dependencies to C#
 - [ ] Refactor
 - [ ] Migrate to .NET 5 (Optionally)
