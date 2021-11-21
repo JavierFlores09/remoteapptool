@@ -3,13 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RDP2MSILib", "RDP2MSILib\RDP2MSILib.vbproj", "{E1CB5F9C-230F-4967-8F19-335F8E4A4906}"
-EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RDP2MSI", "RDP2MSI\RDP2MSI.vbproj", "{1001A958-40DB-4444-9CD7-09D1188072D1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E1CB5F9C-230F-4967-8F19-335F8E4A4906} = {E1CB5F9C-230F-4967-8F19-335F8E4A4906}
-	EndProjectSection
-EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "LockChecker", "LockChecker\LockChecker.vbproj", "{029C010D-728B-4B87-B54A-08B2BBF49BD7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteApp.Tool.New", "RemoteApp.Tool.New\RemoteApp.Tool.New.csproj", "{7BC847D1-41F9-493F-831B-97645E84CB9E}"
@@ -20,20 +13,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteAppLib.New", "RemoteA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDPFileLib.New", "RDPFileLib.New\RDPFileLib.New.csproj", "{8DC2C035-6540-497F-934A-F33B6FB7EDED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDP2MSI.New", "RDP2MSI.New\RDP2MSI.New.csproj", "{4D136F87-3A01-4256-808C-7FDCA68653D9}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RDP2MSILib", "RDP2MSILib\RDP2MSILib.vbproj", "{E1CB5F9C-230F-4967-8F19-335F8E4A4906}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1001A958-40DB-4444-9CD7-09D1188072D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1001A958-40DB-4444-9CD7-09D1188072D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1001A958-40DB-4444-9CD7-09D1188072D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1001A958-40DB-4444-9CD7-09D1188072D1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{029C010D-728B-4B87-B54A-08B2BBF49BD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{029C010D-728B-4B87-B54A-08B2BBF49BD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{029C010D-728B-4B87-B54A-08B2BBF49BD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -54,6 +43,14 @@ Global
 		{8DC2C035-6540-497F-934A-F33B6FB7EDED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DC2C035-6540-497F-934A-F33B6FB7EDED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DC2C035-6540-497F-934A-F33B6FB7EDED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D136F87-3A01-4256-808C-7FDCA68653D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D136F87-3A01-4256-808C-7FDCA68653D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D136F87-3A01-4256-808C-7FDCA68653D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D136F87-3A01-4256-808C-7FDCA68653D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
