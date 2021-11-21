@@ -361,7 +361,7 @@ namespace RemoteApp.Tool.New
             string FlatFileTypes = "";
             if (RemoteApp.FileTypeAssociations != null)
                 FlatFileTypes = RemoteApp.FileTypeAssociations.GetFlatFileTypes();
-            var RDPfile = new RDPFileLib.RDPFile()
+            var RDPfile = new RDPFileLib.New.RDPFile()
             {
                 full_address = ServerAddress,
                 alternate_full_address = AltServerAddress,

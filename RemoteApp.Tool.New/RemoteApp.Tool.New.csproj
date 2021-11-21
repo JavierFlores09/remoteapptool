@@ -207,9 +207,9 @@
       <Project>{1001a958-40db-4444-9cd7-09d1188072d1}</Project>
       <Name>RDP2MSI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RDPFileLib\RDPFileLib.vbproj">
-      <Project>{258307d5-a407-4622-bf1a-bdca8e3d2faa}</Project>
-      <Name>RDPFileLib</Name>
+    <ProjectReference Include="..\RDPFileLib.New\RDPFileLib.New.csproj">
+      <Project>{8dc2c035-6540-497f-934a-f33b6fb7eded}</Project>
+      <Name>RDPFileLib.New</Name>
     </ProjectReference>
     <ProjectReference Include="..\RDPSign.New\RDPSign.New.csproj">
       <Project>{ff07e395-6a47-42b0-8a27-8c8be2a1ee25}</Project>

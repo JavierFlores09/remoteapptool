@@ -10,8 +10,6 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RDP2MSI", "RDP2MSI\RDP2MSI.
 		{E1CB5F9C-230F-4967-8F19-335F8E4A4906} = {E1CB5F9C-230F-4967-8F19-335F8E4A4906}
 	EndProjectSection
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RDPFileLib", "RDPFileLib\RDPFileLib.vbproj", "{258307D5-A407-4622-BF1A-BDCA8E3D2FAA}"
-EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "LockChecker", "LockChecker\LockChecker.vbproj", "{029C010D-728B-4B87-B54A-08B2BBF49BD7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteApp.Tool.New", "RemoteApp.Tool.New\RemoteApp.Tool.New.csproj", "{7BC847D1-41F9-493F-831B-97645E84CB9E}"
@@ -19,6 +17,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDPSign.New", "RDPSign.New\RDPSign.New.csproj", "{FF07E395-6A47-42B0-8A27-8C8BE2A1EE25}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteAppLib.New", "RemoteAppLib.New\RemoteAppLib.New.csproj", "{601606AE-2B75-4A33-9E11-4E91981D555C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDPFileLib.New", "RDPFileLib.New\RDPFileLib.New.csproj", "{8DC2C035-6540-497F-934A-F33B6FB7EDED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,10 +34,6 @@ Global
 		{1001A958-40DB-4444-9CD7-09D1188072D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1001A958-40DB-4444-9CD7-09D1188072D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1001A958-40DB-4444-9CD7-09D1188072D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{258307D5-A407-4622-BF1A-BDCA8E3D2FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{258307D5-A407-4622-BF1A-BDCA8E3D2FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{258307D5-A407-4622-BF1A-BDCA8E3D2FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{258307D5-A407-4622-BF1A-BDCA8E3D2FAA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{029C010D-728B-4B87-B54A-08B2BBF49BD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{029C010D-728B-4B87-B54A-08B2BBF49BD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{029C010D-728B-4B87-B54A-08B2BBF49BD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -54,6 +50,10 @@ Global
 		{601606AE-2B75-4A33-9E11-4E91981D555C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{601606AE-2B75-4A33-9E11-4E91981D555C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{601606AE-2B75-4A33-9E11-4E91981D555C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DC2C035-6540-497F-934A-F33B6FB7EDED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DC2C035-6540-497F-934A-F33B6FB7EDED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DC2C035-6540-497F-934A-F33B6FB7EDED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DC2C035-6540-497F-934A-F33B6FB7EDED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
