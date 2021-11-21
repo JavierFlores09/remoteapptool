@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.31911.260
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteApp.Tool.New", "RemoteApp.Tool.New\RemoteApp.Tool.New.csproj", "{7BC847D1-41F9-493F-831B-97645E84CB9E}"
 EndProject
@@ -16,6 +16,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDP2MSILib.New", "RDP2MSILib.New\RDP2MSILib.New.csproj", "{E18CF70F-E4F6-4A05-A58B-41CF7D98BF8B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LockChecker.New", "LockChecker.New\LockChecker.New.csproj", "{A0DFC0C0-2A68-44D0-BF69-9E57DE84D70B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FFD96833-DE39-493D-9523-0B13E605B845}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
