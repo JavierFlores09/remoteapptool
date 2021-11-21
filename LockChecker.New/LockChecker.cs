@@ -6,9 +6,9 @@ namespace LockChecker.New
 {
     public class LockChecker
     {
-        public string CheckLock(string FileName)
+        public string CheckLock(string fileName)
         {
-            return LockCheckType.LockCheck(FileName);
+            return LockCheckType.LockCheck(fileName);
         }
     }
 }

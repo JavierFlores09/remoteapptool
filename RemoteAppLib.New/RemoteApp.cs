@@ -10,7 +10,7 @@
         public int IconIndex;
         public string CommandLine = string.Empty;
         public int CommandLineOption = 1;
-        public bool TSWA;
+        public bool Tswa;
         public FileTypeAssociationCollection FileTypeAssociations;
     }
 }

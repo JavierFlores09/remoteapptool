@@ -2,14 +2,14 @@
 {
     public class FileTypeAssociationCollection : System.Collections.CollectionBase
     {
-        public void Add(FileTypeAssociation FileTypeAssociation)
+        public void Add(FileTypeAssociation fileTypeAssociation)
         {
-            List.Add(FileTypeAssociation);
+            List.Add(fileTypeAssociation);
         }
 
-        public void Remove(FileTypeAssociation FileTypeAssociation)
+        public void Remove(FileTypeAssociation fileTypeAssociation)
         {
-            List.Remove(FileTypeAssociation);
+            List.Remove(fileTypeAssociation);
         }
 
         public string GetFlatFileTypes()

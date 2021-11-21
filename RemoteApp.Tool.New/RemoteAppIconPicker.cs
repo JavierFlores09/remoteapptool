@@ -15,17 +15,17 @@ namespace RemoteApp.Tool.New
             _FileTypeTextBox.Name = "FileTypeTextBox";
         }
 
-        private bool NoValidate = false;
+        private bool _noValidate = false;
 
-        public RemoteAppLib.New.IconSelection PickIcon(string DefaultPath, int DefaultIndex = 0)
+        public RemoteAppLib.New.IconSelection PickIcon(string defaultPath, int defaultIndex = 0)
         {
             FileTypeLabel.Visible = false;
             FileTypeTextBox.Visible = false;
             IconIndexLabel.Visible = false;
             IconIndexTextBox.Visible = false;
             Text = "Select Icon";
-            IconPathTextBox.Text = DefaultPath;
-            IconIndexTextBox.Text = DefaultIndex.ToString();
+            IconPathTextBox.Text = defaultPath;
+            IconIndexTextBox.Text = defaultIndex.ToString();
             LoadIcons();
             var IconPick = new RemoteAppLib.New.IconSelection();
             if (ShowDialog() == DialogResult.OK)
@@ -38,30 +38,30 @@ namespace RemoteApp.Tool.New
             //Dispose();
         }
 
-        public RemoteAppLib.New.FileTypeAssociation ManageFTA(string DefaultPath, int DefaultIndex = 0, string FileType = ".xyz", bool IsEdit = false)
+        public RemoteAppLib.New.FileTypeAssociation ManageFta(string defaultPath, int defaultIndex = 0, string fileType = ".xyz", bool isEdit = false)
         {
-            var FTA = new RemoteAppLib.New.FileTypeAssociation();
+            var fta = new RemoteAppLib.New.FileTypeAssociation();
             FileTypeLabel.Visible = true;
             FileTypeTextBox.Visible = true;
             IconIndexLabel.Visible = true;
             IconIndexTextBox.Visible = true;
             IconIndexTextBox.ReadOnly = true;
-            FileTypeTextBox.ReadOnly = IsEdit;
+            FileTypeTextBox.ReadOnly = isEdit;
 
             Text = "File Type";
-            FileTypeTextBox.Text = FileType;
-            IconPathTextBox.Text = DefaultPath;
-            IconIndexTextBox.Text = DefaultIndex.ToString();
+            FileTypeTextBox.Text = fileType;
+            IconPathTextBox.Text = defaultPath;
+            IconIndexTextBox.Text = defaultIndex.ToString();
             LoadIcons();
             if (ShowDialog() == DialogResult.OK)
             {
-                FTA.Extension = FileTypeTextBox.Text;
-                FTA.IconPath = IconPathTextBox.Text;
-                FTA.IconIndex = IconIndexTextBox.Text;
+                fta.Extension = FileTypeTextBox.Text;
+                fta.IconPath = IconPathTextBox.Text;
+                fta.IconIndex = IconIndexTextBox.Text;
             }
 
             //Dispose();
-            return FTA;
+            return fta;
         }
 
         private bool LoadIcons()
@@ -83,7 +83,7 @@ namespace RemoteApp.Tool.New
                 catch (Exception)
                 {
                     IconError = true;
-                    NoValidate = true;
+                    _noValidate = true;
                     OKButton.Enabled = true;
                     MessageBox.Show("There was an error loading icons from:" + Environment.NewLine + IconPathTextBox.Text + Environment.NewLine + "Icons may still be usable, but you can not select one using the icon picker.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     IconIndexTextBox.Text = "0";
@@ -92,7 +92,7 @@ namespace RemoteApp.Tool.New
 
                 if (!IconError)
                 {
-                    NoValidate = false;
+                    _noValidate = false;
                     foreach (var sIcon in mIcon)
                     {
                         int IconKey = IconIndex;
@@ -130,7 +130,7 @@ namespace RemoteApp.Tool.New
                         IconIndex++;
                     }
 
-                    if (!NoValidate)
+                    if (!_noValidate)
                         OKButton.Enabled = false;
                 }
             }
@@ -155,7 +155,7 @@ namespace RemoteApp.Tool.New
             else
             {
                 // nothing is selected
-                if (!NoValidate)
+                if (!_noValidate)
                     OKButton.Enabled = false;
                 IconIndexTextBox.Text = "0";
             }

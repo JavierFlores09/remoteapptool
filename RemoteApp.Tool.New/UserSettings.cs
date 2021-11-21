@@ -20,11 +20,11 @@ namespace RemoteApp.Tool.New
 
         public string SavedAltServerAddress { get; set; }
 
-        public bool SavedUseRDGateway { get; set; }
+        public bool SavedUseRdGateway { get; set; }
 
-        public string SavedRDGatewayAddress { get; set; }
+        public string SavedRdGatewayAddress { get; set; }
 
-        public bool SavedAttemptDirectRDGateway { get; set; }
+        public bool SavedAttemptDirectRdGateway { get; set; }
 
         public bool SavedMSIShortcutDesktop { get; set; }
 
@@ -38,11 +38,11 @@ namespace RemoteApp.Tool.New
 
         public bool SavedClientConnectionOptions { get; set; }
 
-        public bool SavedCreateRAWebIcon { get; set; }
+        public bool SavedCreateRaWebIcon { get; set; }
 
         public bool SavedMSIPerUser { get; set; }
 
-        public bool SavedDisableFTA { get; set; }
+        public bool SavedDisableFta { get; set; }
 
         public bool SavedSignRDP { get; set; }
 
@@ -53,54 +53,54 @@ namespace RemoteApp.Tool.New
         public static UserSettings Instance => Lazy.Value;
         private static readonly Lazy<UserSettings> Lazy = new Lazy<UserSettings>(() => new UserSettings());
 
-        private static NameValueCollection userSettingsCollection;
+        private static NameValueCollection _userSettingsCollection;
         private UserSettings()
         {
-            userSettingsCollection = ConfigurationManager.AppSettings;
+            _userSettingsCollection = ConfigurationManager.AppSettings;
 
-            MainWindowWidth = int.Parse(userSettingsCollection["MainWindowWidth"]);
+            MainWindowWidth = int.Parse(_userSettingsCollection["MainWindowWidth"]);
 
-            MainWindowHeight = int.Parse(userSettingsCollection["MainWindowHeight"]);
+            MainWindowHeight = int.Parse(_userSettingsCollection["MainWindowHeight"]);
 
-            SavedConnectionModeMSI = bool.Parse(userSettingsCollection["SavedConnectionModeMSI"]);
+            SavedConnectionModeMSI = bool.Parse(_userSettingsCollection["SavedConnectionModeMSI"]);
 
-            SavedOpenWithNotepad = bool.Parse(userSettingsCollection["SavedOpenWithNotepad"]);
+            SavedOpenWithNotepad = bool.Parse(_userSettingsCollection["SavedOpenWithNotepad"]);
 
-            SavedServerAddress = userSettingsCollection["SavedServerAddress"];
+            SavedServerAddress = _userSettingsCollection["SavedServerAddress"];
 
-            SavedServerPort = int.Parse(userSettingsCollection["SavedServerPort"]);
+            SavedServerPort = int.Parse(_userSettingsCollection["SavedServerPort"]);
 
-            SavedAltServerAddress = userSettingsCollection["SavedAltServerAddress"];
+            SavedAltServerAddress = _userSettingsCollection["SavedAltServerAddress"];
 
-            SavedUseRDGateway = bool.Parse(userSettingsCollection["SavedUseRDGateway"]);
+            SavedUseRdGateway = bool.Parse(_userSettingsCollection["SavedUseRDGateway"]);
 
-            SavedRDGatewayAddress = userSettingsCollection["SavedRDGatewayAddress"];
+            SavedRdGatewayAddress = _userSettingsCollection["SavedRDGatewayAddress"];
 
-            SavedAttemptDirectRDGateway = bool.Parse(userSettingsCollection["SavedAttemptDirectRDGateway"]);
+            SavedAttemptDirectRdGateway = bool.Parse(_userSettingsCollection["SavedAttemptDirectRDGateway"]);
 
-            SavedMSIShortcutDesktop = bool.Parse(userSettingsCollection["SavedMSIShortcutDesktop"]);
+            SavedMSIShortcutDesktop = bool.Parse(_userSettingsCollection["SavedMSIShortcutDesktop"]);
 
-            SavedMSIShortcutStart = bool.Parse(userSettingsCollection["SavedMSIShortcutStart"]);
+            SavedMSIShortcutStart = bool.Parse(_userSettingsCollection["SavedMSIShortcutStart"]);
 
-            SavedMSIShortcutStartTopLevel = bool.Parse(userSettingsCollection["SavedMSIShortcutStartTopLevel"]);
+            SavedMSIShortcutStartTopLevel = bool.Parse(_userSettingsCollection["SavedMSIShortcutStartTopLevel"]);
 
-            SavedUseShortcutTag = bool.Parse(userSettingsCollection["SavedUseShortcutTag"]);
+            SavedUseShortcutTag = bool.Parse(_userSettingsCollection["SavedUseShortcutTag"]);
 
-            SavedShortcutTag = userSettingsCollection["SavedShortcutTag"];
+            SavedShortcutTag = _userSettingsCollection["SavedShortcutTag"];
 
-            SavedClientConnectionOptions = bool.Parse(userSettingsCollection["SavedClientConnectionOptions"]);
+            SavedClientConnectionOptions = bool.Parse(_userSettingsCollection["SavedClientConnectionOptions"]);
 
-            SavedCreateRAWebIcon = bool.Parse(userSettingsCollection["SavedCreateRAWebIcon"]);
+            SavedCreateRaWebIcon = bool.Parse(_userSettingsCollection["SavedCreateRAWebIcon"]);
 
-            SavedMSIPerUser = bool.Parse(userSettingsCollection["SavedMSIPerUser"]);
+            SavedMSIPerUser = bool.Parse(_userSettingsCollection["SavedMSIPerUser"]);
 
-            SavedDisableFTA = bool.Parse(userSettingsCollection["SavedDisableFTA"]);
+            SavedDisableFta = bool.Parse(_userSettingsCollection["SavedDisableFTA"]);
 
-            SavedSignRDP = bool.Parse(userSettingsCollection["SavedSignRDP"]);
+            SavedSignRDP = bool.Parse(_userSettingsCollection["SavedSignRDP"]);
 
-            SavedSignedAndUnsigned = bool.Parse(userSettingsCollection["SavedSignedAndUnsigned"]);
+            SavedSignedAndUnsigned = bool.Parse(_userSettingsCollection["SavedSignedAndUnsigned"]);
 
-            SavedCertSelected = int.Parse(userSettingsCollection["SavedCertSelected"]);
+            SavedCertSelected = int.Parse(_userSettingsCollection["SavedCertSelected"]);
         }
     }
 }

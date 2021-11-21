@@ -22,14 +22,14 @@ namespace RemoteApp.Tool.New
         [DllImport("user32")]
         private static extern int DestroyIcon(int hIcon);
 
-        private int[] m_hIcons;
+        private int[] _mHIcons;
 
         ~IconExtractor()
         {
-            if (m_hIcons?.Length > 0)
+            if (_mHIcons?.Length > 0)
             {
-                for (int iconIndex = 0, loopTo = m_hIcons.Length - 1; iconIndex <= loopTo; iconIndex++)
-                    DestroyIcon(m_hIcons[iconIndex]);
+                for (int iconIndex = 0, loopTo = _mHIcons.Length - 1; iconIndex <= loopTo; iconIndex++)
+                    DestroyIcon(_mHIcons[iconIndex]);
             }
         }
 
@@ -49,8 +49,8 @@ namespace RemoteApp.Tool.New
                 numIcons--;
                 for (int currentIcon = 0, loopTo = numIcons; currentIcon <= loopTo; currentIcon++)
                 {
-                    m_hIcons[currentIcon] = ExtractIcon(hInst, filePath, currentIcon);
-                    var handleIcon = new IntPtr(m_hIcons[currentIcon]);
+                    _mHIcons[currentIcon] = ExtractIcon(hInst, filePath, currentIcon);
+                    var handleIcon = new IntPtr(_mHIcons[currentIcon]);
                     if (!handleIcon.Equals(IntPtr.Zero))
                     {
                         listIcons.Add(Icon.FromHandle(handleIcon));
@@ -87,16 +87,16 @@ namespace RemoteApp.Tool.New
             return result;
         }
 
-        public static bool ExtractToIco(string IconSourcePath, int IconSourceIndex, string IcoDestPath)
+        public static bool ExtractToIco(string iconSourcePath, int iconSourceIndex, string icoDestPath)
         {
             bool success = false;
             bool IconLoadError = false;
-            if (File.Exists(IconSourcePath))
+            if (File.Exists(iconSourcePath))
             {
                 var mIcon = new System.Drawing.IconLib.MultiIcon();
                 try
                 {
-                    mIcon.Load(IconSourcePath);
+                    mIcon.Load(iconSourcePath);
                 }
                 catch (Exception)
                 {
@@ -105,10 +105,10 @@ namespace RemoteApp.Tool.New
 
                 if (!IconLoadError)
                 {
-                    System.Drawing.IconLib.SingleIcon sIcon = IconSourceIndex == 0 ? mIcon.FirstOrDefault() : mIcon[IconSourceIndex];
+                    System.Drawing.IconLib.SingleIcon sIcon = iconSourceIndex == 0 ? mIcon.FirstOrDefault() : mIcon[iconSourceIndex];
                     try
                     {
-                        sIcon.Save(IcoDestPath);
+                        sIcon.Save(icoDestPath);
                         success = true;
                     }
                     catch (Exception)
@@ -123,14 +123,14 @@ namespace RemoteApp.Tool.New
         [DllImport("shell32.dll", EntryPoint = "ExtractIconExA")]
         private static extern int ExtractIcon(string lpszFile, int nIconIndex, ref int phiconLarge, ref int phiconSmall, int nIcons);
 
-        public static Icon ReturnIcon(string Path, int Index, bool small = false)
+        public static Icon ReturnIcon(string path, int index, bool small = false)
         {
             var bigIcon = default(int);
             var smallIcon = default(int);
-            ExtractIcon(Path, Index, ref bigIcon, ref smallIcon, 1);
+            ExtractIcon(path, index, ref bigIcon, ref smallIcon, 1);
             if (bigIcon == 0)
             {
-                ExtractIcon(Path, 0, ref bigIcon, ref smallIcon, 1);
+                ExtractIcon(path, 0, ref bigIcon, ref smallIcon, 1);
             }
 
             if (bigIcon != 0)

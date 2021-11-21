@@ -13,7 +13,7 @@ namespace LockChecker.New
         /// to the RmRegisterResources function.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        internal struct RM_UNIQUE_PROCESS
+        internal struct RmUniqueProcess
         {
             // The product identifier (PID). 
             public int dwProcessId;

@@ -20,23 +20,23 @@ namespace RemoteApp.Tool.New
             _BrowsePath.Name = "BrowsePath";
         }
 
-        private RemoteAppLib.New.RemoteApp RemoteApp = new RemoteAppLib.New.RemoteApp();
+        private RemoteAppLib.New.RemoteApp _remoteApp = new RemoteAppLib.New.RemoteApp();
 
-        public RemoteAppLib.New.RemoteApp EditRemoteApp(RemoteAppLib.New.RemoteApp SelectedRemoteApp)
+        public RemoteAppLib.New.RemoteApp EditRemoteApp(RemoteAppLib.New.RemoteApp selectedRemoteApp)
         {
             HelpSystem.SetupTips(this);
-            RemoteApp = SelectedRemoteApp;
-            Text = "Properties of " + RemoteApp.Name;
+            _remoteApp = selectedRemoteApp;
+            Text = "Properties of " + _remoteApp.Name;
             Size = MinimumSize;
             HelpSystem.SetupTips(this);
             LoadValues();
             _ = ShowDialog();
             Forms.RemoteAppMainWindow.ReloadApps();
             //Dispose();
-            return RemoteApp;
+            return _remoteApp;
         }
 
-        public RemoteAppLib.New.RemoteApp CreateRemoteApp(bool Advanced = false)
+        public RemoteAppLib.New.RemoteApp CreateRemoteApp(bool advanced = false)
         {
             Text = "New RemoteApp";
             Size = MinimumSize;
@@ -44,7 +44,7 @@ namespace RemoteApp.Tool.New
             CommandLineOptionCombo.SelectedIndex = 1;
             TSWAbox.SelectedIndex = 0;
             FTAButton.Enabled = false;
-            if (Advanced)
+            if (advanced)
             {
                 ShowDialog();
             }
@@ -54,7 +54,7 @@ namespace RemoteApp.Tool.New
             }
 
             //Dispose();
-            return RemoteApp;
+            return _remoteApp;
         }
 
         private void SetToolTips()
@@ -73,18 +73,18 @@ namespace RemoteApp.Tool.New
 
         public void LoadValues()
         {
-            ShortNameText.Text = RemoteApp.Name;
-            CommandLineOptionCombo.SelectedIndex = RemoteApp.CommandLineOption;
-            FullNameText.Text = RemoteApp.FullName;
-            PathText.Text = RemoteApp.Path;
-            CommandLineText.Text = RemoteApp.CommandLine;
-            CommandLineOptionCombo.SelectedIndex = RemoteApp.CommandLineOption;
-            IconPathText.Text = RemoteApp.IconPath;
-            IconIndexText.Text = RemoteApp.IconIndex.ToString();
-            var TSWA = 0;
-            if (RemoteApp.TSWA)
-                TSWA = 1;
-            TSWAbox.SelectedIndex = TSWA;
+            ShortNameText.Text = _remoteApp.Name;
+            CommandLineOptionCombo.SelectedIndex = _remoteApp.CommandLineOption;
+            FullNameText.Text = _remoteApp.FullName;
+            PathText.Text = _remoteApp.Path;
+            CommandLineText.Text = _remoteApp.CommandLine;
+            CommandLineOptionCombo.SelectedIndex = _remoteApp.CommandLineOption;
+            IconPathText.Text = _remoteApp.IconPath;
+            IconIndexText.Text = _remoteApp.IconIndex.ToString();
+            var tswa = 0;
+            if (_remoteApp.Tswa)
+                tswa = 1;
+            TSWAbox.SelectedIndex = tswa;
             var TheIcon = IconModule.ReturnIcon(IconPathText.Text, (int)Math.Round(double.Parse(IconIndexText.Text)), true);
             Icon = TheIcon ?? Forms.RemoteAppMainWindow.Icon;
         }
@@ -133,16 +133,16 @@ namespace RemoteApp.Tool.New
             {
                 string FilePath = FileBrowserPath.FileName;
                 PathText.Text = FilePath;
-                RemoteApp.Path = FilePath;
+                _remoteApp.Path = FilePath;
                 if (string.IsNullOrEmpty(IconPathText.Text))
-                    RemoteApp.IconPath = FilePath;
+                    _remoteApp.IconPath = FilePath;
                 if (FilePath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
                 {
-                    var title = RemoteAppFunction.GetEXETitle(FilePath);
+                    var title = RemoteAppFunction.GetExeTitle(FilePath);
                     if (string.IsNullOrEmpty(ShortNameText.Text))
-                        RemoteApp.Name = (string)RemoteAppFunction.FixShortAppName(title);
+                        _remoteApp.Name = (string)RemoteAppFunction.FixShortAppName(title);
                     if (string.IsNullOrEmpty(FullNameText.Text))
-                        RemoteApp.FullName = title;
+                        _remoteApp.FullName = title;
                 }
 
                 LoadValues();
@@ -152,34 +152,34 @@ namespace RemoteApp.Tool.New
             return DoBrowsePathRet;
         }
 
-        private void SaveRemoteApp(string ShortName, string FullName, string Path, string VPath, string CommandLine, int CommandLineSetting, string IconPath, int IconIndex, int ShowInTSWA)
+        private void SaveRemoteApp(string shortName, string fullName, string path, string vPath, string commandLine, int commandLineSetting, string iconPath, int iconIndex, int showInTswa)
         {
             var SysApps = new SystemRemoteApps();
-            if (RemoteApp.Name != null && Text != "New RemoteApp")
+            if (_remoteApp.Name != null && Text != "New RemoteApp")
             {
-                if ((RemoteApp.Name ?? "") != (ShortName ?? ""))
-                    SysApps.RenameApp(RemoteApp.Name, ShortName);
+                if ((_remoteApp.Name ?? "") != (shortName ?? ""))
+                    SysApps.RenameApp(_remoteApp.Name, shortName);
             }
 
-            RemoteApp.Name = ShortName;
-            RemoteApp.FullName = FullName;
-            RemoteApp.Path = Path;
-            RemoteApp.VPath = VPath;
-            RemoteApp.IconPath = IconPath;
-            RemoteApp.IconIndex = IconIndex;
-            RemoteApp.CommandLine = CommandLine;
-            RemoteApp.CommandLineOption = CommandLineSetting;
-            RemoteApp.TSWA = ShowInTSWA != 0;
-            SysApps.SaveApp(RemoteApp);
+            _remoteApp.Name = shortName;
+            _remoteApp.FullName = fullName;
+            _remoteApp.Path = path;
+            _remoteApp.VPath = vPath;
+            _remoteApp.IconPath = iconPath;
+            _remoteApp.IconIndex = iconIndex;
+            _remoteApp.CommandLine = commandLine;
+            _remoteApp.CommandLineOption = commandLineSetting;
+            _remoteApp.Tswa = showInTswa != 0;
+            SysApps.SaveApp(_remoteApp);
         }
 
-        private bool DoesAppExist(string AppName)
+        private bool DoesAppExist(string appName)
         {
             bool AppExists = false;
             var sra = new SystemRemoteApps();
             foreach (RemoteAppLib.New.RemoteApp App in sra.GetAll())
             {
-                if ((App.Name ?? "") == (AppName ?? ""))
+                if ((App.Name ?? "") == (appName ?? ""))
                     AppExists = true;
             }
 
@@ -208,7 +208,7 @@ namespace RemoteApp.Tool.New
                 MessageBox.Show("Path must not be blank.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 ShowDialog();
             }
-            else if ((ShortNameText.Text ?? "") != (RemoteApp.Name ?? "") && DoesAppExist(ShortNameText.Text))
+            else if ((ShortNameText.Text ?? "") != (_remoteApp.Name ?? "") && DoesAppExist(ShortNameText.Text))
             {
                 MessageBox.Show("A RemoteApp with the same name already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 ShowDialog();
@@ -239,7 +239,7 @@ namespace RemoteApp.Tool.New
             {
                 MessageBox.Show("Path must not be blank.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
-            else if ((ShortNameText.Text ?? "") != (RemoteApp.Name ?? "") && DoesAppExist(ShortNameText.Text))
+            else if ((ShortNameText.Text ?? "") != (_remoteApp.Name ?? "") && DoesAppExist(ShortNameText.Text))
             {
                 MessageBox.Show("A RemoteApp with the same name already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
@@ -261,7 +261,7 @@ namespace RemoteApp.Tool.New
 
         private void FTAButton_Click(object sender, EventArgs e)
         {
-            Forms.RemoteAppFileTypeAssociation.EditFileTypes(RemoteApp);
+            Forms.RemoteAppFileTypeAssociation.EditFileTypes(_remoteApp);
         }
 
         private void ShortNameText_TextChanged(object sender, EventArgs e)

@@ -142,10 +142,10 @@ namespace RDP2MSI.New
             RDP.CreateMSI();
         }
 
-        private static void LogText(string TheText, bool DoExit = false)
+        private static void LogText(string theText, bool doExit = false)
         {
-            Console.WriteLine(TheText);
-            if (DoExit)
+            Console.WriteLine(theText);
+            if (doExit)
             {
                 // CleanupTempFiles()
                 Environment.Exit(0);

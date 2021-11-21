@@ -5,22 +5,22 @@ namespace RemoteAppLib.New
 {
     public class SystemRemoteApps : IDisposable
     {
-        private bool Legacy32bit;
-        private string RegistryPath = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";
-        private bool disposedValue;
-        private readonly RegistryKey BaseKey;
-        private readonly RegistryKey BaseKeyWrite;
+        private bool _legacy32Bit;
+        private string _registryPath = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";
+        private bool _disposedValue;
+        private readonly RegistryKey _baseKey;
+        private readonly RegistryKey _baseKeyWrite;
 
         public SystemRemoteApps()
         {
-            BaseKey = Registry.LocalMachine.OpenSubKey(RegistryPath);
-            BaseKeyWrite = Registry.LocalMachine.OpenSubKey(RegistryPath, true);
+            _baseKey = Registry.LocalMachine.OpenSubKey(_registryPath);
+            _baseKeyWrite = Registry.LocalMachine.OpenSubKey(_registryPath, true);
         }
 
         public void Init()
         {
-            const string RegistryPathCV = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\";
-            _ = Registry.LocalMachine.OpenSubKey(RegistryPathCV, true)
+            const string registryPathCv = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\";
+            _ = Registry.LocalMachine.OpenSubKey(registryPathCv, true)
                 .CreateSubKey("Terminal Server")
                 .CreateSubKey("TSAppAllowList")
                 .CreateSubKey("Applications");
@@ -29,7 +29,7 @@ namespace RemoteAppLib.New
         public RemoteAppCollection GetAll()
         {
             var SystemAppCollection = new RemoteAppCollection();
-            foreach (string App in BaseKey.GetSubKeyNames())
+            foreach (string App in _baseKey.GetSubKeyNames())
             {
                 var RemoteApp = GetApp(App);
                 SystemAppCollection.Add(RemoteApp);
@@ -38,11 +38,11 @@ namespace RemoteAppLib.New
             return SystemAppCollection;
         }
 
-        public RemoteApp GetApp(string Name)
+        public RemoteApp GetApp(string name)
         {
             var App = new RemoteApp();
-            var AppKey = BaseKey.OpenSubKey(Name);
-            App.Name = Name;
+            var AppKey = _baseKey.OpenSubKey(name);
+            App.Name = name;
             App.FullName = (string)AppKey.GetValue("Name", string.Empty);
             App.Path = (string)AppKey.GetValue("Path", string.Empty);
             App.VPath = (string)AppKey.GetValue("VPath", string.Empty);
@@ -50,95 +50,95 @@ namespace RemoteAppLib.New
             App.CommandLineOption = int.Parse(AppKey.GetValue("CommandLineSetting", "1").ToString());
             App.IconPath = (string)AppKey.GetValue("IconPath", string.Empty);
             App.IconIndex = int.Parse(AppKey.GetValue("IconIndex", 0).ToString());        
-            App.TSWA = AppKey.GetValue("ShowInTSWA", 0) != null && int.Parse(AppKey.GetValue("ShowInTSWA", 0).ToString()) == 1;
+            App.Tswa = AppKey.GetValue("ShowInTSWA", 0) != null && int.Parse(AppKey.GetValue("ShowInTSWA", 0).ToString()) == 1;
 
-            var FTAKey = AppKey.OpenSubKey("Filetypes");
-            if (FTAKey != null)
+            var ftaKey = AppKey.OpenSubKey("Filetypes");
+            if (ftaKey != null)
             {
-                var FTACol = new FileTypeAssociationCollection();
-                foreach (var FTAValueName in FTAKey.GetValueNames())
+                var ftaCol = new FileTypeAssociationCollection();
+                foreach (var ftaValueName in ftaKey.GetValueNames())
                 {
-                    var FTAValue = FTAKey.GetValue(FTAValueName).ToString().Split(',');
-                    var FTA = new FileTypeAssociation
+                    var ftaValue = ftaKey.GetValue(ftaValueName).ToString().Split(',');
+                    var fta = new FileTypeAssociation
                     {
-                        Extension = FTAValueName,
-                        IconPath = FTAValue[0],
-                        IconIndex = FTAValue[1]
+                        Extension = ftaValueName,
+                        IconPath = ftaValue[0],
+                        IconIndex = ftaValue[1]
                     };
-                    FTACol.Add(FTA);
+                    ftaCol.Add(fta);
                 }
 
-                App.FileTypeAssociations = FTACol;
+                App.FileTypeAssociations = ftaCol;
             }
 
             return App;
         }
 
-        public void SaveApp(RemoteApp RemoteApp)
+        public void SaveApp(RemoteApp remoteApp)
         {
-            BaseKeyWrite.CreateSubKey(RemoteApp.Name);
-            var AppKey = BaseKey.OpenSubKey(RemoteApp.Name, true);
-            AppKey.SetValue("Name", RemoteApp.FullName, RegistryValueKind.String);
-            AppKey.SetValue("Path", RemoteApp.Path, RegistryValueKind.String);
-            AppKey.SetValue("VPath", RemoteApp.VPath, RegistryValueKind.String);
-            AppKey.SetValue("RequiredCommandLine", RemoteApp.CommandLine, RegistryValueKind.String);
-            AppKey.SetValue("CommandLineSetting", RemoteApp.CommandLineOption, RegistryValueKind.DWord);
-            AppKey.SetValue("IconPath", RemoteApp.IconPath, RegistryValueKind.String);
-            AppKey.SetValue("IconIndex", RemoteApp.IconIndex, RegistryValueKind.DWord);
-            AppKey.SetValue("ShowInTSWA", RemoteApp.TSWA, RegistryValueKind.DWord);
-            if (RemoteApp.FileTypeAssociations != null)
+            _baseKeyWrite.CreateSubKey(remoteApp.Name);
+            var AppKey = _baseKey.OpenSubKey(remoteApp.Name, true);
+            AppKey.SetValue("Name", remoteApp.FullName, RegistryValueKind.String);
+            AppKey.SetValue("Path", remoteApp.Path, RegistryValueKind.String);
+            AppKey.SetValue("VPath", remoteApp.VPath, RegistryValueKind.String);
+            AppKey.SetValue("RequiredCommandLine", remoteApp.CommandLine, RegistryValueKind.String);
+            AppKey.SetValue("CommandLineSetting", remoteApp.CommandLineOption, RegistryValueKind.DWord);
+            AppKey.SetValue("IconPath", remoteApp.IconPath, RegistryValueKind.String);
+            AppKey.SetValue("IconIndex", remoteApp.IconIndex, RegistryValueKind.DWord);
+            AppKey.SetValue("ShowInTSWA", remoteApp.Tswa, RegistryValueKind.DWord);
+            if (remoteApp.FileTypeAssociations != null)
             {
                 if (AppKey.OpenSubKey("Filetypes") != null)
                     AppKey.DeleteSubKeyTree("Filetypes");
                 AppKey.CreateSubKey("Filetypes");
-                var FTAKey = AppKey.OpenSubKey("Filetypes", true);
-                foreach (FileTypeAssociation fta in RemoteApp.FileTypeAssociations)
-                    FTAKey.SetValue(fta.Extension, $"{fta.IconPath},{fta.IconIndex}", RegistryValueKind.String);
+                var ftaKey = AppKey.OpenSubKey("Filetypes", true);
+                foreach (FileTypeAssociation fta in remoteApp.FileTypeAssociations)
+                    ftaKey.SetValue(fta.Extension, $"{fta.IconPath},{fta.IconIndex}", RegistryValueKind.String);
             }
         }
 
-        public void RenameApp(string RemoteAppOldName, string RemoteAppNewName)
+        public void RenameApp(string remoteAppOldName, string remoteAppNewName)
         {
             var SystemApps = new SystemRemoteApps();
-            var App = SystemApps.GetApp(RemoteAppOldName);
-            DeleteApp(RemoteAppOldName);
-            App.Name = RemoteAppNewName;
+            var App = SystemApps.GetApp(remoteAppOldName);
+            DeleteApp(remoteAppOldName);
+            App.Name = remoteAppNewName;
             SaveApp(App);
         }
 
-        public void DeleteApp(string Name)
+        public void DeleteApp(string name)
         {
-            BaseKeyWrite.DeleteSubKeyTree(Name);
+            _baseKeyWrite.DeleteSubKeyTree(name);
         }
 
         public bool WoW6432Node
         {
             get
             {
-                return Legacy32bit;
+                return _legacy32Bit;
             }
 
             set
             {
-                Legacy32bit = value;
+                _legacy32Bit = value;
                 string PathStart = "SOFTWARE";
-                if (Legacy32bit)
+                if (_legacy32Bit)
                     PathStart = @"SOFTWARE\Wow6432Node";
-                RegistryPath = PathStart + @"\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";
+                _registryPath = PathStart + @"\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";
             }
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    BaseKey.Close();
-                    BaseKeyWrite.Close();
+                    _baseKey.Close();
+                    _baseKeyWrite.Close();
                 }
 
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 
