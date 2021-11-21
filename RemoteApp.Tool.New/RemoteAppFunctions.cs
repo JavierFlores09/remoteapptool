@@ -166,9 +166,7 @@ namespace RemoteApp.Tool.New
             string pname = FileVersionInfo.GetVersionInfo(exePath).FileDescription;
             if (string.IsNullOrEmpty(pname))
             {
-                var fi = new FileInfo(exePath);
-
-                pname = fi.Name.Replace(fi.Extension, string.Empty);
+                pname = Path.GetFileNameWithoutExtension(exePath);
             }
 
             return pname;

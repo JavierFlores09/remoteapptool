@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace RemoteApp.Tool.New
 {
@@ -33,11 +34,11 @@ namespace RemoteApp.Tool.New
         public void CreateClientConnection(RemoteAppLib.RemoteApp SelectedRemoteApp)
         {
             RemoteApp = SelectedRemoteApp;
-            var rdpSign = new RDPSign.RDPSign();
+            var rdpSign = new RDPSign.New.RDPSign();
             string RemoteAppShortName = RemoteApp.Name;
             Text = "Create Client Connection for " + RemoteAppShortName;
             RdpsignErrorLabel.Text = "";
-            CertificateComboBox.Items.AddRange((object[])rdpSign.GetCertificateFriendlyName());
+            CertificateComboBox.Items.AddRange(rdpSign.GetCertificateFriendlyName().ToArray());
             SetCCWindowSettings();
             if (string.IsNullOrEmpty(ServerAddress.Text))
                 ServerAddress.Text = System.Net.Dns.GetHostName();
@@ -392,7 +393,7 @@ namespace RemoteApp.Tool.New
             RDPfile.SaveRDPfile(RDPPath);
             if (CheckBoxSignRDPEnabled.Checked)
             {
-                var rdpSign = new RDPSign.RDPSign();
+                var rdpSign = new RDPSign.New.RDPSign();
                 string Thumbprint = (string)rdpSign.GetThumbprint(CertificateComboBox.Text);
                 rdpSign.SignRDP(Thumbprint, RDPPath, CheckBoxCreateSignedAndUnsigned.Checked);
             }
