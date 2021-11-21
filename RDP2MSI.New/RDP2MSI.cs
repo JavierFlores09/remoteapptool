@@ -11,38 +11,45 @@ namespace RDP2MSI.New
             var cmdRdpPath = "";
             var cmdSwitches = "";
             LogText("RDP2MSI" + Environment.NewLine);
-            if (args.Length == 0)
+            switch (args.Length)
             {
-                ShowUsage();
-                Environment.Exit(0);
-            }
-            else if (args.Length == 1)
-            {
-                cmdRdpPath = args[0];
-            }
-            else if (args.Length == 2)
-            {
-                if (args[0].StartsWith("/"))
-                {
+                case 0:
+                    ShowUsage();
+                    Environment.Exit(0);
+                    break;
+                case 1:
+                    cmdRdpPath = args[0];
+                    break;
+                case 2 when args[0].StartsWith("/"):
                     cmdSwitches = args[0];
                     cmdRdpPath = args[1];
-                }
-                else
-                {
+                    break;
+                case 2:
                     cmdSwitches = args[1];
                     cmdRdpPath = args[0];
+                    break;
+                default:
+                {
+                    if (args.Length > 2)
+                    {
+                        LogText("Error: Too many parameters provided.", true);
+                    }
+
+                    break;
                 }
-            }
-            else if (args.Length > 2)
-            {
-                LogText("Error: Too many parameters provided.", true);
             }
 
             var relCmdRdpPath = Path.Combine(Directory.GetCurrentDirectory(), cmdRdpPath);
             if (!cmdRdpPath.Contains(":"))
+            {
                 cmdRdpPath = relCmdRdpPath;
+            }
+
             if (!File.Exists(cmdRdpPath))
+            {
                 LogText("Error: Unable to find RDP file: " + cmdRdpPath, true);
+            }
+
             if (cmdSwitches.IndexOf("D", StringComparison.OrdinalIgnoreCase) < 0 && cmdSwitches.IndexOf("S", StringComparison.OrdinalIgnoreCase) < 0)
             {
                 cmdSwitches += "DS";
@@ -73,20 +80,33 @@ namespace RDP2MSI.New
         private static void PrepareRDP2MSI(string rdpFilePath, string cmdSwitches = "DS")
         {
             if (!File.Exists(rdpFilePath))
+            {
                 LogText("Error: Unable to find RDP file: " + rdpFilePath, true);
+            }
+
             if (!rdpFilePath.EndsWith(".rdp", StringComparison.OrdinalIgnoreCase))
+            {
                 LogText("Error: Input file must be an RDP file.", true);
+            }
+
             var RDP = new RDP2MSIlib.New.RDP
             {
                 RDPFilePath = rdpFilePath
             };
+
             if (!RDP.WixInstalled())
+            {
                 LogText("Error: WiX Toolset not found. If you have just installed it, please reboot and try again.", true);
+            }
+
             LogText("RDP file: " + rdpFilePath);
             var RemoteAppFullName = RDP.ReadRDPProperty("remoteapplicationname");
             var RDPFullAddress = RDP.ReadRDPProperty("full address");
             if (string.IsNullOrEmpty(RDPFullAddress))
+            {
                 LogText("Error: RDP file does not contain a Remote Desktop Server address.", true);
+            }
+
             if (string.IsNullOrEmpty(RemoteAppFullName))
             {
                 // Full desktop connection
@@ -106,36 +126,34 @@ namespace RDP2MSI.New
             var ShortcutLocations = new List<string>();
             if (RDP.ShortcutInStart)
             {
-                if (RDP.ShortcutSubfolderInStart)
-                {
-                    ShortcutLocations.Add("Start menu (subfolder)");
-                }
-                else
-                {
-                    ShortcutLocations.Add("Start menu (top level)");
-                }
+                ShortcutLocations.Add(
+                    RDP.ShortcutSubfolderInStart ? "Start menu (subfolder)" : "Start menu (top level)");
             }
 
             if (RDP.ShortcutOnDesktop)
+            {
                 ShortcutLocations.Add("Desktop");
+            }
+
             LogText("Shortcut locations: " + string.Join(", ", ShortcutLocations));
+
             RDP.ProductUpgradeRandom = !cmdSwitches.Contains("A");
             LogText($"MSI upgrade code: {RDP.ProductUpgradeCode()}");
+
             if (cmdSwitches.Contains("T"))
+            {
                 RDP.ProductRemoteTag = string.Empty;
+            }
+
             RDP.PerUser = cmdSwitches.Contains("U");
-            if (RDP.PerUser)
-            {
-                LogText("MSI install context: User");
-            }
-            else
-            {
-                LogText("MSI install context: Machine");
-            }
+            LogText(RDP.PerUser ? "MSI install context: User" : "MSI install context: Machine");
 
             var ShortcutTag = "NONE";
             if (!string.IsNullOrEmpty(RDP.ProductRemoteTag))
+            {
                 ShortcutTag = "(" + RDP.ProductRemoteTag + ")";
+            }
+
             LogText("Shortcut tag: " + ShortcutTag);
             LogText("");
             LogText("Generating MSI...");
