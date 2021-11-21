@@ -8,8 +8,8 @@ namespace RDP2MSI.New
     {
         public static void Main(string[] args)
         {
-            string cmdRdpPath = "";
-            string cmdSwitches = "";
+            var cmdRdpPath = "";
+            var cmdSwitches = "";
             LogText("RDP2MSI" + Environment.NewLine);
             if (args.Length == 0)
             {
@@ -38,7 +38,7 @@ namespace RDP2MSI.New
                 LogText("Error: Too many parameters provided.", true);
             }
 
-            string relCmdRdpPath = Path.Combine(Directory.GetCurrentDirectory(), cmdRdpPath);
+            var relCmdRdpPath = Path.Combine(Directory.GetCurrentDirectory(), cmdRdpPath);
             if (!cmdRdpPath.Contains(":"))
                 cmdRdpPath = relCmdRdpPath;
             if (!File.Exists(cmdRdpPath))
@@ -83,8 +83,8 @@ namespace RDP2MSI.New
             if (!RDP.WixInstalled())
                 LogText("Error: WiX Toolset not found. If you have just installed it, please reboot and try again.", true);
             LogText("RDP file: " + rdpFilePath);
-            string RemoteAppFullName = RDP.ReadRDPProperty("remoteapplicationname");
-            string RDPFullAddress = RDP.ReadRDPProperty("full address");
+            var RemoteAppFullName = RDP.ReadRDPProperty("remoteapplicationname");
+            var RDPFullAddress = RDP.ReadRDPProperty("full address");
             if (string.IsNullOrEmpty(RDPFullAddress))
                 LogText("Error: RDP file does not contain a Remote Desktop Server address.", true);
             if (string.IsNullOrEmpty(RemoteAppFullName))
@@ -133,7 +133,7 @@ namespace RDP2MSI.New
                 LogText("MSI install context: Machine");
             }
 
-            string ShortcutTag = "NONE";
+            var ShortcutTag = "NONE";
             if (!string.IsNullOrEmpty(RDP.ProductRemoteTag))
                 ShortcutTag = "(" + RDP.ProductRemoteTag + ")";
             LogText("Shortcut tag: " + ShortcutTag);

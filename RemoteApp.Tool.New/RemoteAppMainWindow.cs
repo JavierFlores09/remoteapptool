@@ -67,7 +67,7 @@ namespace RemoteApp.Tool.New
         public override void ReloadApps()
         {
             AppList.Clear();
-            RemoteAppCollection Apps = new SystemRemoteApps().GetAll();
+            var Apps = new SystemRemoteApps().GetAll();
             foreach (RemoteAppLib.New.RemoteApp App in Apps)
             {
                 SmallIcons.Images.RemoveByKey(App.Name);
@@ -228,7 +228,7 @@ namespace RemoteApp.Tool.New
             if (DialogResult == DialogResult.OK)
             {
                 const string remoteAppRegPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";
-                string BackupSavePath = BackupSaveFileDialog.FileName;
+                var BackupSavePath = BackupSaveFileDialog.FileName;
                 var StartInfo = new ProcessStartInfo("reg.exe", $"export \"{remoteAppRegPath}\" \"{BackupSavePath}\" /y")
                 {
                     WindowStyle = ProcessWindowStyle.Hidden

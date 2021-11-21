@@ -12,7 +12,7 @@ namespace RemoteApp.Tool.New
     {
         public static void ValidateInteger(TextBox theTextBox)
         {
-            int cloc = theTextBox.SelectionStart;
+            var cloc = theTextBox.SelectionStart;
             theTextBox.Text = double.Parse(theTextBox.Text).ToString();
             theTextBox.Select(theTextBox.Text.Length, 0);
             theTextBox.Select(cloc, 0);
@@ -20,7 +20,7 @@ namespace RemoteApp.Tool.New
 
         public static void ValidatePort(TextBox theTextBox)
         {
-            int cloc = theTextBox.SelectionStart;
+            var cloc = theTextBox.SelectionStart;
             if (double.Parse(theTextBox.Text) > 65535d)
             {
                 theTextBox.Text = "65535";
@@ -34,7 +34,7 @@ namespace RemoteApp.Tool.New
 
         public static void ValidateSeconds(TextBox theTextBox)
         {
-            int cloc = theTextBox.SelectionStart;
+            var cloc = theTextBox.SelectionStart;
             if (double.Parse(theTextBox.Text) > 2147483d)
             {
                 theTextBox.Text = 2147483.ToString();
@@ -53,7 +53,7 @@ namespace RemoteApp.Tool.New
 
         private static void ValidateTextBoxR(TextBox theTextBox, string regex)
         {
-            int cloc = theTextBox.SelectionStart;
+            var cloc = theTextBox.SelectionStart;
             var rx = new Regex(regex);
             if (rx.IsMatch(theTextBox.Text))
             {
@@ -127,11 +127,11 @@ namespace RemoteApp.Tool.New
 
         public static void DeleteFiles(List<string> filesArray)
         {
-            foreach (string dFile in filesArray)
+            foreach (var dFile in filesArray)
             {
                 var LockCheck = new LockChecker.New.LockChecker();
                 string FileLocked;
-                bool SkipFile = false;
+                var SkipFile = false;
                 FileLocked = LockCheck.CheckLock(dFile);
                 while (FileLocked != "No locks")
                 {
@@ -163,7 +163,7 @@ namespace RemoteApp.Tool.New
         /// <returns>File description or file name</returns>
         public static string GetExeTitle(string exePath)
         {
-            string pname = FileVersionInfo.GetVersionInfo(exePath).FileDescription;
+            var pname = FileVersionInfo.GetVersionInfo(exePath).FileDescription;
             if (string.IsNullOrEmpty(pname))
             {
                 pname = Path.GetFileNameWithoutExtension(exePath);

@@ -50,7 +50,7 @@ namespace RemoteApp.Tool.New
         {
             var TipString = string.Empty;
             var TipText = GetTipFile();
-            foreach (string TipLine in TipText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var TipLine in TipText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 var TipLineArray = TipLine.Split('|');
                 if ((TipLineArray[0] ?? string.Empty) == (formName ?? string.Empty) && (TipLineArray[1] ?? string.Empty) == (controlName ?? string.Empty))

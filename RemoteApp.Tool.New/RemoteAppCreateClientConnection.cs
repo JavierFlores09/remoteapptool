@@ -35,7 +35,7 @@ namespace RemoteApp.Tool.New
         {
             _remoteApp = selectedRemoteApp;
             var rdpSign = new RDPSign.New.RDPSign();
-            string RemoteAppShortName = _remoteApp.Name;
+            var RemoteAppShortName = _remoteApp.Name;
             Text = "Create Client Connection for " + RemoteAppShortName;
             RdpsignErrorLabel.Text = "";
             CertificateComboBox.Items.AddRange(rdpSign.GetCertificateFriendlyName().ToArray());
@@ -236,7 +236,7 @@ namespace RemoteApp.Tool.New
 
         private void CreateButton_Click(object sender, EventArgs e)
         {
-            string MSIPath = string.Empty;
+            var MSIPath = string.Empty;
             if (CheckBoxSignRDPEnabled.Checked && string.IsNullOrEmpty(CertificateComboBox.SelectedItem as string))
             {
                 MessageBox.Show("You must select a certificate to sign the RDP file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -275,13 +275,13 @@ namespace RemoteApp.Tool.New
                 // !!!!!!! If it's an RDP file
                 if (EditAfterSave.Checked)
                 {
-                    string CmdLine = RemoteAppFunction.GetSysDir() + @"\notepad.exe";
+                    var CmdLine = RemoteAppFunction.GetSysDir() + @"\notepad.exe";
                     Process.Start(CmdLine, FileSaveRDP.FileName);
                 }
 
                 if (CreateRAWebIcon.Checked)
                 {
-                    string IconFilePath = RDPPath.Substring(0, RDPPath.Length - 4) + ".ico";
+                    var IconFilePath = RDPPath.Substring(0, RDPPath.Length - 4) + ".ico";
                     if (!IconModule.ExtractToIco(_remoteApp.IconPath, _remoteApp.IconIndex, IconFilePath))
                     {
                         MessageBox.Show("Icon could not be created the RemoteApp. RDP file will still be created.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -291,7 +291,7 @@ namespace RemoteApp.Tool.New
                     {
                         foreach (RemoteAppLib.New.FileTypeAssociation fta in _remoteApp.FileTypeAssociations)
                         {
-                            string ProductFileName = RDPPath.Substring(0, RDPPath.Length - 4);
+                            var ProductFileName = RDPPath.Substring(0, RDPPath.Length - 4);
                             ExtractFtIcon(ProductFileName, fta);
                         }
                     }
@@ -355,10 +355,10 @@ namespace RemoteApp.Tool.New
         {
             // Dim App As New RemoteAppLib.New.RemoteApp = RemoteApp
             // App = RemoteApp
-            string ServerAddress = this.ServerAddress.Text;
-            string AltServerAddress = this.AltServerAddress.Text;
-            string ServerPort = this.ServerPort.Text;
-            string FlatFileTypes = "";
+            var ServerAddress = this.ServerAddress.Text;
+            var AltServerAddress = this.AltServerAddress.Text;
+            var ServerPort = this.ServerPort.Text;
+            var FlatFileTypes = "";
             if (remoteApp.FileTypeAssociations != null)
                 FlatFileTypes = remoteApp.FileTypeAssociations.GetFlatFileTypes();
             var rdPfile = new RDPFileLib.New.RDPFile()
@@ -394,19 +394,19 @@ namespace RemoteApp.Tool.New
             if (CheckBoxSignRDPEnabled.Checked)
             {
                 var rdpSign = new RDPSign.New.RDPSign();
-                string Thumbprint = rdpSign.GetThumbprint(CertificateComboBox.Text);
+                var Thumbprint = rdpSign.GetThumbprint(CertificateComboBox.Text);
                 rdpSign.SignRDP(Thumbprint, rdpPath, CheckBoxCreateSignedAndUnsigned.Checked);
             }
         }
 
         private string GetFlatFileTypesList(string appName, string delim = ",")
         {
-            string BaseKeyName = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications\" + appName + @"\Filetypes";
-            string flatFtList = "";
+            var BaseKeyName = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications\" + appName + @"\Filetypes";
+            var flatFtList = "";
             try
             {
                 var BaseKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(BaseKeyName);
-                foreach (string ft in BaseKey.GetSubKeyNames())
+                foreach (var ft in BaseKey.GetSubKeyNames())
                     flatFtList += "." + ft + delim;
                 flatFtList = flatFtList.TrimEnd(delim.ToCharArray());
             }

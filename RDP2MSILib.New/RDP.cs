@@ -49,7 +49,7 @@ namespace RDP2MSIlib.New
             }
 
             // Get RDP file parent folder path
-            string rdpParentFolder = Path.GetDirectoryName(_rdpFilePath);
+            var rdpParentFolder = Path.GetDirectoryName(_rdpFilePath);
 
             // Get the RDP filename and filename minus extension
             var fileName = new FileInfo(_rdpFilePath).Name;
@@ -62,29 +62,29 @@ namespace RDP2MSIlib.New
             }
 
             // Set iconpath (whether it exists or not)
-            string IconFilePath = rdpParentFolder + @"\" + _productBaseFileName + ".ico";
+            var IconFilePath = rdpParentFolder + @"\" + _productBaseFileName + ".ico";
 
             // Check for icon, set "HasIcon" to true if found
             _hasIcon = File.Exists(IconFilePath);
 
             // Get RemoteApp names (short and full) from RDP file contents
-            string RemoteAppFullName = ReadRDPProperty("remoteapplicationname");
-            string RemoteAppShortName = ReadRDPProperty("remoteapplicationprogram");
+            var RemoteAppFullName = ReadRDPProperty("remoteapplicationname");
+            var RemoteAppShortName = ReadRDPProperty("remoteapplicationprogram");
 
             // Define wix temp file paths
-            string TempPath = Environment.GetEnvironmentVariable("TEMP");
-            string wxsPath = TempPath + @"\" + _productBaseFileName + ".wxs";
-            string wixobjPath = TempPath + @"\" + _productBaseFileName + ".wixobj";
-            string wixpdbPath = TempPath + @"\" + _productBaseFileName + ".wixpdb";
-            string msiPath = TempPath + @"\" + _productBaseFileName + ".msi";
-            string rdpTempPath = TempPath + @"\" + _productBaseFileName + ".rdp";
-            string icoTempPath = TempPath + @"\" + _productBaseFileName + ".ico";
+            var TempPath = Environment.GetEnvironmentVariable("TEMP");
+            var wxsPath = TempPath + @"\" + _productBaseFileName + ".wxs";
+            var wixobjPath = TempPath + @"\" + _productBaseFileName + ".wixobj";
+            var wixpdbPath = TempPath + @"\" + _productBaseFileName + ".wixpdb";
+            var msiPath = TempPath + @"\" + _productBaseFileName + ".msi";
+            var rdpTempPath = TempPath + @"\" + _productBaseFileName + ".rdp";
+            var icoTempPath = TempPath + @"\" + _productBaseFileName + ".ico";
 
             // Define temp files to delete
             var FilesToDelete = new List<string>(new string[] { wxsPath, wixobjPath, wixpdbPath });
             var LockCheck = new LockChecker.New.LockChecker();
             string FileLocked;
-            bool SkipFile = false;
+            var SkipFile = false;
             // Check if rdp file is already in TEMP folder
             if ((rdpParentFolder ?? "") == (TempPath ?? ""))
             {
@@ -147,13 +147,13 @@ namespace RDP2MSIlib.New
             var LightPath = Path.Combine(WixPath(), "light.exe ");
 
             // Run Candle.exe and Light.exe to process wxs file
-            int CandleExitCode = RunWait(CandlePath, $"-out \"{wixobjPath}\" \"{wxsPath}\"");
+            var CandleExitCode = RunWait(CandlePath, $"-out \"{wixobjPath}\" \"{wxsPath}\"");
             // If Not CandleExitCode = 0 Then Exit Sub
             if (CandleExitCode != 0)
             {
                 throw new Exception("Could not start candle.exe");
             }
-            int LightExitCode = RunWait(LightPath, $"-out \"{msiPath}\" \"{wixobjPath}\"");
+            var LightExitCode = RunWait(LightPath, $"-out \"{msiPath}\" \"{wixobjPath}\"");
             // If Not LightExitCode = 0 Then Exit Sub
             if (LightExitCode != 0)
             {
@@ -214,7 +214,7 @@ namespace RDP2MSIlib.New
             {
                 var LockCheck = new LockChecker.New.LockChecker();
                 string FileLocked;
-                bool SkipFile = false;
+                var SkipFile = false;
                 FileLocked = LockCheck.CheckLock(dFile);
                 while (FileLocked != "No locks")
                 {
@@ -297,7 +297,7 @@ namespace RDP2MSIlib.New
                 ProductPublisher = _productName;
             }
 
-            string RegRoot = "HKLM";
+            var RegRoot = "HKLM";
             if (PerUser)
             {
                 RegRoot = "HKCU";
@@ -306,7 +306,7 @@ namespace RDP2MSIlib.New
             var AppFilesGuid = GenerateGuiDfromString($"AppFiles{ProductUpgradeCode()}");
             var AppStartShortcutsGuid = GenerateGuiDfromString($"AppStartShortcuts{ProductUpgradeCode()}");
             var AppDeskShortcutsGuid = GenerateGuiDfromString($"AppDeskShortcuts{ProductUpgradeCode()}");
-            string progId = MakeProgId(_productBaseFileName);
+            var progId = MakeProgId(_productBaseFileName);
             var wxsString = new StringBuilder();
             wxsString.AppendLine("<?xml version=\"1.0\"?>");
             wxsString.Append("<?define ProductVersion = \"").Append(ProductVersion).AppendLine("\"?>");
@@ -480,7 +480,7 @@ namespace RDP2MSIlib.New
         public string ReadRDPProperty(string rdpProperty)
         {
             var rdpFileLines = _rdpFileContents.Split(Environment.NewLine[0]);
-            string rdpValue = "";
+            var rdpValue = "";
             foreach (var rdpLine in rdpFileLines)
             {
                 var newLine = rdpLine.Replace("|", string.Empty);
@@ -502,7 +502,7 @@ namespace RDP2MSIlib.New
 
         private string GenerateGuiDfromString(string theString)
         {
-            string TheHash = GetMd5Hash(theString);
+            var TheHash = GetMd5Hash(theString);
             var MyGuid = new Guid(TheHash);
             return MyGuid.ToString();
         }
@@ -512,7 +512,7 @@ namespace RDP2MSIlib.New
             var md5Obj = new System.Security.Cryptography.MD5CryptoServiceProvider();
             var bytesToHash = System.Text.Encoding.ASCII.GetBytes(strToHash);
             bytesToHash = md5Obj.ComputeHash(bytesToHash);
-            string strResult = "";
+            var strResult = "";
             foreach (var b in bytesToHash)
             {
                 strResult += b.ToString("x2");

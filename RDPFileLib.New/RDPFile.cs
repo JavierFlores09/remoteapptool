@@ -87,7 +87,7 @@ namespace RDPFileLib.New
         {
             var LockCheck = new LockChecker.New.LockChecker();
             string FileLocked;
-            bool SkipFile = false;
+            var SkipFile = false;
             FileLocked = LockCheck.CheckLock(filePath);
             while (FileLocked != "No locks")
             {
@@ -491,7 +491,7 @@ namespace RDPFileLib.New
             var sr = new StreamReader(filePath);
             while (sr.Peek() != -1)
             {
-                string line = sr.ReadLine();
+                var line = sr.ReadLine();
                 var SplitLine = line.Split(':');
                 if (string.IsNullOrEmpty(SplitLine[2]))
                 {

@@ -73,8 +73,8 @@ namespace RemoteApp.Tool.New
             }
 
             _ = new RemoteAppLib.New.FileTypeAssociation();
-            RemoteAppLib.New.FileTypeAssociation fta = Forms.RemoteAppIconPicker.ManageFta(_remoteApp.IconPath, 0);
-            bool sameFta = false;
+            var fta = Forms.RemoteAppIconPicker.ManageFta(_remoteApp.IconPath, 0);
+            var sameFta = false;
             if (fta.Extension != null)
             {
                 foreach (RemoteAppLib.New.FileTypeAssociation rafta in _remoteApp.FileTypeAssociations)
@@ -129,7 +129,7 @@ namespace RemoteApp.Tool.New
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            string FileType = FTAListView.SelectedItems[0].Text;
+            var FileType = FTAListView.SelectedItems[0].Text;
             if (MessageBox.Show("Are you sure you want to remove filetype:" + Environment.NewLine + "." + FileType + " ?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 _ = FTAListView.SelectedItems[0].SubItems[0].Text;
@@ -155,12 +155,12 @@ namespace RemoteApp.Tool.New
         private void EditFta()
         {
             _ = new RemoteAppLib.New.FileTypeAssociation();
-            RemoteAppLib.New.FileTypeAssociation fta = Forms.RemoteAppIconPicker.ManageFta(FTAListView.SelectedItems[0].SubItems[1].Text, (int)Math.Round(double.Parse(FTAListView.SelectedItems[0].SubItems[2].Text)), FTAListView.SelectedItems[0].Text, true);
+            var fta = Forms.RemoteAppIconPicker.ManageFta(FTAListView.SelectedItems[0].SubItems[1].Text, (int)Math.Round(double.Parse(FTAListView.SelectedItems[0].SubItems[2].Text)), FTAListView.SelectedItems[0].Text, true);
             if (fta.Extension != null)
             {
                 _ = FTAListView.SelectedItems[0].SubItems[0].Text;
                 _ = FTAListView.SelectedItems[0].SubItems[1].Text;
-                string FileType = FTAListView.SelectedItems[0].Text;
+                var FileType = FTAListView.SelectedItems[0].Text;
                 var ftAtoRemove = new RemoteAppLib.New.FileTypeAssociation();
                 foreach (RemoteAppLib.New.FileTypeAssociation fta2 in _remoteApp.FileTypeAssociations)
                 {

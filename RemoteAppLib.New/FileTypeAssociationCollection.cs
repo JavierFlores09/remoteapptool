@@ -14,7 +14,7 @@
 
         public string GetFlatFileTypes()
         {
-            string GetFlatFileTypesRet = string.Empty;
+            var GetFlatFileTypesRet = string.Empty;
             if (List.Count > 0)
             {
                 foreach (FileTypeAssociation listItem in List)

@@ -12,7 +12,7 @@ namespace RemoteApp.Tool.New
             if (!RunningAsAdmin())
             {
                 Console.WriteLine("Running as admin required!");
-                ProcessStartInfo proc = new ProcessStartInfo();
+                var proc = new ProcessStartInfo();
                 proc.UseShellExecute = true;
                 proc.WorkingDirectory = Environment.CurrentDirectory;
                 proc.FileName = Assembly.GetEntryAssembly().CodeBase;
@@ -32,8 +32,8 @@ namespace RemoteApp.Tool.New
 
         private static bool RunningAsAdmin()
         {
-            WindowsIdentity id = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new WindowsPrincipal(id);
+            var id = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(id);
 
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }

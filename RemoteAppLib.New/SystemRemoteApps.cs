@@ -29,7 +29,7 @@ namespace RemoteAppLib.New
         public RemoteAppCollection GetAll()
         {
             var SystemAppCollection = new RemoteAppCollection();
-            foreach (string App in _baseKey.GetSubKeyNames())
+            foreach (var App in _baseKey.GetSubKeyNames())
             {
                 var RemoteApp = GetApp(App);
                 SystemAppCollection.Add(RemoteApp);
@@ -121,7 +121,7 @@ namespace RemoteAppLib.New
             set
             {
                 _legacy32Bit = value;
-                string PathStart = "SOFTWARE";
+                var PathStart = "SOFTWARE";
                 if (_legacy32Bit)
                     PathStart = @"SOFTWARE\Wow6432Node";
                 _registryPath = PathStart + @"\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";

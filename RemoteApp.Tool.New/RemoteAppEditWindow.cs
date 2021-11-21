@@ -107,8 +107,8 @@ namespace RemoteApp.Tool.New
 
         private void IconPick()
         {
-            string StartPath = RemoteAppFunction.GetSysDir() + @"\shell32.dll";
-            int StartIndex = (int)Math.Round(double.Parse(IconIndexText.Text));
+            var StartPath = RemoteAppFunction.GetSysDir() + @"\shell32.dll";
+            var StartIndex = (int)Math.Round(double.Parse(IconIndexText.Text));
             if (File.Exists(IconPathText.Text))
                 StartPath = IconPathText.Text;
             var PickedIcon = Forms.RemoteAppIconPicker.PickIcon(StartPath, StartIndex);
@@ -126,12 +126,12 @@ namespace RemoteApp.Tool.New
 
         private bool DoBrowsePath()
         {
-            bool DoBrowsePathRet = false;
+            var DoBrowsePathRet = false;
             if (File.Exists(PathText.Text))
                 FileBrowserPath.InitialDirectory = Path.GetDirectoryName(PathText.Text);
             if (FileBrowserPath.ShowDialog() == DialogResult.OK)
             {
-                string FilePath = FileBrowserPath.FileName;
+                var FilePath = FileBrowserPath.FileName;
                 PathText.Text = FilePath;
                 _remoteApp.Path = FilePath;
                 if (string.IsNullOrEmpty(IconPathText.Text))
@@ -175,7 +175,7 @@ namespace RemoteApp.Tool.New
 
         private bool DoesAppExist(string appName)
         {
-            bool AppExists = false;
+            var AppExists = false;
             var sra = new SystemRemoteApps();
             foreach (RemoteAppLib.New.RemoteApp App in sra.GetAll())
             {

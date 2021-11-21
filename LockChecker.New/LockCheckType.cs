@@ -19,9 +19,9 @@ namespace LockChecker.New
         public static string LockCheck(string filename)
         {
             var handle = default(uint);
-            string sessionkey = Guid.NewGuid().ToString();
+            var sessionkey = Guid.NewGuid().ToString();
             var result = new System.Text.StringBuilder();
-            int res = Interop.RmStartSession(ref handle, 0, sessionkey);
+            var res = Interop.RmStartSession(ref handle, 0, sessionkey);
             if (res != 0)
             {
                 throw new Exception("Could not begin restart session.");
@@ -29,8 +29,8 @@ namespace LockChecker.New
 
             try
             {
-                uint pnProcInfoNeeded = 0U;
-                uint pnProcInfo = 100U;
+                var pnProcInfoNeeded = 0U;
+                var pnProcInfo = 100U;
                 uint lpdwRebootReasons = RmRebootReasonNone;
                 var resources = new string[] { filename };
 

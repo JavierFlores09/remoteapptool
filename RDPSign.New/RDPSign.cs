@@ -19,11 +19,11 @@ namespace RDPSign.New
         /// <returns>String array of Certificate friendly names</returns>
         public IEnumerable<string> GetCertificateFriendlyName()
         {
-            X509Store certStoreLm = GetCertificateStoreLm();
-            X509Store certStoreCu = GetCertificateStoreCu();
+            var certStoreLm = GetCertificateStoreLm();
+            var certStoreCu = GetCertificateStoreCu();
             var FriendlyNames = new string[certStoreLm.Certificates.Count + certStoreCu.Certificates.Count + 1];
-            int Counter = 0;
-            foreach (X509Certificate2 Certificate in certStoreLm.Certificates)
+            var Counter = 0;
+            foreach (var Certificate in certStoreLm.Certificates)
             {
                 if (!ReferenceEquals(Certificate.FriendlyName, string.Empty))
                 {
@@ -32,7 +32,7 @@ namespace RDPSign.New
                 }
             }
 
-            foreach (X509Certificate2 Certificate in certStoreCu.Certificates)
+            foreach (var Certificate in certStoreCu.Certificates)
             {
                 if (!ReferenceEquals(Certificate.FriendlyName, string.Empty))
                 {
@@ -75,7 +75,7 @@ namespace RDPSign.New
         public string GetThumbprint(string friendlyName)
         {
             string Thumbprint;
-            foreach (X509Certificate2 certificate in GetCertificateStoreLm().Certificates)
+            foreach (var certificate in GetCertificateStoreLm().Certificates)
             {
                 if ((certificate.FriendlyName ?? string.Empty) == (friendlyName ?? string.Empty))
                 {
@@ -85,7 +85,7 @@ namespace RDPSign.New
                 }
             }
             GetCertificateStoreLm().Close();
-            foreach (X509Certificate2 certificate in GetCertificateStoreCu().Certificates)
+            foreach (var certificate in GetCertificateStoreCu().Certificates)
             {
                 if ((certificate.FriendlyName ?? string.Empty) == (friendlyName ?? string.Empty))
                 {
@@ -115,10 +115,10 @@ namespace RDPSign.New
 
             if (createBackup)
             {
-                string BackupFile = Path.Combine(Path.GetDirectoryName(rdpFileLocation), $"{Path.GetFileNameWithoutExtension(rdpFileLocation)}-Unsigned.rdp");
+                var BackupFile = Path.Combine(Path.GetDirectoryName(rdpFileLocation), $"{Path.GetFileNameWithoutExtension(rdpFileLocation)}-Unsigned.rdp");
                 var LockCheck = new LockChecker.New.LockChecker();
                 string FileLocked;
-                bool SkipFile = false;
+                var SkipFile = false;
                 FileLocked = LockCheck.CheckLock(BackupFile);
                 while (FileLocked != "No locks")
                 {
@@ -188,7 +188,7 @@ namespace RDPSign.New
             // Each path to check for rdpsign.exe is added to this array.
             // If it is found in more than one location, the lowest in the list will be selected.
             var PossibleRdpsignPaths = new string[] { Environment.SystemDirectory, Directory.GetCurrentDirectory() };
-            string FinalRdpSignPath = string.Empty;
+            var FinalRdpSignPath = string.Empty;
             foreach (var RdpsignPath in PossibleRdpsignPaths)
             {
                 var newPath = Path.Combine(RdpsignPath, "rdpsign.exe");

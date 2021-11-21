@@ -68,13 +68,13 @@ namespace RemoteApp.Tool.New
         {
             IconList.Clear();
             SmallIcons.Images.Clear();
-            bool IconError = false;
+            var IconError = false;
             IconIndexLabel.Visible = true;
             IconIndexTextBox.Visible = true;
             if (File.Exists(IconPathTextBox.Text))
             {
                 var mIcon = new System.Drawing.IconLib.MultiIcon();
-                int IconIndex = 0;
+                var IconIndex = 0;
                 try
                 {
                     mIcon.Load(IconPathTextBox.Text);
@@ -95,7 +95,7 @@ namespace RemoteApp.Tool.New
                     _noValidate = false;
                     foreach (var sIcon in mIcon)
                     {
-                        int IconKey = IconIndex;
+                        var IconKey = IconIndex;
                         var IconItem = new ListViewItem(IconKey.ToString());
                         var fiImage = sIcon[0];
                         foreach (var iImage in sIcon)

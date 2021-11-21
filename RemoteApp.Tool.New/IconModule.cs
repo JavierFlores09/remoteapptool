@@ -38,9 +38,9 @@ namespace RemoteApp.Tool.New
             var listIcons = new List<Icon>();
             try
             {
-                int argphiconLarge = 0;
-                int argphiconSmall = 0;
-                int numIcons = ExtractIconEx(filePath, -1, ref argphiconLarge, ref argphiconSmall, 0);
+                var argphiconLarge = 0;
+                var argphiconSmall = 0;
+                var numIcons = ExtractIconEx(filePath, -1, ref argphiconLarge, ref argphiconSmall, 0);
                 if (numIcons == 0)
                 {
                     throw new Exception("No icons found in " + filePath);
@@ -89,8 +89,8 @@ namespace RemoteApp.Tool.New
 
         public static bool ExtractToIco(string iconSourcePath, int iconSourceIndex, string icoDestPath)
         {
-            bool success = false;
-            bool IconLoadError = false;
+            var success = false;
+            var IconLoadError = false;
             if (File.Exists(iconSourcePath))
             {
                 var mIcon = new System.Drawing.IconLib.MultiIcon();
@@ -105,7 +105,7 @@ namespace RemoteApp.Tool.New
 
                 if (!IconLoadError)
                 {
-                    System.Drawing.IconLib.SingleIcon sIcon = iconSourceIndex == 0 ? mIcon.FirstOrDefault() : mIcon[iconSourceIndex];
+                    var sIcon = iconSourceIndex == 0 ? mIcon.FirstOrDefault() : mIcon[iconSourceIndex];
                     try
                     {
                         sIcon.Save(icoDestPath);

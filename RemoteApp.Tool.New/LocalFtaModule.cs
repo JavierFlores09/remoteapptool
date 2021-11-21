@@ -10,11 +10,11 @@ namespace RemoteApp.Tool.New
         public static void RemoveUnusedFtAs()
         {
             var KeyNames = Registry.ClassesRoot.GetSubKeyNames();
-            int RemoveCount = 0;
+            var RemoveCount = 0;
             foreach (var KeyName in KeyNames)
             {
                 var ftAkey = Registry.ClassesRoot.OpenSubKey(KeyName);
-                string RAvalue = (string)ftAkey.GetValue("RemoteApp", "");
+                var RAvalue = (string)ftAkey.GetValue("RemoteApp", "");
                 if (!string.IsNullOrEmpty(RAvalue))
                 {
                     foreach (var KeyName2 in KeyNames)
@@ -22,11 +22,11 @@ namespace RemoteApp.Tool.New
                         try
                         {
                             var FTkey = Registry.ClassesRoot.OpenSubKey(KeyName2);
-                            string FTvalue = (string)FTkey.GetValue("", "");
+                            var FTvalue = (string)FTkey.GetValue("", "");
                             if ((FTvalue ?? "") == (KeyName ?? ""))
                             {
                                 var sra = new SystemRemoteApps();
-                                bool AppExists = false;
+                                var AppExists = false;
                                 foreach (RemoteAppLib.New.RemoteApp app in sra.GetAll())
                                 {
                                     if ((app.Name ?? "") == (GetAppForFta(KeyName2) ?? ""))
