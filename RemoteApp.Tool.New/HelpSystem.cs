@@ -8,6 +8,7 @@ namespace RemoteApp.Tool.New
 {
     internal static class HelpSystem
     {
+        private const string TipsFileName = "tips.txt";
         public static void SetupTips(Form theForm)
         {
             var toolTip1 = new ToolTip()
@@ -16,9 +17,9 @@ namespace RemoteApp.Tool.New
                 InitialDelay = 500,
                 ReshowDelay = 500
             };
-            string HelpString;
             foreach (Control Control in theForm.Controls)
             {
+                string HelpString;
                 foreach (Control SubControl in Control.Controls)
                 {
                     foreach (Control SubSubControl in SubControl.Controls)
@@ -62,8 +63,8 @@ namespace RemoteApp.Tool.New
 
         private static string GetTipFile()
         {
-            return File.Exists("tips.txt")
-                ? File.ReadAllText("tips.txt")
+            return File.Exists(TipsFileName)
+                ? File.ReadAllText(TipsFileName)
                 : GetBuiltInTips();
         }
 

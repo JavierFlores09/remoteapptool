@@ -438,12 +438,12 @@ namespace RemoteApp.Tool.New
 
         private void ServerAddress_TextChanged(object sender, EventArgs e)
         {
-            RemoteAppFunction.ValidateDnSname(ServerAddress);
+            RemoteAppFunction.ValidateDnsName(ServerAddress);
         }
 
         private void AltServerAddress_TextChanged(object sender, EventArgs e)
         {
-            RemoteAppFunction.ValidateDnSname(AltServerAddress);
+            RemoteAppFunction.ValidateDnsName(AltServerAddress);
         }
 
         private void ServerPort_TextChanged(object sender, EventArgs e)

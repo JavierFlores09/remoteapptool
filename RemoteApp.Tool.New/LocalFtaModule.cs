@@ -13,36 +13,30 @@ namespace RemoteApp.Tool.New
             var RemoveCount = 0;
             foreach (var KeyName in KeyNames)
             {
-                var ftAkey = Registry.ClassesRoot.OpenSubKey(KeyName);
-                var RAvalue = (string)ftAkey.GetValue("RemoteApp", "");
-                if (!string.IsNullOrEmpty(RAvalue))
+                var ftaKey = Registry.ClassesRoot.OpenSubKey(KeyName);
+                var raValue = (string)ftaKey.GetValue("RemoteApp", "");
+                if (string.IsNullOrEmpty(raValue)) continue;
+                foreach (var KeyName2 in KeyNames)
                 {
-                    foreach (var KeyName2 in KeyNames)
+                    try
                     {
-                        try
+                        var ftKey = Registry.ClassesRoot.OpenSubKey(KeyName2);
+                        var ftValue = (string)ftKey.GetValue("", "");
+                        if ((ftValue ?? "") != (KeyName ?? "")) continue;
+                        var sra = new SystemRemoteApps();
+                        var AppExists = false;
+                        foreach (RemoteAppLib.New.RemoteApp app in sra.GetAll())
                         {
-                            var FTkey = Registry.ClassesRoot.OpenSubKey(KeyName2);
-                            var FTvalue = (string)FTkey.GetValue("", "");
-                            if ((FTvalue ?? "") == (KeyName ?? ""))
-                            {
-                                var sra = new SystemRemoteApps();
-                                var AppExists = false;
-                                foreach (RemoteAppLib.New.RemoteApp app in sra.GetAll())
-                                {
-                                    if ((app.Name ?? "") == (GetAppForFta(KeyName2) ?? ""))
-                                        AppExists = true;
-                                }
+                            if ((app.Name ?? "") == (GetAppForFta(KeyName2) ?? ""))
+                                AppExists = true;
+                        }
 
-                                if (!AppExists)
-                                {
-                                    DeleteFta(KeyName2);
-                                    RemoveCount++;
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        if (AppExists) continue;
+                        DeleteFta(KeyName2);
+                        RemoveCount++;
+                    }
+                    catch (Exception)
+                    {
                     }
                 }
             }
@@ -70,42 +64,38 @@ namespace RemoteApp.Tool.New
             {
                 return false;
             }
-            else
-            {
-                DeleteFta(fta.Extension);
-                var FileTypeReg = Registry.ClassesRoot.CreateSubKey("." + fta.Extension);
-                FileTypeReg.SetValue("", fta.Extension + "_file");
-                var FileTypeKey = Registry.ClassesRoot.CreateSubKey(fta.Extension + "_file");
-                FileTypeKey.SetValue("RemoteApp", remoteAppName);
-                var FileTypeKeyShell = FileTypeKey.CreateSubKey("shell");
-                var FileTypeKeyShellOpen = FileTypeKeyShell.CreateSubKey("open");
-                var FileTypeKeyShellOpenCommand = FileTypeKeyShellOpen.CreateSubKey("command");
-                FileTypeKeyShellOpenCommand.SetValue("", "\"" + exeFile + "\" \"%1\"");
-                var FileTypeKeyDefIcon = FileTypeKey.CreateSubKey("DefaultIcon");
-                FileTypeKeyDefIcon.SetValue("", "\"" + fta.IconPath + "\"," + fta.IconIndex);
-                return true;
-            }
+
+            DeleteFta(fta.Extension);
+            var FileTypeReg = Registry.ClassesRoot.CreateSubKey("." + fta.Extension);
+            FileTypeReg.SetValue("", fta.Extension + "_file");
+            var FileTypeKey = Registry.ClassesRoot.CreateSubKey(fta.Extension + "_file");
+            FileTypeKey.SetValue("RemoteApp", remoteAppName);
+            var FileTypeKeyShell = FileTypeKey.CreateSubKey("shell");
+            var FileTypeKeyShellOpen = FileTypeKeyShell.CreateSubKey("open");
+            var FileTypeKeyShellOpenCommand = FileTypeKeyShellOpen.CreateSubKey("command");
+            FileTypeKeyShellOpenCommand.SetValue("", "\"" + exeFile + "\" \"%1\"");
+            var FileTypeKeyDefIcon = FileTypeKey.CreateSubKey("DefaultIcon");
+            FileTypeKeyDefIcon.SetValue("", "\"" + fta.IconPath + "\"," + fta.IconIndex);
+            return true;
         }
 
         public static string GetAppForFta(string fileExtension)
         {
             fileExtension = fileExtension.TrimStart('.');
-            if (DoesFtaExist(fileExtension) && IsFtaMine(fileExtension))
+            if (!DoesFtaExist(fileExtension) || !IsFtaMine(fileExtension)) return string.Empty;
+            try
             {
-                try
+                var hkcRext = Registry.ClassesRoot.OpenSubKey("." + fileExtension);
+                var hkcRfta = hkcRext.GetValue("", "");
+                if (string.IsNullOrEmpty(hkcRfta as string))
                 {
-                    var hkcRext = Registry.ClassesRoot.OpenSubKey("." + fileExtension);
-                    var hkcRfta = hkcRext.GetValue("", "");
-                    if (string.IsNullOrEmpty(hkcRfta as string))
-                    {
-                        return string.Empty;
-                    }
-                    var hkcRftaKey = Registry.ClassesRoot.OpenSubKey((string)hkcRfta);
-                    return (string)hkcRftaKey.GetValue("RemoteApp", "");
+                    return string.Empty;
                 }
-                catch (Exception)
-                {
-                }
+                var hkcRftaKey = Registry.ClassesRoot.OpenSubKey((string)hkcRfta);
+                return (string)hkcRftaKey.GetValue("RemoteApp", "");
+            }
+            catch (Exception)
+            {
             }
 
             return string.Empty;
@@ -123,13 +113,7 @@ namespace RemoteApp.Tool.New
         public static bool DoesFtaExist(string fileExtension)
         {
             fileExtension = fileExtension.TrimStart('.');
-            var ftAexists = false;
-            if (Registry.ClassesRoot.OpenSubKey("." + fileExtension) != null)
-            {
-                ftAexists = true;
-            }
-
-            return ftAexists;
+            return  Registry.ClassesRoot.OpenSubKey("." + fileExtension) != null;
         }
 
         public static bool IsFtaMine(string fileExtension)

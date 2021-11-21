@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -13,7 +14,7 @@ namespace RemoteApp.Tool.New
         public static void ValidateInteger(TextBox theTextBox)
         {
             var cloc = theTextBox.SelectionStart;
-            theTextBox.Text = double.Parse(theTextBox.Text).ToString();
+            theTextBox.Text = double.Parse(theTextBox.Text).ToString(CultureInfo.InvariantCulture);
             theTextBox.Select(theTextBox.Text.Length, 0);
             theTextBox.Select(cloc, 0);
         }
@@ -27,7 +28,7 @@ namespace RemoteApp.Tool.New
                 cloc = theTextBox.Text.Length;
             }
 
-            theTextBox.Text = double.Parse(theTextBox.Text).ToString();
+            theTextBox.Text = double.Parse(theTextBox.Text).ToString(CultureInfo.InvariantCulture);
             theTextBox.Select(theTextBox.Text.Length, 0);
             theTextBox.Select(cloc, 0);
         }
@@ -41,7 +42,7 @@ namespace RemoteApp.Tool.New
                 cloc = theTextBox.Text.Length;
             }
 
-            theTextBox.Text = double.Parse(theTextBox.Text).ToString();
+            theTextBox.Text = double.Parse(theTextBox.Text).ToString(CultureInfo.InvariantCulture);
             theTextBox.Select(theTextBox.Text.Length, 0);
             theTextBox.Select(cloc, 0);
         }
@@ -68,53 +69,47 @@ namespace RemoteApp.Tool.New
 
         public static object FixShortAppName(string theText)
         {
-            if (!string.IsNullOrEmpty(theText))
+            if (string.IsNullOrEmpty(theText)) return theText.Trim();
+            var rx = new Regex(@"[^\p{L}0-9\-_"" ""]");
+            if (rx.IsMatch(theText))
             {
-                var rx = new Regex(@"[^\p{L}0-9\-_"" ""]");
-                if (rx.IsMatch(theText))
-                {
-                    theText = rx.Replace(theText, "");
-                }
+                theText = rx.Replace(theText, "");
             }
 
             return theText.Trim();
         }
 
-        public static void ValidateDnSname(TextBox theTextBox)
+        public static void ValidateDnsName(TextBox theTextBox)
         {
             // pattern matches any character that is NOT A-Z (allows upper and lower case alphabets)
             var rx = new Regex(@"[^\p{L}LlUu0-9\-\._]");
-            if (rx.IsMatch(theTextBox.Text))
-            {
-                theTextBox.Text = rx.Replace(theTextBox.Text, "");
-                theTextBox.Select(theTextBox.Text.Length, 0);
-            }
+            if (!rx.IsMatch(theTextBox.Text)) return;
+            theTextBox.Text = rx.Replace(theTextBox.Text, "");
+            theTextBox.Select(theTextBox.Text.Length, 0);
         }
 
         public static void ValidateFileType(TextBox theTextBox)
         {
             // pattern matches any character that is NOT A-Z (allows upper and lower case alphabets)
             var rx = new Regex(@"[^\p{L}0-9\-_\!\@\#\$\%\^\&\(\)\{\}\[\]\+\=\;\,\']");
-            if (rx.IsMatch(theTextBox.Text))
-            {
-                theTextBox.Text = rx.Replace(theTextBox.Text, "");
-                theTextBox.Select(theTextBox.Text.Length, 0);
-            }
+            if (!rx.IsMatch(theTextBox.Text)) return;
+            theTextBox.Text = rx.Replace(theTextBox.Text, "");
+            theTextBox.Select(theTextBox.Text.Length, 0);
         }
 
         public static System.Drawing.Bitmap GetAppBitmap(string remoteAppShortName)
         {
             // FIX : Potential exception.
-            var AppKey = $@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications\{remoteAppShortName}";
-            var TheRegKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(AppKey);
-            var TheIcon = IconModule.ReturnIcon("", 0).ToBitmap();
-            if (TheRegKey is null)
+            var appKey = $@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications\{remoteAppShortName}";
+            var registryKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(appKey);
+            var icon = IconModule.ReturnIcon("", 0).ToBitmap();
+            if (registryKey is null)
             {
-                return TheIcon;
+                return icon;
             }
-            var IconPath = TheRegKey.GetValue("IconPath", "");
-            var IconIndex = (int)TheRegKey.GetValue("IconIndex", "");
-            return IconModule.ReturnIcon((string)IconPath, IconIndex).ToBitmap();
+            var iconPath = registryKey.GetValue("IconPath", "");
+            var iconIndex = (int)registryKey.GetValue("IconIndex", "");
+            return IconModule.ReturnIcon((string)iconPath, iconIndex).ToBitmap();
         }
 
         [DllImport("kernel32", EntryPoint = "GetSystemDirectoryA")]
@@ -129,27 +124,26 @@ namespace RemoteApp.Tool.New
         {
             foreach (var dFile in filesArray)
             {
-                var LockCheck = new LockChecker.New.LockChecker();
-                string FileLocked;
-                var SkipFile = false;
-                FileLocked = LockCheck.CheckLock(dFile);
-                while (FileLocked != "No locks")
+                var lockCheck = new LockChecker.New.LockChecker();
+                var skipFile = false;
+                var fileLocked = lockCheck.CheckLock(dFile);
+                while (fileLocked != "No locks")
                 {
-                    var message = $"The file {dFile} is currently locked. Lock information: {FileLocked}{Environment.NewLine}Do you want to try again?";
+                    var message = $"The file {dFile} is currently locked. Lock information: {fileLocked}{Environment.NewLine}Do you want to try again?";
                     if (MessageBox.Show(message, "File Locked", MessageBoxButtons.YesNo)
                         == DialogResult.Yes)
                     {
-                        FileLocked = LockCheck.CheckLock(dFile);
+                        fileLocked = lockCheck.CheckLock(dFile);
                     }
                     else
                     {
                         _ = MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{dFile}");
-                        SkipFile = true;
-                        FileLocked = "No locks";
+                        skipFile = true;
+                        fileLocked = "No locks";
                     }
                 }
 
-                if (!SkipFile && File.Exists(dFile))
+                if (!skipFile && File.Exists(dFile))
                 {
                     File.Delete(dFile);
                 }
@@ -157,19 +151,19 @@ namespace RemoteApp.Tool.New
         }
 
         /// <summary>
-        ///   Reads File Description. If it does not exist, returns the name of the exacutable.
+        ///   Reads File Description. If it does not exist, returns the name of the executable.
         /// </summary>
         /// <param name="exePath">full path of the executable.</param>
         /// <returns>File description or file name</returns>
         public static string GetExeTitle(string exePath)
         {
-            var pname = FileVersionInfo.GetVersionInfo(exePath).FileDescription;
-            if (string.IsNullOrEmpty(pname))
+            var executableTitle = FileVersionInfo.GetVersionInfo(exePath).FileDescription;
+            if (string.IsNullOrEmpty(executableTitle))
             {
-                pname = Path.GetFileNameWithoutExtension(exePath);
+                executableTitle = Path.GetFileNameWithoutExtension(exePath);
             }
 
-            return pname;
+            return executableTitle;
         }
     }
 }

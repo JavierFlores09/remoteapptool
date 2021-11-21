@@ -10,6 +10,8 @@ namespace RemoteApp.Tool.New
 {
     public class IconExtractor
     {
+        // TODO: Move Interops into another class
+
         [DllImport("shell32.dll", EntryPoint = "ExtractIconExA")]
         private static extern int ExtractIconEx(string lpszFile, int nIconIndex, ref int phiconLarge, ref int phiconSmall, int nIcons);
 
@@ -26,11 +28,9 @@ namespace RemoteApp.Tool.New
 
         ~IconExtractor()
         {
-            if (_mHIcons?.Length > 0)
-            {
-                for (int iconIndex = 0, loopTo = _mHIcons.Length - 1; iconIndex <= loopTo; iconIndex++)
-                    DestroyIcon(_mHIcons[iconIndex]);
-            }
+            if (!(_mHIcons?.Length > 0)) return;
+            for (int iconIndex = 0, loopTo = _mHIcons.Length - 1; iconIndex <= loopTo; iconIndex++)
+                DestroyIcon(_mHIcons[iconIndex]);
         }
 
         public List<Icon> ExtractIcons(string filePath, IntPtr hInst)
@@ -47,7 +47,7 @@ namespace RemoteApp.Tool.New
                 }
 
                 numIcons--;
-                for (int currentIcon = 0, loopTo = numIcons; currentIcon <= loopTo; currentIcon++)
+                for (var currentIcon = 0; currentIcon <= numIcons; currentIcon++)
                 {
                     _mHIcons[currentIcon] = ExtractIcon(hInst, filePath, currentIcon);
                     var handleIcon = new IntPtr(_mHIcons[currentIcon]);
@@ -76,6 +76,7 @@ namespace RemoteApp.Tool.New
         public static Icon IconFromFilePath(string filePath)
         {
             Icon result = null;
+            // TODO: Add file exist check here.
             try
             {
                 result = Icon.ExtractAssociatedIcon(filePath);
@@ -91,30 +92,27 @@ namespace RemoteApp.Tool.New
         {
             var success = false;
             var IconLoadError = false;
-            if (File.Exists(iconSourcePath))
-            {
-                var mIcon = new System.Drawing.IconLib.MultiIcon();
-                try
-                {
-                    mIcon.Load(iconSourcePath);
-                }
-                catch (Exception)
-                {
-                    IconLoadError = true;
-                }
+            if (!File.Exists(iconSourcePath)) return false;
 
-                if (!IconLoadError)
-                {
-                    var sIcon = iconSourceIndex == 0 ? mIcon.FirstOrDefault() : mIcon[iconSourceIndex];
-                    try
-                    {
-                        sIcon.Save(icoDestPath);
-                        success = true;
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
+            var mIcon = new System.Drawing.IconLib.MultiIcon();
+            try
+            {
+                mIcon.Load(iconSourcePath);
+            }
+            catch (Exception)
+            {
+                IconLoadError = true;
+            }
+
+            if (IconLoadError) return success;
+            var sIcon = iconSourceIndex == 0 ? mIcon.FirstOrDefault() : mIcon[iconSourceIndex];
+            try
+            {
+                sIcon.Save(icoDestPath);
+                success = true;
+            }
+            catch (Exception)
+            {
             }
 
             return success;
@@ -135,19 +133,10 @@ namespace RemoteApp.Tool.New
 
             if (bigIcon != 0)
             {
-                if (!small)
-                {
-                    return Icon.FromHandle((IntPtr)bigIcon);
-                }
-                else
-                {
-                    return Icon.FromHandle((IntPtr)smallIcon);
-                }
+                return !small ? Icon.FromHandle((IntPtr)bigIcon) : Icon.FromHandle((IntPtr)smallIcon);
             }
-            else
-            {
-                return ReturnIcon(RemoteAppFunction.GetSysDir() + @"\mstsc.exe", 0);
-            }
+
+            return ReturnIcon(RemoteAppFunction.GetSysDir() + @"\mstsc.exe", 0);
         }
     }
 }

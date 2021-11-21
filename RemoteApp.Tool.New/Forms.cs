@@ -1,5 +1,6 @@
 ﻿namespace RemoteApp.Tool.New
 {
+    // TODO: This is a workaround that substitutes My folder in VB.NET. These should not be singletons.
     internal static class Forms
     {
         private static RemoteAppCreateClientConnection _remoteAppCreateClientConnection;
