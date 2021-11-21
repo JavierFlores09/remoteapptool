@@ -366,31 +366,31 @@ namespace RemoteApp.Tool.New
                 FullAddress = ServerAddress,
                 AlternateFullAddress = AltServerAddress,
                 ServerPort = (int)Math.Round(double.Parse(ServerPort)),
-                Remoteapplicationname = remoteApp.FullName,
-                Remoteapplicationprogram = "||" + remoteApp.Name,
-                Remoteapplicationmode = 1,
-                Disableremoteappcapscheck = 1,
+                RemoteApplicationName = remoteApp.FullName,
+                RemoteApplicationProgram = "||" + remoteApp.Name,
+                RemoteApplicationMode = 1,
+                DisableRemoteAppCapsCheck = 1,
                 AlternateShell = "rdpinit.exe"
             };
             if (UseRDGatewayCheckBox.Checked)
             {
-                rdPfile.Gatewayhostname = GatewayAddress.Text;
-                rdPfile.Gatewayusagemethod = AttemptDirectCheckBox.Checked ? 2 : 1;
-                rdPfile.Gatewayprofileusagemethod = 1;
+                rdPfile.GatewayHostname = GatewayAddress.Text;
+                rdPfile.GatewayUsageMethod = AttemptDirectCheckBox.Checked ? 2 : 1;
+                rdPfile.GatewayProfileUsageMethod = 1;
             }
 
             rdPfile.PromptForCredentialsOnClient = 1;
-            rdPfile.Promptcredentialonce = 0;
-            rdPfile.Devicestoredirect = "*";
-            rdPfile.Drivestoredirect = "*";
-            rdPfile.Redirectcomports = 1;
-            rdPfile.Redirectdrives = 1;
+            rdPfile.PromptCredentialOnce = 0;
+            rdPfile.DeviceStoreDirect = "*";
+            rdPfile.DriveStoreDirect = "*";
+            rdPfile.RedirectComPorts = 1;
+            rdPfile.RedirectDrives = 1;
             rdPfile.AllowDesktopComposition = 1;
             rdPfile.AllowFontSmoothing = 1;
             rdPfile.SpanMonitors = 1;
-            rdPfile.UseMultimon = 1;
-            rdPfile.Remoteapplicationfileextensions = FlatFileTypes;
-            rdPfile.SaveRdPfile(rdpPath);
+            rdPfile.UseMultimonitor = 1;
+            rdPfile.RemoteApplicationFileExtensions = FlatFileTypes;
+            rdPfile.SaveRdpFile(rdpPath);
             if (CheckBoxSignRDPEnabled.Checked)
             {
                 var rdpSign = new RDPSign.New.RDPSign();
