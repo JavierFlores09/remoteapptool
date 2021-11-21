@@ -2,6 +2,17 @@
 
 # RemoteApp Tool
 
+## C# Fork
+This fork is solely based on converting the solution to C#. Because, I am experienced on C#, I needed a conversion. Currentlu only GUI is converted. It needs a huge refactor.
+
+## Roadmap
+- [x] Convert GUI to C#
+- [ ] Write unit tests for libraries
+- [ ] Convert dependencies to C#
+- [ ] Refactor
+- [ ] Migrate to .NET 5 (Optionally)
+
+## Original Readme
 With Microsoft RemoteApp technology, you can seamlessly use an application that is running on another computer.
 
 RemoteApp Tool is a utility that allows you to create/manage RemoteApps hosted on Windows (7, 8, 10, XP and Server) as well as generate RDP and MSI files for clients.
