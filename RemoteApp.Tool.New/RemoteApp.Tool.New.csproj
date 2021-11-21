@@ -59,21 +59,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="IconLib, Version=0.74.3.0, Culture=neutral, PublicKeyToken=9c8a655eb595762a, processorArchitecture=MSIL">
-      <HintPath>..\remoteapp-tool\packages\IconLib.0.74.3\lib\net40\IconLib.dll</HintPath>
+      <HintPath>..\packages\IconLib.0.74.3\lib\net40\IconLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminRelauncher.cs" />
@@ -193,10 +185,6 @@
     <ProjectReference Include="..\LockChecker.New\LockChecker.New.csproj">
       <Project>{a0dfc0c0-2a68-44d0-bf69-9e57de84d70b}</Project>
       <Name>LockChecker.New</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RDP2MSI.New\RDP2MSI.New.csproj">
-      <Project>{4d136f87-3a01-4256-808c-7fdca68653d9}</Project>
-      <Name>RDP2MSI.New</Name>
     </ProjectReference>
     <ProjectReference Include="..\RDP2MSILib.New\RDP2MSILib.New.csproj">
       <Project>{e18cf70f-e4f6-4a05-a58b-41cf7d98bf8b}</Project>
