@@ -17,7 +17,7 @@ namespace RemoteApp.Tool.New
 
         private bool NoValidate = false;
 
-        public RemoteAppLib.IconSelection PickIcon(string DefaultPath, int DefaultIndex = 0)
+        public RemoteAppLib.New.IconSelection PickIcon(string DefaultPath, int DefaultIndex = 0)
         {
             FileTypeLabel.Visible = false;
             FileTypeTextBox.Visible = false;
@@ -27,7 +27,7 @@ namespace RemoteApp.Tool.New
             IconPathTextBox.Text = DefaultPath;
             IconIndexTextBox.Text = DefaultIndex.ToString();
             LoadIcons();
-            var IconPick = new RemoteAppLib.IconSelection();
+            var IconPick = new RemoteAppLib.New.IconSelection();
             if (ShowDialog() == DialogResult.OK)
             {
                 IconPick.IconPath = IconPathTextBox.Text;
@@ -38,9 +38,9 @@ namespace RemoteApp.Tool.New
             //Dispose();
         }
 
-        public RemoteAppLib.FileTypeAssociation ManageFTA(string DefaultPath, int DefaultIndex = 0, string FileType = ".xyz", bool IsEdit = false)
+        public RemoteAppLib.New.FileTypeAssociation ManageFTA(string DefaultPath, int DefaultIndex = 0, string FileType = ".xyz", bool IsEdit = false)
         {
-            var FTA = new RemoteAppLib.FileTypeAssociation();
+            var FTA = new RemoteAppLib.New.FileTypeAssociation();
             FileTypeLabel.Visible = true;
             FileTypeTextBox.Visible = true;
             IconIndexLabel.Visible = true;

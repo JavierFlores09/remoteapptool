@@ -215,9 +215,9 @@
       <Project>{ff07e395-6a47-42b0-8a27-8c8be2a1ee25}</Project>
       <Name>RDPSign.New</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RemoteAppLib\RemoteAppLib.vbproj">
-      <Project>{785b6808-b2fe-4c18-9d63-6dab46482374}</Project>
-      <Name>RemoteAppLib</Name>
+    <ProjectReference Include="..\RemoteAppLib.New\RemoteAppLib.New.csproj">
+      <Project>{601606ae-2b75-4a33-9e11-4e91981d555c}</Project>
+      <Name>RemoteAppLib.New</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

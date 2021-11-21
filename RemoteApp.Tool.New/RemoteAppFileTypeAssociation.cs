@@ -16,9 +16,9 @@ namespace RemoteApp.Tool.New
             _SetAssociationButton.Name = "SetAssociationButton";
         }
 
-        private RemoteAppLib.RemoteApp RemoteApp = new RemoteAppLib.RemoteApp();
+        private RemoteAppLib.New.RemoteApp RemoteApp = new RemoteAppLib.New.RemoteApp();
 
-        public RemoteAppLib.RemoteApp EditFileTypes(RemoteAppLib.RemoteApp SelectedRemoteApp)
+        public RemoteAppLib.New.RemoteApp EditFileTypes(RemoteAppLib.New.RemoteApp SelectedRemoteApp)
         {
             RemoteApp = SelectedRemoteApp;
             Text = "File type associations for " + RemoteApp.Name;
@@ -34,7 +34,7 @@ namespace RemoteApp.Tool.New
             FTAListView.Items.Clear();
             if (RemoteApp.FileTypeAssociations != null)
             {
-                foreach (RemoteAppLib.FileTypeAssociation fta in RemoteApp.FileTypeAssociations)
+                foreach (RemoteAppLib.New.FileTypeAssociation fta in RemoteApp.FileTypeAssociations)
                 {
                     var FTitem = new ListViewItem(fta.Extension);
                     string ftaStatus;
@@ -68,16 +68,16 @@ namespace RemoteApp.Tool.New
         {
             if (RemoteApp.FileTypeAssociations is null)
             {
-                var FTACol = new RemoteAppLib.FileTypeAssociationCollection();
+                var FTACol = new RemoteAppLib.New.FileTypeAssociationCollection();
                 RemoteApp.FileTypeAssociations = FTACol;
             }
 
-            _ = new RemoteAppLib.FileTypeAssociation();
-            RemoteAppLib.FileTypeAssociation FTA = Forms.RemoteAppIconPicker.ManageFTA(RemoteApp.IconPath, 0);
+            _ = new RemoteAppLib.New.FileTypeAssociation();
+            RemoteAppLib.New.FileTypeAssociation FTA = Forms.RemoteAppIconPicker.ManageFTA(RemoteApp.IconPath, 0);
             bool SameFTA = false;
             if (FTA.Extension != null)
             {
-                foreach (RemoteAppLib.FileTypeAssociation RAFTA in RemoteApp.FileTypeAssociations)
+                foreach (RemoteAppLib.New.FileTypeAssociation RAFTA in RemoteApp.FileTypeAssociations)
                 {
                     if ((RAFTA.Extension ?? "") == (FTA.Extension ?? ""))
                         SameFTA = true;
@@ -134,8 +134,8 @@ namespace RemoteApp.Tool.New
             {
                 _ = FTAListView.SelectedItems[0].SubItems[0].Text;
                 _ = FTAListView.SelectedItems[0].SubItems[1].Text;
-                var FTAtoRemove = new RemoteAppLib.FileTypeAssociation();
-                foreach (RemoteAppLib.FileTypeAssociation FTA in RemoteApp.FileTypeAssociations)
+                var FTAtoRemove = new RemoteAppLib.New.FileTypeAssociation();
+                foreach (RemoteAppLib.New.FileTypeAssociation FTA in RemoteApp.FileTypeAssociations)
                 {
                     if ((FTA.Extension ?? "") == (FileType ?? ""))
                         FTAtoRemove = FTA;
@@ -154,15 +154,15 @@ namespace RemoteApp.Tool.New
 
         private void EditFTA()
         {
-            _ = new RemoteAppLib.FileTypeAssociation();
-            RemoteAppLib.FileTypeAssociation FTA = Forms.RemoteAppIconPicker.ManageFTA(FTAListView.SelectedItems[0].SubItems[1].Text, (int)Math.Round(double.Parse(FTAListView.SelectedItems[0].SubItems[2].Text)), FTAListView.SelectedItems[0].Text, true);
+            _ = new RemoteAppLib.New.FileTypeAssociation();
+            RemoteAppLib.New.FileTypeAssociation FTA = Forms.RemoteAppIconPicker.ManageFTA(FTAListView.SelectedItems[0].SubItems[1].Text, (int)Math.Round(double.Parse(FTAListView.SelectedItems[0].SubItems[2].Text)), FTAListView.SelectedItems[0].Text, true);
             if (FTA.Extension != null)
             {
                 _ = FTAListView.SelectedItems[0].SubItems[0].Text;
                 _ = FTAListView.SelectedItems[0].SubItems[1].Text;
                 string FileType = FTAListView.SelectedItems[0].Text;
-                var FTAtoRemove = new RemoteAppLib.FileTypeAssociation();
-                foreach (RemoteAppLib.FileTypeAssociation FTA2 in RemoteApp.FileTypeAssociations)
+                var FTAtoRemove = new RemoteAppLib.New.FileTypeAssociation();
+                foreach (RemoteAppLib.New.FileTypeAssociation FTA2 in RemoteApp.FileTypeAssociations)
                 {
                     if ((FTA2.Extension ?? "") == (FileType ?? ""))
                         FTAtoRemove = FTA2;
@@ -176,7 +176,7 @@ namespace RemoteApp.Tool.New
 
         private void SetAssociationButton_Click(object sender, EventArgs e) // NEED TO SORT OUT EVERYTHING IN THIS SUB!!!
         {
-            var fta = new RemoteAppLib.FileTypeAssociation
+            var fta = new RemoteAppLib.New.FileTypeAssociation
             {
                 Extension = FTAListView.SelectedItems[0].SubItems[0].Text,
                 IconPath = FTAListView.SelectedItems[0].SubItems[1].Text,

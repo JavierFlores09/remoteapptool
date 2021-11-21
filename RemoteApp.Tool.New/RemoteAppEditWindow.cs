@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using RemoteAppLib;
+using RemoteAppLib.New;
 
 namespace RemoteApp.Tool.New
 {
@@ -20,9 +20,9 @@ namespace RemoteApp.Tool.New
             _BrowsePath.Name = "BrowsePath";
         }
 
-        private RemoteAppLib.RemoteApp RemoteApp = new RemoteAppLib.RemoteApp();
+        private RemoteAppLib.New.RemoteApp RemoteApp = new RemoteAppLib.New.RemoteApp();
 
-        public RemoteAppLib.RemoteApp EditRemoteApp(RemoteAppLib.RemoteApp SelectedRemoteApp)
+        public RemoteAppLib.New.RemoteApp EditRemoteApp(RemoteAppLib.New.RemoteApp SelectedRemoteApp)
         {
             HelpSystem.SetupTips(this);
             RemoteApp = SelectedRemoteApp;
@@ -36,7 +36,7 @@ namespace RemoteApp.Tool.New
             return RemoteApp;
         }
 
-        public RemoteAppLib.RemoteApp CreateRemoteApp(bool Advanced = false)
+        public RemoteAppLib.New.RemoteApp CreateRemoteApp(bool Advanced = false)
         {
             Text = "New RemoteApp";
             Size = MinimumSize;
@@ -177,7 +177,7 @@ namespace RemoteApp.Tool.New
         {
             bool AppExists = false;
             var sra = new SystemRemoteApps();
-            foreach (RemoteAppLib.RemoteApp App in sra.GetAll())
+            foreach (RemoteAppLib.New.RemoteApp App in sra.GetAll())
             {
                 if ((App.Name ?? "") == (AppName ?? ""))
                     AppExists = true;

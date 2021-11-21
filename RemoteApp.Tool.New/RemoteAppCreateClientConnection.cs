@@ -29,9 +29,9 @@ namespace RemoteApp.Tool.New
             _CheckBoxSignRDPEnabled.Name = "CheckBoxSignRDPEnabled";
         }
 
-        private RemoteAppLib.RemoteApp RemoteApp = new RemoteAppLib.RemoteApp();
+        private RemoteAppLib.New.RemoteApp RemoteApp = new RemoteAppLib.New.RemoteApp();
 
-        public void CreateClientConnection(RemoteAppLib.RemoteApp SelectedRemoteApp)
+        public void CreateClientConnection(RemoteAppLib.New.RemoteApp SelectedRemoteApp)
         {
             RemoteApp = SelectedRemoteApp;
             var rdpSign = new RDPSign.New.RDPSign();
@@ -289,7 +289,7 @@ namespace RemoteApp.Tool.New
                     // Check if there are file type associations before trying to work with the file type association icons
                     if (RemoteApp.FileTypeAssociations != null)
                     {
-                        foreach (RemoteAppLib.FileTypeAssociation FTA in RemoteApp.FileTypeAssociations)
+                        foreach (RemoteAppLib.New.FileTypeAssociation FTA in RemoteApp.FileTypeAssociations)
                         {
                             string ProductFileName = RDPPath.Substring(0, RDPPath.Length - 4);
                             ExtractFTIcon(ProductFileName, FTA);
@@ -325,7 +325,7 @@ namespace RemoteApp.Tool.New
 
                 if (RemoteApp.FileTypeAssociations != null)
                 {
-                    foreach (RemoteAppLib.FileTypeAssociation FTA in RemoteApp.FileTypeAssociations)
+                    foreach (RemoteAppLib.New.FileTypeAssociation FTA in RemoteApp.FileTypeAssociations)
                     {
                         ExtractFTIcon(ProductFileName, FTA);
                         FilesToDelete.Add(ProductFileName + "." + FTA.Extension + ".ico");
@@ -340,7 +340,7 @@ namespace RemoteApp.Tool.New
             }
         }
 
-        private void ExtractFTIcon(string ProductFileName, RemoteAppLib.FileTypeAssociation FTA)
+        private void ExtractFTIcon(string ProductFileName, RemoteAppLib.New.FileTypeAssociation FTA)
         {
             // Extract icon for filetype
             if (!IconModule.ExtractToIco(FTA.IconPath, int.Parse(FTA.IconIndex), ProductFileName + "." + FTA.Extension + ".ico"))
@@ -351,9 +351,9 @@ namespace RemoteApp.Tool.New
             }
         }
 
-        private void CreateRDPFile(string RDPPath, RemoteAppLib.RemoteApp RemoteApp)
+        private void CreateRDPFile(string RDPPath, RemoteAppLib.New.RemoteApp RemoteApp)
         {
-            // Dim App As New RemoteAppLib.RemoteApp = RemoteApp
+            // Dim App As New RemoteAppLib.New.RemoteApp = RemoteApp
             // App = RemoteApp
             string ServerAddress = this.ServerAddress.Text;
             string AltServerAddress = this.AltServerAddress.Text;

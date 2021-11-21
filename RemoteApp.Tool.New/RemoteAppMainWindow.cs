@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using RemoteAppLib;
 using System.IO;
+using RemoteAppLib.New;
 
 namespace RemoteApp.Tool.New
 {
@@ -68,7 +68,7 @@ namespace RemoteApp.Tool.New
         {
             AppList.Clear();
             RemoteAppCollection Apps = new SystemRemoteApps().GetAll();
-            foreach (RemoteAppLib.RemoteApp App in Apps)
+            foreach (RemoteAppLib.New.RemoteApp App in Apps)
             {
                 SmallIcons.Images.RemoveByKey(App.Name);
                 Image TheBitmap = RemoteAppFunction.GetAppBitmap(App.Name);

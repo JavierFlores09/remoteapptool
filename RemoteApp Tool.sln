@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RemoteAppLib", "RemoteAppLib\RemoteAppLib.vbproj", "{785B6808-B2FE-4C18-9D63-6DAB46482374}"
-EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RDP2MSILib", "RDP2MSILib\RDP2MSILib.vbproj", "{E1CB5F9C-230F-4967-8F19-335F8E4A4906}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RDP2MSI", "RDP2MSI\RDP2MSI.vbproj", "{1001A958-40DB-4444-9CD7-09D1188072D1}"
@@ -20,16 +18,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteApp.Tool.New", "Remot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDPSign.New", "RDPSign.New\RDPSign.New.csproj", "{FF07E395-6A47-42B0-8A27-8C8BE2A1EE25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteAppLib.New", "RemoteAppLib.New\RemoteAppLib.New.csproj", "{601606AE-2B75-4A33-9E11-4E91981D555C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{785B6808-B2FE-4C18-9D63-6DAB46482374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{785B6808-B2FE-4C18-9D63-6DAB46482374}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{785B6808-B2FE-4C18-9D63-6DAB46482374}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{785B6808-B2FE-4C18-9D63-6DAB46482374}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1CB5F9C-230F-4967-8F19-335F8E4A4906}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -54,6 +50,10 @@ Global
 		{FF07E395-6A47-42B0-8A27-8C8BE2A1EE25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF07E395-6A47-42B0-8A27-8C8BE2A1EE25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF07E395-6A47-42B0-8A27-8C8BE2A1EE25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{601606AE-2B75-4A33-9E11-4E91981D555C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{601606AE-2B75-4A33-9E11-4E91981D555C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{601606AE-2B75-4A33-9E11-4E91981D555C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{601606AE-2B75-4A33-9E11-4E91981D555C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
