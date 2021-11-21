@@ -85,15 +85,15 @@ namespace RDPFileLib.New
 
         public void SaveRDPfile(string FilePath, bool SaveDefaultSettings = false)
         {
-            var LockCheck = new LockChecker.LockChecker();
+            var LockCheck = new LockChecker.New.LockChecker();
             string FileLocked;
             bool SkipFile = false;
-            FileLocked = (string)LockCheck.CheckLock(FilePath);
+            FileLocked = LockCheck.CheckLock(FilePath);
             while (FileLocked != "No locks")
             {
                 if (MessageBox.Show($"The file {FilePath} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    FileLocked = (string)LockCheck.CheckLock(FilePath);
+                    FileLocked = LockCheck.CheckLock(FilePath);
                 }
                 else
                 {

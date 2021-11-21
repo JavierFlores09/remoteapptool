@@ -195,9 +195,9 @@
     <Content Include="add-window.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LockChecker\LockChecker.vbproj">
-      <Project>{029c010d-728b-4b87-b54a-08b2bbf49bd7}</Project>
-      <Name>LockChecker</Name>
+    <ProjectReference Include="..\LockChecker.New\LockChecker.New.csproj">
+      <Project>{a0dfc0c0-2a68-44d0-bf69-9e57de84d70b}</Project>
+      <Name>LockChecker.New</Name>
     </ProjectReference>
     <ProjectReference Include="..\RDP2MSI.New\RDP2MSI.New.csproj">
       <Project>{4d136f87-3a01-4256-808c-7fdca68653d9}</Project>

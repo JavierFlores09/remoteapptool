@@ -129,17 +129,17 @@ namespace RemoteApp.Tool.New
         {
             foreach (string dFile in FilesArray)
             {
-                var LockCheck = new LockChecker.LockChecker();
+                var LockCheck = new LockChecker.New.LockChecker();
                 string FileLocked;
                 bool SkipFile = false;
-                FileLocked = (string)LockCheck.CheckLock(dFile);
+                FileLocked = LockCheck.CheckLock(dFile);
                 while (FileLocked != "No locks")
                 {
                     var message = $"The file {dFile} is currently locked. Lock information: {FileLocked}{Environment.NewLine}Do you want to try again?";
                     if (MessageBox.Show(message, "File Locked", MessageBoxButtons.YesNo)
                         == DialogResult.Yes)
                     {
-                        FileLocked = (string)LockCheck.CheckLock(dFile);
+                        FileLocked = LockCheck.CheckLock(dFile);
                     }
                     else
                     {

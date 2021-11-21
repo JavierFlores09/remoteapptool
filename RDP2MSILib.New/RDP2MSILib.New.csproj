@@ -39,9 +39,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LockChecker\LockChecker.vbproj">
-      <Project>{029c010d-728b-4b87-b54a-08b2bbf49bd7}</Project>
-      <Name>LockChecker</Name>
+    <ProjectReference Include="..\LockChecker.New\LockChecker.New.csproj">
+      <Project>{a0dfc0c0-2a68-44d0-bf69-9e57de84d70b}</Project>
+      <Name>LockChecker.New</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

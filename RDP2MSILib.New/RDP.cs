@@ -82,7 +82,7 @@ namespace RDP2MSIlib.New
 
             // Define temp files to delete
             var FilesToDelete = new List<string>(new string[] { wxsPath, wixobjPath, wixpdbPath });
-            var LockCheck = new LockChecker.LockChecker();
+            var LockCheck = new LockChecker.New.LockChecker();
             string FileLocked;
             bool SkipFile = false;
             // Check if rdp file is already in TEMP folder
@@ -94,12 +94,12 @@ namespace RDP2MSIlib.New
             // if RDP file not in temp, copy to temp
             if (!rdpInTemp)
             {
-                FileLocked = (string)LockCheck.CheckLock(rdpTempPath);
+                FileLocked = LockCheck.CheckLock(rdpTempPath);
                 while (FileLocked != "No locks")
                 {
                     if (MessageBox.Show($"The file {rdpTempPath} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        FileLocked = (string)LockCheck.CheckLock(rdpTempPath);
+                        FileLocked = LockCheck.CheckLock(rdpTempPath);
                     }
                     else
                     {
@@ -117,12 +117,12 @@ namespace RDP2MSIlib.New
                 FilesToDelete.Add(rdpTempPath);
                 if (hasIcon)
                 {
-                    FileLocked = (string)LockCheck.CheckLock(icoTempPath);
+                    FileLocked = LockCheck.CheckLock(icoTempPath);
                     while (FileLocked != "No locks")
                     {
                         if (MessageBox.Show($"The file {icoTempPath} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            FileLocked = (string)LockCheck.CheckLock(icoTempPath);
+                            FileLocked = LockCheck.CheckLock(icoTempPath);
                         }
                         else
                         {
@@ -161,12 +161,12 @@ namespace RDP2MSIlib.New
             }
 
             // Move MSI file to destination and delete temp files
-            FileLocked = (string)LockCheck.CheckLock(DestinationPath);
+            FileLocked = LockCheck.CheckLock(DestinationPath);
             while (FileLocked != "No locks")
             {
                 if (MessageBox.Show($"The file {DestinationPath} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    FileLocked = (string)LockCheck.CheckLock(DestinationPath);
+                    FileLocked = LockCheck.CheckLock(DestinationPath);
                 }
                 else
                 {
@@ -212,15 +212,15 @@ namespace RDP2MSIlib.New
         {
             foreach (var dFile in filesToDelete)
             {
-                var LockCheck = new LockChecker.LockChecker();
+                var LockCheck = new LockChecker.New.LockChecker();
                 string FileLocked;
                 bool SkipFile = false;
-                FileLocked = (string)LockCheck.CheckLock(dFile);
+                FileLocked = LockCheck.CheckLock(dFile);
                 while (FileLocked != "No locks")
                 {
                     if (MessageBox.Show($"The file {dFile} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        FileLocked = (string)LockCheck.CheckLock(dFile);
+                        FileLocked = LockCheck.CheckLock(dFile);
                     }
                     else
                     {

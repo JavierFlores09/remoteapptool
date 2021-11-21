@@ -64,7 +64,7 @@ namespace RemoteApp.Tool.New
                 MSIRadioButton.Text = "MSI installer (requires WiX Toolset)";
             }
 
-            if (!File.Exists((string)rdpSign.GetRdpsignExeLocation()))
+            if (!File.Exists(rdpSign.GetRdpsignExeLocation()))
             {
                 SigningTabPage.Enabled = false;
                 RdpsignErrorLabel.Text += " * Requires rdpsign.exe.";
@@ -394,7 +394,7 @@ namespace RemoteApp.Tool.New
             if (CheckBoxSignRDPEnabled.Checked)
             {
                 var rdpSign = new RDPSign.New.RDPSign();
-                string Thumbprint = (string)rdpSign.GetThumbprint(CertificateComboBox.Text);
+                string Thumbprint = rdpSign.GetThumbprint(CertificateComboBox.Text);
                 rdpSign.SignRDP(Thumbprint, RDPPath, CheckBoxCreateSignedAndUnsigned.Checked);
             }
         }

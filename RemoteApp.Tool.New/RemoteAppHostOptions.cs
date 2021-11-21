@@ -95,7 +95,7 @@ namespace RemoteApp.Tool.New
                 var tsAllowList = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList", "fDisabledAllowList", "") as string;
                 if (!string.IsNullOrEmpty(tsAllowList))
                 {
-                    DisableAllowListCheckBox.Checked = double.Parse((string)tsAllowList) == 1d;
+                    DisableAllowListCheckBox.Checked = double.Parse(tsAllowList) == 1d;
                 }
                 else
                 {

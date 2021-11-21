@@ -116,16 +116,16 @@ namespace RDPSign.New
             if (CreateBackup)
             {
                 string BackupFile = Path.Combine(Path.GetDirectoryName(RDPFileLocation), $"{Path.GetFileNameWithoutExtension(RDPFileLocation)}-Unsigned.rdp");
-                var LockCheck = new LockChecker.LockChecker();
+                var LockCheck = new LockChecker.New.LockChecker();
                 string FileLocked;
                 bool SkipFile = false;
-                FileLocked = (string)LockCheck.CheckLock(BackupFile);
+                FileLocked = LockCheck.CheckLock(BackupFile);
                 while (FileLocked != "No locks")
                 {
                     // TODO: Add an exception or another method to check the result here so that the consumer executable can decide the GUI elements.
                     if (MessageBox.Show($"The file {BackupFile} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        FileLocked = (string)LockCheck.CheckLock(BackupFile);
+                        FileLocked = LockCheck.CheckLock(BackupFile);
                     }
                     else
                     {

@@ -142,7 +142,7 @@ namespace RemoteApp.Tool.New
                     if (string.IsNullOrEmpty(ShortNameText.Text))
                         RemoteApp.Name = (string)RemoteAppFunction.FixShortAppName(title);
                     if (string.IsNullOrEmpty(FullNameText.Text))
-                        RemoteApp.FullName = (string)title;
+                        RemoteApp.FullName = title;
                 }
 
                 LoadValues();
