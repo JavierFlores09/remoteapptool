@@ -50,26 +50,24 @@ namespace RemoteAppLib.New
             App.CommandLineOption = int.Parse(AppKey.GetValue("CommandLineSetting", "1").ToString());
             App.IconPath = (string)AppKey.GetValue("IconPath", string.Empty);
             App.IconIndex = int.Parse(AppKey.GetValue("IconIndex", 0).ToString());        
-            App.Tswa = AppKey.GetValue("ShowInTSWA", 0) != null && int.Parse(AppKey.GetValue("ShowInTSWA", 0).ToString()) == 1;
+            App.TSWA = AppKey.GetValue("ShowInTSWA", 0) != null && int.Parse(AppKey.GetValue("ShowInTSWA", 0).ToString()) == 1;
 
             var ftaKey = AppKey.OpenSubKey("Filetypes");
-            if (ftaKey != null)
+            if (ftaKey == null) return App;
+            var ftaCol = new FileTypeAssociationCollection();
+            foreach (var ftaValueName in ftaKey.GetValueNames())
             {
-                var ftaCol = new FileTypeAssociationCollection();
-                foreach (var ftaValueName in ftaKey.GetValueNames())
+                var ftaValue = ftaKey.GetValue(ftaValueName).ToString().Split(',');
+                var fta = new FileTypeAssociation
                 {
-                    var ftaValue = ftaKey.GetValue(ftaValueName).ToString().Split(',');
-                    var fta = new FileTypeAssociation
-                    {
-                        Extension = ftaValueName,
-                        IconPath = ftaValue[0],
-                        IconIndex = ftaValue[1]
-                    };
-                    ftaCol.Add(fta);
-                }
-
-                App.FileTypeAssociations = ftaCol;
+                    Extension = ftaValueName,
+                    IconPath = ftaValue[0],
+                    IconIndex = ftaValue[1]
+                };
+                ftaCol.Add(fta);
             }
+
+            App.FileTypeAssociations = ftaCol;
 
             return App;
         }
@@ -85,16 +83,14 @@ namespace RemoteAppLib.New
             AppKey.SetValue("CommandLineSetting", remoteApp.CommandLineOption, RegistryValueKind.DWord);
             AppKey.SetValue("IconPath", remoteApp.IconPath, RegistryValueKind.String);
             AppKey.SetValue("IconIndex", remoteApp.IconIndex, RegistryValueKind.DWord);
-            AppKey.SetValue("ShowInTSWA", remoteApp.Tswa, RegistryValueKind.DWord);
-            if (remoteApp.FileTypeAssociations != null)
-            {
-                if (AppKey.OpenSubKey("Filetypes") != null)
-                    AppKey.DeleteSubKeyTree("Filetypes");
-                AppKey.CreateSubKey("Filetypes");
-                var ftaKey = AppKey.OpenSubKey("Filetypes", true);
-                foreach (FileTypeAssociation fta in remoteApp.FileTypeAssociations)
-                    ftaKey.SetValue(fta.Extension, $"{fta.IconPath},{fta.IconIndex}", RegistryValueKind.String);
-            }
+            AppKey.SetValue("ShowInTSWA", remoteApp.TSWA, RegistryValueKind.DWord);
+            if (remoteApp.FileTypeAssociations == null) return;
+            if (AppKey.OpenSubKey("Filetypes") != null)
+                AppKey.DeleteSubKeyTree("Filetypes");
+            AppKey.CreateSubKey("Filetypes");
+            var ftaKey = AppKey.OpenSubKey("Filetypes", true);
+            foreach (FileTypeAssociation fta in remoteApp.FileTypeAssociations)
+                ftaKey.SetValue(fta.Extension, $"{fta.IconPath},{fta.IconIndex}", RegistryValueKind.String);
         }
 
         public void RenameApp(string remoteAppOldName, string remoteAppNewName)
@@ -130,16 +126,14 @@ namespace RemoteAppLib.New
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
+            if (_disposedValue) return;
+            if (disposing)
             {
-                if (disposing)
-                {
-                    _baseKey.Close();
-                    _baseKeyWrite.Close();
-                }
-
-                _disposedValue = true;
+                _baseKey.Close();
+                _baseKeyWrite.Close();
             }
+
+            _disposedValue = true;
         }
 
         public void Dispose()

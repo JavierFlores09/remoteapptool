@@ -15,15 +15,14 @@
         public string GetFlatFileTypes()
         {
             var GetFlatFileTypesRet = string.Empty;
-            if (List.Count > 0)
-            {
-                foreach (FileTypeAssociation listItem in List)
-                {
-                    GetFlatFileTypesRet = string.Join(",.", listItem.Extension);
-                }
+            if (List.Count == 0) return GetFlatFileTypesRet;
 
-                GetFlatFileTypesRet = GetFlatFileTypesRet.Substring(1);
+            foreach (FileTypeAssociation listItem in List)
+            {
+                GetFlatFileTypesRet = string.Join(",.", listItem.Extension);
             }
+
+            GetFlatFileTypesRet = GetFlatFileTypesRet.Substring(1);
 
             return GetFlatFileTypesRet;
         }

@@ -82,7 +82,7 @@ namespace RemoteApp.Tool.New
             IconPathText.Text = _remoteApp.IconPath;
             IconIndexText.Text = _remoteApp.IconIndex.ToString();
             var tswa = 0;
-            if (_remoteApp.Tswa)
+            if (_remoteApp.TSWA)
                 tswa = 1;
             TSWAbox.SelectedIndex = tswa;
             var TheIcon = IconModule.ReturnIcon(IconPathText.Text, (int)Math.Round(double.Parse(IconIndexText.Text)), true);
@@ -169,7 +169,7 @@ namespace RemoteApp.Tool.New
             _remoteApp.IconIndex = iconIndex;
             _remoteApp.CommandLine = commandLine;
             _remoteApp.CommandLineOption = commandLineSetting;
-            _remoteApp.Tswa = showInTswa != 0;
+            _remoteApp.TSWA = showInTswa != 0;
             SysApps.SaveApp(_remoteApp);
         }
 
