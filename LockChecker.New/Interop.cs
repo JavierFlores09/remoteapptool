@@ -30,7 +30,7 @@ namespace LockChecker.New
         /// are defined in Winerror.h
         /// </returns>
         [DllImport("rstrtmgr.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern int RmRegisterResources(uint pSessionHandle, uint nFiles, string[] rgsFilenames, uint nApplications, [In] LockCheckType.RM_UNIQUE_PROCESS[] rgApplications, uint nServices, string[] rgsServiceNames);
+        internal static extern int RmRegisterResources(uint pSessionHandle, uint nFiles, string[] rgsFilenames, uint nApplications, [In] LockCheckType.RmUniqueProcess[] rgApplications, uint nServices, string[] rgsServiceNames);
 
         /// <summary>
         /// Starts a new Restart Manager session. A maximum of 64 Restart Manager
@@ -91,6 +91,6 @@ namespace LockChecker.New
         /// </param>
         /// <returns></returns>
         [DllImport("rstrtmgr.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern int RmGetList(uint dwSessionHandle, ref uint pnProcInfoNeeded, ref uint pnProcInfo, [In] LockCheckType.RM_PROCESS_INFO[] rgAffectedApps, ref uint lpdwRebootReasons);
+        internal static extern int RmGetList(uint dwSessionHandle, ref uint pnProcInfoNeeded, ref uint pnProcInfo, [In] LockCheckType.RmProcessInfo[] rgAffectedApps, ref uint lpdwRebootReasons);
     }
 }

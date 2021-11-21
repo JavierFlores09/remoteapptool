@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -10,111 +11,105 @@ namespace RemoteApp.Tool.New
 {
     internal static class RemoteAppFunction
     {
-        public static void ValidateInteger(TextBox TheTextBox)
+        public static void ValidateInteger(TextBox theTextBox)
         {
-            int cloc = TheTextBox.SelectionStart;
-            TheTextBox.Text = double.Parse(TheTextBox.Text).ToString();
-            TheTextBox.Select(TheTextBox.Text.Length, 0);
-            TheTextBox.Select(cloc, 0);
+            var cloc = theTextBox.SelectionStart;
+            theTextBox.Text = double.Parse(theTextBox.Text).ToString(CultureInfo.InvariantCulture);
+            theTextBox.Select(theTextBox.Text.Length, 0);
+            theTextBox.Select(cloc, 0);
         }
 
-        public static void ValidatePort(TextBox TheTextBox)
+        public static void ValidatePort(TextBox theTextBox)
         {
-            int cloc = TheTextBox.SelectionStart;
-            if (double.Parse(TheTextBox.Text) > 65535d)
+            var cloc = theTextBox.SelectionStart;
+            if (double.Parse(theTextBox.Text) > 65535d)
             {
-                TheTextBox.Text = "65535";
-                cloc = TheTextBox.Text.Length;
+                theTextBox.Text = "65535";
+                cloc = theTextBox.Text.Length;
             }
 
-            TheTextBox.Text = double.Parse(TheTextBox.Text).ToString();
-            TheTextBox.Select(TheTextBox.Text.Length, 0);
-            TheTextBox.Select(cloc, 0);
+            theTextBox.Text = double.Parse(theTextBox.Text).ToString(CultureInfo.InvariantCulture);
+            theTextBox.Select(theTextBox.Text.Length, 0);
+            theTextBox.Select(cloc, 0);
         }
 
-        public static void ValidateSeconds(TextBox TheTextBox)
+        public static void ValidateSeconds(TextBox theTextBox)
         {
-            int cloc = TheTextBox.SelectionStart;
-            if (double.Parse(TheTextBox.Text) > 2147483d)
+            var cloc = theTextBox.SelectionStart;
+            if (double.Parse(theTextBox.Text) > 2147483d)
             {
-                TheTextBox.Text = 2147483.ToString();
-                cloc = TheTextBox.Text.Length;
+                theTextBox.Text = 2147483.ToString();
+                cloc = theTextBox.Text.Length;
             }
 
-            TheTextBox.Text = double.Parse(TheTextBox.Text).ToString();
-            TheTextBox.Select(TheTextBox.Text.Length, 0);
-            TheTextBox.Select(cloc, 0);
+            theTextBox.Text = double.Parse(theTextBox.Text).ToString(CultureInfo.InvariantCulture);
+            theTextBox.Select(theTextBox.Text.Length, 0);
+            theTextBox.Select(cloc, 0);
         }
 
-        public static void ValidateAppName(TextBox TheTextBox)
+        public static void ValidateAppName(TextBox theTextBox)
         {
-            ValidateTextBoxR(TheTextBox, @"[^\p{L}0-9\-_"" ""]");
+            ValidateTextBoxR(theTextBox, @"[^\p{L}0-9\-_"" ""]");
         }
 
-        private static void ValidateTextBoxR(TextBox TheTextBox, string regex)
+        private static void ValidateTextBoxR(TextBox theTextBox, string regex)
         {
-            int cloc = TheTextBox.SelectionStart;
+            var cloc = theTextBox.SelectionStart;
             var rx = new Regex(regex);
-            if (rx.IsMatch(TheTextBox.Text))
+            if (rx.IsMatch(theTextBox.Text))
             {
-                TheTextBox.Text = rx.Replace(TheTextBox.Text, "");
-                TheTextBox.Select(cloc - 1, 0);
+                theTextBox.Text = rx.Replace(theTextBox.Text, "");
+                theTextBox.Select(cloc - 1, 0);
             }
             else
             {
-                TheTextBox.Select(cloc, 0);
+                theTextBox.Select(cloc, 0);
             }
         }
 
-        public static object FixShortAppName(string TheText)
+        public static object FixShortAppName(string theText)
         {
-            if (!string.IsNullOrEmpty(TheText))
+            if (string.IsNullOrEmpty(theText)) return theText.Trim();
+            var rx = new Regex(@"[^\p{L}0-9\-_"" ""]");
+            if (rx.IsMatch(theText))
             {
-                var rx = new Regex(@"[^\p{L}0-9\-_"" ""]");
-                if (rx.IsMatch(TheText))
-                {
-                    TheText = rx.Replace(TheText, "");
-                }
+                theText = rx.Replace(theText, "");
             }
 
-            return TheText.Trim();
+            return theText.Trim();
         }
 
-        public static void ValidateDNSname(TextBox TheTextBox)
+        public static void ValidateDnsName(TextBox theTextBox)
         {
             // pattern matches any character that is NOT A-Z (allows upper and lower case alphabets)
             var rx = new Regex(@"[^\p{L}LlUu0-9\-\._]");
-            if (rx.IsMatch(TheTextBox.Text))
-            {
-                TheTextBox.Text = rx.Replace(TheTextBox.Text, "");
-                TheTextBox.Select(TheTextBox.Text.Length, 0);
-            }
+            if (!rx.IsMatch(theTextBox.Text)) return;
+            theTextBox.Text = rx.Replace(theTextBox.Text, "");
+            theTextBox.Select(theTextBox.Text.Length, 0);
         }
 
-        public static void ValidateFileType(TextBox TheTextBox)
+        public static void ValidateFileType(TextBox theTextBox)
         {
             // pattern matches any character that is NOT A-Z (allows upper and lower case alphabets)
             var rx = new Regex(@"[^\p{L}0-9\-_\!\@\#\$\%\^\&\(\)\{\}\[\]\+\=\;\,\']");
-            if (rx.IsMatch(TheTextBox.Text))
-            {
-                TheTextBox.Text = rx.Replace(TheTextBox.Text, "");
-                TheTextBox.Select(TheTextBox.Text.Length, 0);
-            }
+            if (!rx.IsMatch(theTextBox.Text)) return;
+            theTextBox.Text = rx.Replace(theTextBox.Text, "");
+            theTextBox.Select(theTextBox.Text.Length, 0);
         }
 
-        public static System.Drawing.Bitmap GetAppBitmap(string RemoteAppShortName)
+        public static System.Drawing.Bitmap GetAppBitmap(string remoteAppShortName)
         {
             // FIX : Potential exception.
-            var AppKey = $@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications\{RemoteAppShortName}";
-            var TheRegKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(AppKey);
-            var TheIcon = IconModule.ReturnIcon("", 0).ToBitmap();
-            if (TheRegKey is null)
+            var appKey = $@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications\{remoteAppShortName}";
+            var registryKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(appKey);
+            var icon = IconModule.ReturnIcon("", 0).ToBitmap();
+            if (registryKey is null)
             {
-                return TheIcon;
+                return icon;
             }
-            var IconPath = TheRegKey.GetValue("IconPath", "");
-            var IconIndex = (int)TheRegKey.GetValue("IconIndex", "");
-            return IconModule.ReturnIcon((string)IconPath, IconIndex).ToBitmap();
+            var iconPath = registryKey.GetValue("IconPath", "");
+            var iconIndex = (int)registryKey.GetValue("IconIndex", "");
+            return IconModule.ReturnIcon((string)iconPath, iconIndex).ToBitmap();
         }
 
         [DllImport("kernel32", EntryPoint = "GetSystemDirectoryA")]
@@ -125,31 +120,30 @@ namespace RemoteApp.Tool.New
             return Environment.SystemDirectory;
         }
 
-        public static void DeleteFiles(List<string> FilesArray)
+        public static void DeleteFiles(List<string> filesArray)
         {
-            foreach (string dFile in FilesArray)
+            foreach (var dFile in filesArray)
             {
-                var LockCheck = new LockChecker.New.LockChecker();
-                string FileLocked;
-                bool SkipFile = false;
-                FileLocked = LockCheck.CheckLock(dFile);
-                while (FileLocked != "No locks")
+                var lockCheck = new LockChecker.New.LockChecker();
+                var skipFile = false;
+                var fileLocked = lockCheck.CheckLock(dFile);
+                while (fileLocked != "No locks")
                 {
-                    var message = $"The file {dFile} is currently locked. Lock information: {FileLocked}{Environment.NewLine}Do you want to try again?";
+                    var message = $"The file {dFile} is currently locked. Lock information: {fileLocked}{Environment.NewLine}Do you want to try again?";
                     if (MessageBox.Show(message, "File Locked", MessageBoxButtons.YesNo)
                         == DialogResult.Yes)
                     {
-                        FileLocked = LockCheck.CheckLock(dFile);
+                        fileLocked = lockCheck.CheckLock(dFile);
                     }
                     else
                     {
                         _ = MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{dFile}");
-                        SkipFile = true;
-                        FileLocked = "No locks";
+                        skipFile = true;
+                        fileLocked = "No locks";
                     }
                 }
 
-                if (!SkipFile && File.Exists(dFile))
+                if (!skipFile && File.Exists(dFile))
                 {
                     File.Delete(dFile);
                 }
@@ -157,19 +151,19 @@ namespace RemoteApp.Tool.New
         }
 
         /// <summary>
-        ///   Reads File Description. If it does not exist, returns the name of the exacutable.
+        ///   Reads File Description. If it does not exist, returns the name of the executable.
         /// </summary>
         /// <param name="exePath">full path of the executable.</param>
         /// <returns>File description or file name</returns>
-        public static string GetEXETitle(string exePath)
+        public static string GetExeTitle(string exePath)
         {
-            string pname = FileVersionInfo.GetVersionInfo(exePath).FileDescription;
-            if (string.IsNullOrEmpty(pname))
+            var executableTitle = FileVersionInfo.GetVersionInfo(exePath).FileDescription;
+            if (string.IsNullOrEmpty(executableTitle))
             {
-                pname = Path.GetFileNameWithoutExtension(exePath);
+                executableTitle = Path.GetFileNameWithoutExtension(exePath);
             }
 
-            return pname;
+            return executableTitle;
         }
     }
 }

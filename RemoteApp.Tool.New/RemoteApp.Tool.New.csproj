@@ -77,7 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminRelauncher.cs" />
-    <Compile Include="ApplicationEvents.cs" />
     <Compile Include="Forms.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="HelpSystem.cs" />
@@ -127,9 +126,6 @@
     </Compile>
     <Compile Include="RemoteAppMainWindow.Designer.cs">
       <DependentUpon>RemoteAppMainWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteAppMainWindowBase.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>

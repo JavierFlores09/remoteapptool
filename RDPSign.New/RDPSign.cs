@@ -19,26 +19,22 @@ namespace RDPSign.New
         /// <returns>String array of Certificate friendly names</returns>
         public IEnumerable<string> GetCertificateFriendlyName()
         {
-            X509Store CertStoreLM = GetCertificateStoreLM();
-            X509Store CertStoreCU = GetCertificateStoreCU();
-            var FriendlyNames = new string[CertStoreLM.Certificates.Count + CertStoreCU.Certificates.Count + 1];
-            int Counter = 0;
-            foreach (X509Certificate2 Certificate in CertStoreLM.Certificates)
+            var certStoreLm = GetCertificateStoreLm();
+            var certStoreCu = GetCertificateStoreCu();
+            var FriendlyNames = new string[certStoreLm.Certificates.Count + certStoreCu.Certificates.Count + 1];
+            var Counter = 0;
+            foreach (var Certificate in certStoreLm.Certificates)
             {
-                if (!ReferenceEquals(Certificate.FriendlyName, string.Empty))
-                {
-                    FriendlyNames[Counter] = Certificate.FriendlyName;
-                    Counter++;
-                }
+                if (ReferenceEquals(Certificate.FriendlyName, string.Empty)) continue;
+                FriendlyNames[Counter] = Certificate.FriendlyName;
+                Counter++;
             }
 
-            foreach (X509Certificate2 Certificate in CertStoreCU.Certificates)
+            foreach (var Certificate in certStoreCu.Certificates)
             {
-                if (!ReferenceEquals(Certificate.FriendlyName, string.Empty))
-                {
-                    FriendlyNames[Counter] = Certificate.FriendlyName;
-                    Counter++;
-                }
+                if (ReferenceEquals(Certificate.FriendlyName, string.Empty)) continue;
+                FriendlyNames[Counter] = Certificate.FriendlyName;
+                Counter++;
             }
 
             Array.Resize(ref FriendlyNames, Counter);
@@ -49,7 +45,7 @@ namespace RDPSign.New
         /// Open the Local Machine certificate store and return it to the calling function/sub
         /// </summary>
         /// <returns>Certificate Store</returns>
-        public X509Store GetCertificateStoreLM()
+        public X509Store GetCertificateStoreLm()
         {
             var CertStore = new X509Store(StoreLocation.LocalMachine);
             CertStore.Open(OpenFlags.ReadOnly);
@@ -60,7 +56,7 @@ namespace RDPSign.New
         /// Open the Current User certificate store and return it to the calling function/sub
         /// </summary>
         /// <returns>Certificate Store</returns>
-        public X509Store GetCertificateStoreCU()
+        public X509Store GetCertificateStoreCu()
         {
             var CertStore = new X509Store(StoreLocation.CurrentUser);
             CertStore.Open(OpenFlags.ReadOnly);
@@ -70,29 +66,25 @@ namespace RDPSign.New
         /// <summary>
         /// Given a friendly name, find and return the associated thumbprint
         /// </summary>
-        /// <param name="FriendlyName">String of the Friendly Name of a certificate</param>
+        /// <param name="friendlyName">String of the Friendly Name of a certificate</param>
         /// <returns>String of the thumbprint of the certificate</returns>
-        public string GetThumbprint(string FriendlyName)
+        public string GetThumbprint(string friendlyName)
         {
             string Thumbprint;
-            foreach (X509Certificate2 certificate in GetCertificateStoreLM().Certificates)
+            foreach (var certificate in GetCertificateStoreLm().Certificates)
             {
-                if ((certificate.FriendlyName ?? string.Empty) == (FriendlyName ?? string.Empty))
-                {
-                    Thumbprint = certificate.Thumbprint;
-                    GetCertificateStoreLM().Close();
-                    return Thumbprint;
-                }
+                if ((certificate.FriendlyName ?? string.Empty) != (friendlyName ?? string.Empty)) continue;
+                Thumbprint = certificate.Thumbprint;
+                GetCertificateStoreLm().Close();
+                return Thumbprint;
             }
-            GetCertificateStoreLM().Close();
-            foreach (X509Certificate2 certificate in GetCertificateStoreCU().Certificates)
+            GetCertificateStoreLm().Close();
+            foreach (var certificate in GetCertificateStoreCu().Certificates)
             {
-                if ((certificate.FriendlyName ?? string.Empty) == (FriendlyName ?? string.Empty))
-                {
-                    Thumbprint = certificate.Thumbprint;
-                    GetCertificateStoreCU().Close();
-                    return Thumbprint;
-                }
+                if ((certificate.FriendlyName ?? string.Empty) != (friendlyName ?? string.Empty)) continue;
+                Thumbprint = certificate.Thumbprint;
+                GetCertificateStoreCu().Close();
+                return Thumbprint;
             }
             // We could get here if something went wrong such as Certificate was removed from certificate store after it was loaded into the application
             // return an invalid thumbprint
@@ -102,24 +94,23 @@ namespace RDPSign.New
         /// <summary>
         /// Sign an RDP file and make a backup of the unsigned one if requested
         /// </summary>
-        /// <param name="Thumbprint">Thumbprint used to sign RDP file</param>
-        /// <param name="RDPFileLocation">Location of RDP file</param>
-        /// <param name="CreateBackup">Boolean indicating if a backup should be created or not</param>
-        public void SignRDP(string Thumbprint, string RDPFileLocation, bool CreateBackup)
+        /// <param name="thumbprint">Thumbprint used to sign RDP file</param>
+        /// <param name="rdpFileLocation">Location of RDP file</param>
+        /// <param name="createBackup">Boolean indicating if a backup should be created or not</param>
+        public void SignRDP(string thumbprint, string rdpFileLocation, bool createBackup)
         {
-            if (Thumbprint == "0000")
+            if (thumbprint == "0000")
             {
                 // Invalid thumbprint, this should be handled on the application side, but just as a safety, return without doing any work if invalid thumbprint sent
                 return;
             }
 
-            if (CreateBackup)
+            if (createBackup)
             {
-                string BackupFile = Path.Combine(Path.GetDirectoryName(RDPFileLocation), $"{Path.GetFileNameWithoutExtension(RDPFileLocation)}-Unsigned.rdp");
+                var BackupFile = Path.Combine(Path.GetDirectoryName(rdpFileLocation), $"{Path.GetFileNameWithoutExtension(rdpFileLocation)}-Unsigned.rdp");
                 var LockCheck = new LockChecker.New.LockChecker();
-                string FileLocked;
-                bool SkipFile = false;
-                FileLocked = LockCheck.CheckLock(BackupFile);
+                var SkipFile = false;
+                var FileLocked = LockCheck.CheckLock(BackupFile);
                 while (FileLocked != "No locks")
                 {
                     // TODO: Add an exception or another method to check the result here so that the consumer executable can decide the GUI elements.
@@ -137,7 +128,7 @@ namespace RDPSign.New
 
                 if (!SkipFile)
                 {
-                    File.Copy(RDPFileLocation, BackupFile, true); // backup file with overwrite
+                    File.Copy(rdpFileLocation, BackupFile, true); // backup file with overwrite
                 }
             }
 
@@ -156,14 +147,7 @@ namespace RDPSign.New
                 // On a Windows Server 2008 R2 server I have access to, the Product parts come in at 6.1.7601.17514 which is lower than the windows 10 ones.
                 // I do not have other versions of windows to test, so will need external testing for this.
                 // Not sure where the version number switches over, but also not sure how to determine which method to use otherwise
-                if (FileVersionInfo.ProductMajorPart >= 10)
-                {
-                    Arguments = $" /sha256 {Thumbprint} \"{RDPFileLocation}\"";
-                }
-                else
-                {
-                    Arguments = $" /sha1 {Thumbprint} \"{RDPFileLocation}\"";
-                }
+                Arguments = FileVersionInfo.ProductMajorPart >= 10 ? $" /sha256 {thumbprint} \"{rdpFileLocation}\"" : $" /sha1 {thumbprint} \"{rdpFileLocation}\"";
 
                 var StartInfo = new ProcessStartInfo
                 {
@@ -187,18 +171,18 @@ namespace RDPSign.New
         {
             // Each path to check for rdpsign.exe is added to this array.
             // If it is found in more than one location, the lowest in the list will be selected.
-            var PossibleRdpsignPaths = new string[] { Environment.SystemDirectory, Directory.GetCurrentDirectory() };
-            string FinalRdpSignPath = string.Empty;
-            foreach (var RdpsignPath in PossibleRdpsignPaths)
+            var possibleRdpSignPaths = new string[] { Environment.SystemDirectory, Directory.GetCurrentDirectory() };
+            var finalRdpSignPath = string.Empty;
+            foreach (var rdpSignPath in possibleRdpSignPaths)
             {
-                var newPath = Path.Combine(RdpsignPath, "rdpsign.exe");
+                var newPath = Path.Combine(rdpSignPath, "rdpsign.exe");
                 if (File.Exists(newPath))
                 {
-                    FinalRdpSignPath = newPath;
+                    finalRdpSignPath = newPath;
                 }
             }
 
-            return FinalRdpSignPath;
+            return finalRdpSignPath;
         }
 
         [DllImport("kernel32", EntryPoint = "GetSystemDirectoryA")]

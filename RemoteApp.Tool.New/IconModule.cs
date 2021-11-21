@@ -10,6 +10,8 @@ namespace RemoteApp.Tool.New
 {
     public class IconExtractor
     {
+        // TODO: Move Interops into another class
+
         [DllImport("shell32.dll", EntryPoint = "ExtractIconExA")]
         private static extern int ExtractIconEx(string lpszFile, int nIconIndex, ref int phiconLarge, ref int phiconSmall, int nIcons);
 
@@ -22,15 +24,13 @@ namespace RemoteApp.Tool.New
         [DllImport("user32")]
         private static extern int DestroyIcon(int hIcon);
 
-        private int[] m_hIcons;
+        private int[] _mHIcons;
 
         ~IconExtractor()
         {
-            if (m_hIcons?.Length > 0)
-            {
-                for (int iconIndex = 0, loopTo = m_hIcons.Length - 1; iconIndex <= loopTo; iconIndex++)
-                    DestroyIcon(m_hIcons[iconIndex]);
-            }
+            if (!(_mHIcons?.Length > 0)) return;
+            for (int iconIndex = 0, loopTo = _mHIcons.Length - 1; iconIndex <= loopTo; iconIndex++)
+                DestroyIcon(_mHIcons[iconIndex]);
         }
 
         public List<Icon> ExtractIcons(string filePath, IntPtr hInst)
@@ -38,19 +38,19 @@ namespace RemoteApp.Tool.New
             var listIcons = new List<Icon>();
             try
             {
-                int argphiconLarge = 0;
-                int argphiconSmall = 0;
-                int numIcons = ExtractIconEx(filePath, -1, ref argphiconLarge, ref argphiconSmall, 0);
+                var argphiconLarge = 0;
+                var argphiconSmall = 0;
+                var numIcons = ExtractIconEx(filePath, -1, ref argphiconLarge, ref argphiconSmall, 0);
                 if (numIcons == 0)
                 {
                     throw new Exception("No icons found in " + filePath);
                 }
 
                 numIcons--;
-                for (int currentIcon = 0, loopTo = numIcons; currentIcon <= loopTo; currentIcon++)
+                for (var currentIcon = 0; currentIcon <= numIcons; currentIcon++)
                 {
-                    m_hIcons[currentIcon] = ExtractIcon(hInst, filePath, currentIcon);
-                    var handleIcon = new IntPtr(m_hIcons[currentIcon]);
+                    _mHIcons[currentIcon] = ExtractIcon(hInst, filePath, currentIcon);
+                    var handleIcon = new IntPtr(_mHIcons[currentIcon]);
                     if (!handleIcon.Equals(IntPtr.Zero))
                     {
                         listIcons.Add(Icon.FromHandle(handleIcon));
@@ -76,6 +76,7 @@ namespace RemoteApp.Tool.New
         public static Icon IconFromFilePath(string filePath)
         {
             Icon result = null;
+            // TODO: Add file exist check here.
             try
             {
                 result = Icon.ExtractAssociatedIcon(filePath);
@@ -87,34 +88,31 @@ namespace RemoteApp.Tool.New
             return result;
         }
 
-        public static bool ExtractToIco(string IconSourcePath, int IconSourceIndex, string IcoDestPath)
+        public static bool ExtractToIco(string iconSourcePath, int iconSourceIndex, string icoDestPath)
         {
-            bool success = false;
-            bool IconLoadError = false;
-            if (File.Exists(IconSourcePath))
-            {
-                var mIcon = new System.Drawing.IconLib.MultiIcon();
-                try
-                {
-                    mIcon.Load(IconSourcePath);
-                }
-                catch (Exception)
-                {
-                    IconLoadError = true;
-                }
+            var success = false;
+            var IconLoadError = false;
+            if (!File.Exists(iconSourcePath)) return false;
 
-                if (!IconLoadError)
-                {
-                    System.Drawing.IconLib.SingleIcon sIcon = IconSourceIndex == 0 ? mIcon.FirstOrDefault() : mIcon[IconSourceIndex];
-                    try
-                    {
-                        sIcon.Save(IcoDestPath);
-                        success = true;
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
+            var mIcon = new System.Drawing.IconLib.MultiIcon();
+            try
+            {
+                mIcon.Load(iconSourcePath);
+            }
+            catch (Exception)
+            {
+                IconLoadError = true;
+            }
+
+            if (IconLoadError) return success;
+            var sIcon = iconSourceIndex == 0 ? mIcon.FirstOrDefault() : mIcon[iconSourceIndex];
+            try
+            {
+                sIcon.Save(icoDestPath);
+                success = true;
+            }
+            catch (Exception)
+            {
             }
 
             return success;
@@ -123,31 +121,22 @@ namespace RemoteApp.Tool.New
         [DllImport("shell32.dll", EntryPoint = "ExtractIconExA")]
         private static extern int ExtractIcon(string lpszFile, int nIconIndex, ref int phiconLarge, ref int phiconSmall, int nIcons);
 
-        public static Icon ReturnIcon(string Path, int Index, bool small = false)
+        public static Icon ReturnIcon(string path, int index, bool small = false)
         {
             var bigIcon = default(int);
             var smallIcon = default(int);
-            ExtractIcon(Path, Index, ref bigIcon, ref smallIcon, 1);
+            ExtractIcon(path, index, ref bigIcon, ref smallIcon, 1);
             if (bigIcon == 0)
             {
-                ExtractIcon(Path, 0, ref bigIcon, ref smallIcon, 1);
+                ExtractIcon(path, 0, ref bigIcon, ref smallIcon, 1);
             }
 
             if (bigIcon != 0)
             {
-                if (!small)
-                {
-                    return Icon.FromHandle((IntPtr)bigIcon);
-                }
-                else
-                {
-                    return Icon.FromHandle((IntPtr)smallIcon);
-                }
+                return !small ? Icon.FromHandle((IntPtr)bigIcon) : Icon.FromHandle((IntPtr)smallIcon);
             }
-            else
-            {
-                return ReturnIcon(RemoteAppFunction.GetSysDir() + @"\mstsc.exe", 0);
-            }
+
+            return ReturnIcon(RemoteAppFunction.GetSysDir() + @"\mstsc.exe", 0);
         }
     }
 }

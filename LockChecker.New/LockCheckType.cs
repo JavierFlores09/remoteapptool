@@ -10,18 +10,18 @@ namespace LockChecker.New
     internal static partial class LockCheckType
     {
         // maximum character count of application friendly name. 
-        private const int CCH_RM_MAX_APP_NAME = 255;
+        private const int CchRmMaxAppName = 255;
         // maximum character count of service short name. 
-        private const int CCH_RM_MAX_SVC_NAME = 63;
+        private const int CchRmMaxSvcName = 63;
         // A system restart is not required. 
         private const int RmRebootReasonNone = 0;
 
-        public static string LockCheck(string Filename)
+        public static string LockCheck(string filename)
         {
             var handle = default(uint);
-            string sessionkey = Guid.NewGuid().ToString();
+            var sessionkey = Guid.NewGuid().ToString();
             var result = new System.Text.StringBuilder();
-            int res = Interop.RmStartSession(ref handle, 0, sessionkey);
+            var res = Interop.RmStartSession(ref handle, 0, sessionkey);
             if (res != 0)
             {
                 throw new Exception("Could not begin restart session.");
@@ -29,13 +29,13 @@ namespace LockChecker.New
 
             try
             {
-                uint pnProcInfoNeeded = 0U;
-                uint pnProcInfo = 100U;
+                var pnProcInfoNeeded = 0U;
+                var pnProcInfo = 100U;
                 uint lpdwRebootReasons = RmRebootReasonNone;
-                var resources = new string[] { Filename };
+                var resources = new string[] { filename };
 
                 // Create an array to store the process results. 
-                var processInfo = new RM_PROCESS_INFO[(int)(pnProcInfo - 1L + 1)];
+                var processInfo = new RmProcessInfo[(int)(pnProcInfo - 1L + 1)];
                 res = Interop.RmRegisterResources(handle, (uint)resources.Length, resources, 0U, null, 0U, null);
                 if (res != 0)
                 {

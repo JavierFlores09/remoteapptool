@@ -1,4 +1,4 @@
-﻿namespace RDPFileLib
+﻿namespace RDPFileLib.New
 {
     internal static class RdpExtensions
     {

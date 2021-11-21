@@ -8,7 +8,8 @@ namespace RemoteApp.Tool.New
 {
     internal static class HelpSystem
     {
-        public static void SetupTips(Form TheForm)
+        private const string TipsFileName = "tips.txt";
+        public static void SetupTips(Form theForm)
         {
             var toolTip1 = new ToolTip()
             {
@@ -16,9 +17,9 @@ namespace RemoteApp.Tool.New
                 InitialDelay = 500,
                 ReshowDelay = 500
             };
-            string HelpString;
-            foreach (Control Control in TheForm.Controls)
+            foreach (Control Control in theForm.Controls)
             {
+                string HelpString;
                 foreach (Control SubControl in Control.Controls)
                 {
                     foreach (Control SubSubControl in SubControl.Controls)
@@ -46,14 +47,14 @@ namespace RemoteApp.Tool.New
             }
         }
 
-        private static string GetTipString(string FormName, string ControlName)
+        private static string GetTipString(string formName, string controlName)
         {
             var TipString = string.Empty;
             var TipText = GetTipFile();
-            foreach (string TipLine in TipText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var TipLine in TipText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 var TipLineArray = TipLine.Split('|');
-                if ((TipLineArray[0] ?? string.Empty) == (FormName ?? string.Empty) && (TipLineArray[1] ?? string.Empty) == (ControlName ?? string.Empty))
+                if ((TipLineArray[0] ?? string.Empty) == (formName ?? string.Empty) && (TipLineArray[1] ?? string.Empty) == (controlName ?? string.Empty))
                     TipString = TipLineArray[2];
             }
 
@@ -62,8 +63,8 @@ namespace RemoteApp.Tool.New
 
         private static string GetTipFile()
         {
-            return File.Exists("tips.txt")
-                ? File.ReadAllText("tips.txt")
+            return File.Exists(TipsFileName)
+                ? File.ReadAllText(TipsFileName)
                 : GetBuiltInTips();
         }
 

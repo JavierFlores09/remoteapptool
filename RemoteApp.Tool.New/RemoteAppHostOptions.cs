@@ -27,15 +27,15 @@ namespace RemoteApp.Tool.New
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            const string PolicyKeyStringMS = @"SOFTWARE\Policies\Microsoft";
-            const string PolicyKeyString = @"SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services";
+            const string policyKeyStringMs = @"SOFTWARE\Policies\Microsoft";
+            const string policyKeyString = @"SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services";
             Microsoft.Win32.RegistryKey PolicyKey;
 
             // Create policy reg keys
-            var PolicyKeyMS = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(PolicyKeyStringMS, true);
-            var PolicyKeyWNT = PolicyKeyMS.CreateSubKey("Windows NT");
-            _ = PolicyKeyWNT.CreateSubKey("Terminal Services");
-            PolicyKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(PolicyKeyString, true);
+            var policyKeyMs = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(policyKeyStringMs, true);
+            var policyKeyWnt = policyKeyMs.CreateSubKey("Windows NT");
+            _ = policyKeyWnt.CreateSubKey("Terminal Services");
+            PolicyKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(policyKeyString, true);
             if (DisableAllowListCheckBox.Checked)
             {
                 Microsoft.Win32.Registry.SetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList", "fDisabledAllowList", "1", Microsoft.Win32.RegistryValueKind.DWord);
@@ -87,8 +87,8 @@ namespace RemoteApp.Tool.New
         public void SetValues()
         {
             // FIX: Potential exception
-            const string PolicyKeyString = @"SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services";
-            using (var PolicyKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(PolicyKeyString, false))
+            const string policyKeyString = @"SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services";
+            using (var PolicyKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(policyKeyString, false))
             {
                 DisconnectTimeTextBox.Text = "0";
                 IdleTimeTextBox.Text = "0";

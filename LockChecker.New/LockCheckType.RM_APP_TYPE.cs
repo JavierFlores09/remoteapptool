@@ -10,7 +10,7 @@ namespace LockChecker.New
         /// Specifies the type of application that is described by
         /// the RM_PROCESS_INFO structure.
         /// </summary>
-        internal enum RM_APP_TYPE
+        internal enum RmAppType
         {
             // The application cannot be classified as any other type. 
             RmUnknownApp = 0,

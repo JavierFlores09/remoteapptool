@@ -29,24 +29,24 @@ namespace RemoteApp.Tool.New
             _CheckBoxSignRDPEnabled.Name = "CheckBoxSignRDPEnabled";
         }
 
-        private RemoteAppLib.New.RemoteApp RemoteApp = new RemoteAppLib.New.RemoteApp();
+        private RemoteAppLib.New.RemoteApp _remoteApp = new RemoteAppLib.New.RemoteApp();
 
-        public void CreateClientConnection(RemoteAppLib.New.RemoteApp SelectedRemoteApp)
+        public void CreateClientConnection(RemoteAppLib.New.RemoteApp selectedRemoteApp)
         {
-            RemoteApp = SelectedRemoteApp;
+            _remoteApp = selectedRemoteApp;
             var rdpSign = new RDPSign.New.RDPSign();
-            string RemoteAppShortName = RemoteApp.Name;
+            var RemoteAppShortName = _remoteApp.Name;
             Text = "Create Client Connection for " + RemoteAppShortName;
             RdpsignErrorLabel.Text = "";
             CertificateComboBox.Items.AddRange(rdpSign.GetCertificateFriendlyName().ToArray());
-            SetCCWindowSettings();
+            SetCcWindowSettings();
             if (string.IsNullOrEmpty(ServerAddress.Text))
                 ServerAddress.Text = System.Net.Dns.GetHostName();
             if (string.IsNullOrEmpty(AltServerAddress.Text))
                 AltServerAddress.Text = ServerAddress.Text;
             if (ServerPort.Text == "0")
                 ServerPort.Text = "3389";
-            if (!File.Exists(RemoteApp.IconPath))
+            if (!File.Exists(_remoteApp.IconPath))
             {
                 CreateRAWebIcon.Checked = false;
                 CreateRAWebIcon.Enabled = false;
@@ -74,8 +74,8 @@ namespace RemoteApp.Tool.New
                 CertificateComboBox.Text = "";
             }
 
-            if (RemoteApp.FileTypeAssociations != null)
-                FTACountLabel.Text = "Count: " + RemoteApp.FileTypeAssociations.Count;
+            if (_remoteApp.FileTypeAssociations != null)
+                FTACountLabel.Text = "Count: " + _remoteApp.FileTypeAssociations.Count;
             RDPRadioButton.Focus();
             HelpSystem.SetupTips(this);
             ShowDialog();
@@ -83,54 +83,54 @@ namespace RemoteApp.Tool.New
             //Dispose();
         }
 
-        public void ResetCCWindowSettings()
+        public void ResetCcWindowSettings()
         {
             UserSettings.Instance.SavedConnectionModeMSI = false;
             UserSettings.Instance.SavedOpenWithNotepad = false;
             UserSettings.Instance.SavedServerAddress = System.Net.Dns.GetHostName();
             UserSettings.Instance.SavedServerPort = 3389;
             UserSettings.Instance.SavedAltServerAddress = UserSettings.Instance.SavedServerAddress;
-            UserSettings.Instance.SavedUseRDGateway = false;
-            UserSettings.Instance.SavedRDGatewayAddress = "";
-            UserSettings.Instance.SavedAttemptDirectRDGateway = false;
+            UserSettings.Instance.SavedUseRdGateway = false;
+            UserSettings.Instance.SavedRdGatewayAddress = "";
+            UserSettings.Instance.SavedAttemptDirectRdGateway = false;
             UserSettings.Instance.SavedMSIShortcutDesktop = true;
             UserSettings.Instance.SavedMSIShortcutStart = true;
             UserSettings.Instance.SavedMSIShortcutStartTopLevel = false;
             UserSettings.Instance.SavedUseShortcutTag = true;
             UserSettings.Instance.SavedShortcutTag = "remote";
             UserSettings.Instance.SavedClientConnectionOptions = false;
-            UserSettings.Instance.SavedCreateRAWebIcon = false;
+            UserSettings.Instance.SavedCreateRaWebIcon = false;
             UserSettings.Instance.SavedMSIPerUser = false;
-            UserSettings.Instance.SavedDisableFTA = false;
+            UserSettings.Instance.SavedDisableFta = false;
             UserSettings.Instance.SavedSignRDP = false;
             UserSettings.Instance.SavedSignedAndUnsigned = false;
             UserSettings.Instance.SavedCertSelected = 0;
         }
 
-        public void SaveCCWindowSettings()
+        public void SaveCcWindowSettings()
         {
             UserSettings.Instance.SavedConnectionModeMSI = MSIRadioButton.Checked;
             UserSettings.Instance.SavedOpenWithNotepad = EditAfterSave.Checked;
             UserSettings.Instance.SavedServerAddress = ServerAddress.Text;
             UserSettings.Instance.SavedServerPort = (int)Math.Round(double.Parse(ServerPort.Text));
             UserSettings.Instance.SavedAltServerAddress = AltServerAddress.Text;
-            UserSettings.Instance.SavedUseRDGateway = UseRDGatewayCheckBox.Checked;
-            UserSettings.Instance.SavedRDGatewayAddress = GatewayAddress.Text;
-            UserSettings.Instance.SavedAttemptDirectRDGateway = AttemptDirectCheckBox.Checked;
+            UserSettings.Instance.SavedUseRdGateway = UseRDGatewayCheckBox.Checked;
+            UserSettings.Instance.SavedRdGatewayAddress = GatewayAddress.Text;
+            UserSettings.Instance.SavedAttemptDirectRdGateway = AttemptDirectCheckBox.Checked;
             UserSettings.Instance.SavedMSIShortcutDesktop = ShortcutDesktopCheckBox.Checked;
             UserSettings.Instance.SavedMSIShortcutStart = ShortcutStartCheckBox.Checked;
             UserSettings.Instance.SavedMSIShortcutStartTopLevel = TopLevelRadioButton.Checked;
             UserSettings.Instance.SavedUseShortcutTag = ShortcutTagCheckBox.Checked;
             UserSettings.Instance.SavedShortcutTag = ShortcutTagTextBox.Text;
-            UserSettings.Instance.SavedCreateRAWebIcon = CreateRAWebIcon.Checked;
+            UserSettings.Instance.SavedCreateRaWebIcon = CreateRAWebIcon.Checked;
             UserSettings.Instance.SavedMSIPerUser = PerUserRadioButton.Checked;
-            UserSettings.Instance.SavedDisableFTA = DisabledFTACheckBox.Checked;
+            UserSettings.Instance.SavedDisableFta = DisabledFTACheckBox.Checked;
             UserSettings.Instance.SavedSignRDP = CheckBoxSignRDPEnabled.Checked;
             UserSettings.Instance.SavedSignedAndUnsigned = CheckBoxCreateSignedAndUnsigned.Checked;
             UserSettings.Instance.SavedCertSelected = CertificateComboBox.SelectedIndex;
         }
 
-        public void SetCCWindowSettings()
+        public void SetCcWindowSettings()
         {
             if (UserSettings.Instance.SavedConnectionModeMSI)
             {
@@ -147,9 +147,9 @@ namespace RemoteApp.Tool.New
             ServerAddress.Text = UserSettings.Instance.SavedServerAddress;
             ServerPort.Text = UserSettings.Instance.SavedServerPort.ToString();
             AltServerAddress.Text = UserSettings.Instance.SavedAltServerAddress;
-            UseRDGatewayCheckBox.Checked = UserSettings.Instance.SavedUseRDGateway;
-            GatewayAddress.Text = UserSettings.Instance.SavedRDGatewayAddress;
-            AttemptDirectCheckBox.Checked = UserSettings.Instance.SavedAttemptDirectRDGateway;
+            UseRDGatewayCheckBox.Checked = UserSettings.Instance.SavedUseRdGateway;
+            GatewayAddress.Text = UserSettings.Instance.SavedRdGatewayAddress;
+            AttemptDirectCheckBox.Checked = UserSettings.Instance.SavedAttemptDirectRdGateway;
             ShortcutDesktopCheckBox.Checked = UserSettings.Instance.SavedMSIShortcutDesktop;
             ShortcutStartCheckBox.Checked = UserSettings.Instance.SavedMSIShortcutStart;
             if (UserSettings.Instance.SavedMSIShortcutStartTopLevel)
@@ -166,8 +166,8 @@ namespace RemoteApp.Tool.New
             ShortcutTagCheckBox.Checked = UserSettings.Instance.SavedUseShortcutTag;
             ShortcutTagTextBox.Text = UserSettings.Instance.SavedShortcutTag;
             MSIOptionsTabPage.Enabled = MSIRadioButton.Checked;
-            CreateRAWebIcon.Checked = UserSettings.Instance.SavedCreateRAWebIcon;
-            DisabledFTACheckBox.Checked = UserSettings.Instance.SavedDisableFTA;
+            CreateRAWebIcon.Checked = UserSettings.Instance.SavedCreateRaWebIcon;
+            DisabledFTACheckBox.Checked = UserSettings.Instance.SavedDisableFta;
             if (!UserSettings.Instance.SavedMSIPerUser)
             {
                 PerMachineRadioButton.Checked = true;
@@ -236,31 +236,31 @@ namespace RemoteApp.Tool.New
 
         private void CreateButton_Click(object sender, EventArgs e)
         {
-            string MSIPath = string.Empty;
+            var MSIPath = string.Empty;
             if (CheckBoxSignRDPEnabled.Checked && string.IsNullOrEmpty(CertificateComboBox.SelectedItem as string))
             {
                 MessageBox.Show("You must select a certificate to sign the RDP file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (DisabledFTACheckBox.Checked && RemoteApp.FileTypeAssociations != null)
-                RemoteApp.FileTypeAssociations.Clear();
+            if (DisabledFTACheckBox.Checked && _remoteApp.FileTypeAssociations != null)
+                _remoteApp.FileTypeAssociations.Clear();
             string RDPPath;
             if (RDPRadioButton.Checked)
             {
-                FileSaveRDP.FileName = RemoteApp.Name;
+                FileSaveRDP.FileName = _remoteApp.Name;
                 if (FileSaveRDP.ShowDialog() != DialogResult.OK)
                     return;
                 RDPPath = FileSaveRDP.FileName;
             }
             else
             {
-                FileSaveMSI.FileName = RemoteApp.Name;
+                FileSaveMSI.FileName = _remoteApp.Name;
                 if (FileSaveMSI.ShowDialog() != DialogResult.OK)
                     return;
                 MSIPath = FileSaveMSI.FileName;
-                RDPPath = Environment.GetEnvironmentVariable("TEMP") + @"\" + RemoteApp.Name + ".rdp";
-                _ = Environment.GetEnvironmentVariable("TEMP") + @"\" + RemoteApp.Name + ".msi";
+                RDPPath = Environment.GetEnvironmentVariable("TEMP") + @"\" + _remoteApp.Name + ".rdp";
+                _ = Environment.GetEnvironmentVariable("TEMP") + @"\" + _remoteApp.Name + ".msi";
             }
 
             if (UseRDGatewayCheckBox.Checked)
@@ -271,28 +271,28 @@ namespace RemoteApp.Tool.New
 
             if (RDPRadioButton.Checked)
             {
-                CreateRDPFile(RDPPath, RemoteApp);
+                CreateRDPFile(RDPPath, _remoteApp);
                 // !!!!!!! If it's an RDP file
                 if (EditAfterSave.Checked)
                 {
-                    string CmdLine = RemoteAppFunction.GetSysDir() + @"\notepad.exe";
+                    var CmdLine = RemoteAppFunction.GetSysDir() + @"\notepad.exe";
                     Process.Start(CmdLine, FileSaveRDP.FileName);
                 }
 
                 if (CreateRAWebIcon.Checked)
                 {
-                    string IconFilePath = RDPPath.Substring(0, RDPPath.Length - 4) + ".ico";
-                    if (!IconModule.ExtractToIco(RemoteApp.IconPath, RemoteApp.IconIndex, IconFilePath))
+                    var IconFilePath = RDPPath.Substring(0, RDPPath.Length - 4) + ".ico";
+                    if (!IconModule.ExtractToIco(_remoteApp.IconPath, _remoteApp.IconIndex, IconFilePath))
                     {
                         MessageBox.Show("Icon could not be created the RemoteApp. RDP file will still be created.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                     // Check if there are file type associations before trying to work with the file type association icons
-                    if (RemoteApp.FileTypeAssociations != null)
+                    if (_remoteApp.FileTypeAssociations != null)
                     {
-                        foreach (RemoteAppLib.New.FileTypeAssociation FTA in RemoteApp.FileTypeAssociations)
+                        foreach (RemoteAppLib.New.FileTypeAssociation fta in _remoteApp.FileTypeAssociations)
                         {
-                            string ProductFileName = RDPPath.Substring(0, RDPPath.Length - 4);
-                            ExtractFTIcon(ProductFileName, FTA);
+                            var ProductFileName = RDPPath.Substring(0, RDPPath.Length - 4);
+                            ExtractFtIcon(ProductFileName, fta);
                         }
                     }
                 }
@@ -303,7 +303,7 @@ namespace RemoteApp.Tool.New
             {
                 // !!!!!!!  If it's an MSI
                 var RDP = new RDP2MSIlib.New.RDP();
-                CreateRDPFile(RDPPath, RemoteApp);
+                CreateRDPFile(RDPPath, _remoteApp);
                 RDP.RDPFilePath = RDPPath;
                 RDP.ShortcutOnDesktop = ShortcutDesktopCheckBox.Checked;
                 RDP.ShortcutInStart = ShortcutStartCheckBox.Checked;
@@ -314,24 +314,24 @@ namespace RemoteApp.Tool.New
                 var ProductFileName = RDPPath.Substring(0, RDPPath.Length - 4);
                 var IconFilePath = ProductFileName + ".ico";
                 FilesToDelete.Add(RDPPath);
-                if (!IconModule.ExtractToIco(RemoteApp.IconPath, RemoteApp.IconIndex, IconFilePath))
+                if (!IconModule.ExtractToIco(_remoteApp.IconPath, _remoteApp.IconIndex, IconFilePath))
                 {
-                    MessageBox.Show("There was an error loading icon:" + Environment.NewLine + RemoteApp.IconPath + "," + RemoteApp.IconIndex + Environment.NewLine + "The MSI will still be created but the main icon will be missing.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("There was an error loading icon:" + Environment.NewLine + _remoteApp.IconPath + "," + _remoteApp.IconIndex + Environment.NewLine + "The MSI will still be created but the main icon will be missing.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
                 else
                 {
                     FilesToDelete.Add(IconFilePath);
                 }
 
-                if (RemoteApp.FileTypeAssociations != null)
+                if (_remoteApp.FileTypeAssociations != null)
                 {
-                    foreach (RemoteAppLib.New.FileTypeAssociation FTA in RemoteApp.FileTypeAssociations)
+                    foreach (RemoteAppLib.New.FileTypeAssociation fta in _remoteApp.FileTypeAssociations)
                     {
-                        ExtractFTIcon(ProductFileName, FTA);
-                        FilesToDelete.Add(ProductFileName + "." + FTA.Extension + ".ico");
+                        ExtractFtIcon(ProductFileName, fta);
+                        FilesToDelete.Add(ProductFileName + "." + fta.Extension + ".ico");
                     }
 
-                    RDP.FlatFileTypes = RemoteApp.FileTypeAssociations.GetFlatFileTypes();
+                    RDP.FlatFileTypes = _remoteApp.FileTypeAssociations.GetFlatFileTypes();
                 }
 
                 RDP.CreateMSI(MSIPath);
@@ -340,89 +340,89 @@ namespace RemoteApp.Tool.New
             }
         }
 
-        private void ExtractFTIcon(string ProductFileName, RemoteAppLib.New.FileTypeAssociation FTA)
+        private void ExtractFtIcon(string productFileName, RemoteAppLib.New.FileTypeAssociation fta)
         {
             // Extract icon for filetype
-            if (!IconModule.ExtractToIco(FTA.IconPath, int.Parse(FTA.IconIndex), ProductFileName + "." + FTA.Extension + ".ico"))
+            if (!IconModule.ExtractToIco(fta.IconPath, int.Parse(fta.IconIndex), productFileName + "." + fta.Extension + ".ico"))
             {
                 // If filetype icon fails to extract, then grab the default document icon from Shell32.dll
-                IconModule.ExtractToIco(RemoteAppFunction.GetSysDir() + @"\shell32.dll", 0, ProductFileName + "." + FTA.Extension + ".ico");
+                IconModule.ExtractToIco(RemoteAppFunction.GetSysDir() + @"\shell32.dll", 0, productFileName + "." + fta.Extension + ".ico");
                 // Possibly show an error here??
             }
         }
 
-        private void CreateRDPFile(string RDPPath, RemoteAppLib.New.RemoteApp RemoteApp)
+        private void CreateRDPFile(string rdpPath, RemoteAppLib.New.RemoteApp remoteApp)
         {
             // Dim App As New RemoteAppLib.New.RemoteApp = RemoteApp
             // App = RemoteApp
-            string ServerAddress = this.ServerAddress.Text;
-            string AltServerAddress = this.AltServerAddress.Text;
-            string ServerPort = this.ServerPort.Text;
-            string FlatFileTypes = "";
-            if (RemoteApp.FileTypeAssociations != null)
-                FlatFileTypes = RemoteApp.FileTypeAssociations.GetFlatFileTypes();
-            var RDPfile = new RDPFileLib.New.RDPFile()
+            var ServerAddress = this.ServerAddress.Text;
+            var AltServerAddress = this.AltServerAddress.Text;
+            var ServerPort = this.ServerPort.Text;
+            var FlatFileTypes = "";
+            if (remoteApp.FileTypeAssociations != null)
+                FlatFileTypes = remoteApp.FileTypeAssociations.GetFlatFileTypes();
+            var rdPfile = new RDPFileLib.New.RDPFile()
             {
-                full_address = ServerAddress,
-                alternate_full_address = AltServerAddress,
-                server_port = (int)Math.Round(double.Parse(ServerPort)),
-                remoteapplicationname = RemoteApp.FullName,
-                remoteapplicationprogram = "||" + RemoteApp.Name,
-                remoteapplicationmode = 1,
-                disableremoteappcapscheck = 1,
-                alternate_shell = "rdpinit.exe"
+                FullAddress = ServerAddress,
+                AlternateFullAddress = AltServerAddress,
+                ServerPort = (int)Math.Round(double.Parse(ServerPort)),
+                RemoteApplicationName = remoteApp.FullName,
+                RemoteApplicationProgram = "||" + remoteApp.Name,
+                RemoteApplicationMode = 1,
+                DisableRemoteAppCapsCheck = 1,
+                AlternateShell = "rdpinit.exe"
             };
             if (UseRDGatewayCheckBox.Checked)
             {
-                RDPfile.gatewayhostname = GatewayAddress.Text;
-                RDPfile.gatewayusagemethod = AttemptDirectCheckBox.Checked ? 2 : 1;
-                RDPfile.gatewayprofileusagemethod = 1;
+                rdPfile.GatewayHostname = GatewayAddress.Text;
+                rdPfile.GatewayUsageMethod = AttemptDirectCheckBox.Checked ? 2 : 1;
+                rdPfile.GatewayProfileUsageMethod = 1;
             }
 
-            RDPfile.prompt_for_credentials_on_client = 1;
-            RDPfile.promptcredentialonce = 0;
-            RDPfile.devicestoredirect = "*";
-            RDPfile.drivestoredirect = "*";
-            RDPfile.redirectcomports = 1;
-            RDPfile.redirectdrives = 1;
-            RDPfile.allow_desktop_composition = 1;
-            RDPfile.allow_font_smoothing = 1;
-            RDPfile.span_monitors = 1;
-            RDPfile.use_multimon = 1;
-            RDPfile.remoteapplicationfileextensions = FlatFileTypes;
-            RDPfile.SaveRDPfile(RDPPath);
+            rdPfile.PromptForCredentialsOnClient = 1;
+            rdPfile.PromptCredentialOnce = 0;
+            rdPfile.DeviceStoreDirect = "*";
+            rdPfile.DriveStoreDirect = "*";
+            rdPfile.RedirectComPorts = 1;
+            rdPfile.RedirectDrives = 1;
+            rdPfile.AllowDesktopComposition = 1;
+            rdPfile.AllowFontSmoothing = 1;
+            rdPfile.SpanMonitors = 1;
+            rdPfile.UseMultimonitor = 1;
+            rdPfile.RemoteApplicationFileExtensions = FlatFileTypes;
+            rdPfile.SaveRdpFile(rdpPath);
             if (CheckBoxSignRDPEnabled.Checked)
             {
                 var rdpSign = new RDPSign.New.RDPSign();
-                string Thumbprint = rdpSign.GetThumbprint(CertificateComboBox.Text);
-                rdpSign.SignRDP(Thumbprint, RDPPath, CheckBoxCreateSignedAndUnsigned.Checked);
+                var Thumbprint = rdpSign.GetThumbprint(CertificateComboBox.Text);
+                rdpSign.SignRDP(Thumbprint, rdpPath, CheckBoxCreateSignedAndUnsigned.Checked);
             }
         }
 
-        private string GetFlatFileTypesList(string AppName, string Delim = ",")
+        private string GetFlatFileTypesList(string appName, string delim = ",")
         {
-            string BaseKeyName = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications\" + AppName + @"\Filetypes";
-            string FlatFTList = "";
+            var BaseKeyName = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications\" + appName + @"\Filetypes";
+            var flatFtList = "";
             try
             {
                 var BaseKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(BaseKeyName);
-                foreach (string FT in BaseKey.GetSubKeyNames())
-                    FlatFTList += "." + FT + Delim;
-                FlatFTList = FlatFTList.TrimEnd(Delim.ToCharArray());
+                foreach (var ft in BaseKey.GetSubKeyNames())
+                    flatFtList += "." + ft + delim;
+                flatFtList = flatFtList.TrimEnd(delim.ToCharArray());
             }
             catch (Exception)
             {
             }
 
-            return FlatFTList;
+            return flatFtList;
         }
 
         private void FTAButton_Click(object sender, EventArgs e)
         {
             MessageBox.Show(this, "Changes made here to File Type Associations are for this client connection only and will not be saved for next time." + Environment.NewLine + Environment.NewLine + "To make permanent changes to the File Type Associations for this RemoteApp, edit the RemoteApp.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            RemoteApp = Forms.RemoteAppFileTypeAssociation.EditFileTypes(RemoteApp);
-            if (RemoteApp.FileTypeAssociations != null)
-                FTACountLabel.Text = "Count: " + RemoteApp.FileTypeAssociations.Count;
+            _remoteApp = Forms.RemoteAppFileTypeAssociation.EditFileTypes(_remoteApp);
+            if (_remoteApp.FileTypeAssociations != null)
+                FTACountLabel.Text = "Count: " + _remoteApp.FileTypeAssociations.Count;
         }
 
         private void ShortcutStartCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -438,12 +438,12 @@ namespace RemoteApp.Tool.New
 
         private void ServerAddress_TextChanged(object sender, EventArgs e)
         {
-            RemoteAppFunction.ValidateDNSname(ServerAddress);
+            RemoteAppFunction.ValidateDnsName(ServerAddress);
         }
 
         private void AltServerAddress_TextChanged(object sender, EventArgs e)
         {
-            RemoteAppFunction.ValidateDNSname(AltServerAddress);
+            RemoteAppFunction.ValidateDnsName(AltServerAddress);
         }
 
         private void ServerPort_TextChanged(object sender, EventArgs e)
@@ -453,13 +453,13 @@ namespace RemoteApp.Tool.New
 
         private void ResetButton_Click(object sender, EventArgs e)
         {
-            ResetCCWindowSettings();
-            SetCCWindowSettings();
+            ResetCcWindowSettings();
+            SetCcWindowSettings();
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            SaveCCWindowSettings();
+            SaveCcWindowSettings();
         }
 
         private void DisabledFTACheckBox_CheckedChanged(object sender, EventArgs e)

@@ -1,29 +1,30 @@
 ﻿namespace RemoteApp.Tool.New
 {
+    // TODO: This is a workaround that substitutes My folder in VB.NET. These should not be singletons.
     internal static class Forms
     {
-        private static RemoteAppCreateClientConnection remoteAppCreateClientConnection;
-        private static RemoteAppIconPicker remoteAppIconPicker;
-        private static RemoteAppEditWindow remoteAppEditWindow;
-        private static RemoteAppMainWindow remoteAppMainWindow;
-        private static RemoteAppFileTypeAssociation remoteAppFileTypeAssociation;
-        private static RemoteAppHostOptions remoteAppHostOptions;
-        private static RemoteAppAboutWindow remoteAppAboutWindow;
+        private static RemoteAppCreateClientConnection _remoteAppCreateClientConnection;
+        private static RemoteAppIconPicker _remoteAppIconPicker;
+        private static RemoteAppEditWindow _remoteAppEditWindow;
+        private static RemoteAppMainWindow _remoteAppMainWindow;
+        private static RemoteAppFileTypeAssociation _remoteAppFileTypeAssociation;
+        private static RemoteAppHostOptions _remoteAppHostOptions;
+        private static RemoteAppAboutWindow _remoteAppAboutWindow;
 
         internal static RemoteAppAboutWindow RemoteAppAboutWindow =>
-            remoteAppAboutWindow ?? (remoteAppAboutWindow = new RemoteAppAboutWindow());
+            _remoteAppAboutWindow ?? (_remoteAppAboutWindow = new RemoteAppAboutWindow());
 
         internal static RemoteAppHostOptions RemoteAppHostOptions =>
-            remoteAppHostOptions ?? (remoteAppHostOptions = new RemoteAppHostOptions());
+            _remoteAppHostOptions ?? (_remoteAppHostOptions = new RemoteAppHostOptions());
         internal static RemoteAppFileTypeAssociation RemoteAppFileTypeAssociation =>
-            remoteAppFileTypeAssociation ?? (remoteAppFileTypeAssociation = new RemoteAppFileTypeAssociation());
+            _remoteAppFileTypeAssociation ?? (_remoteAppFileTypeAssociation = new RemoteAppFileTypeAssociation());
         internal static RemoteAppMainWindow RemoteAppMainWindow =>
-            remoteAppMainWindow ?? (remoteAppMainWindow = new RemoteAppMainWindow());
+            _remoteAppMainWindow ?? (_remoteAppMainWindow = new RemoteAppMainWindow());
         internal static RemoteAppEditWindow RemoteAppEditWindow =>
-            remoteAppEditWindow ?? (remoteAppEditWindow = new RemoteAppEditWindow());
+            _remoteAppEditWindow ?? (_remoteAppEditWindow = new RemoteAppEditWindow());
         internal static RemoteAppIconPicker RemoteAppIconPicker =>
-            remoteAppIconPicker ?? (remoteAppIconPicker = new RemoteAppIconPicker());
+            _remoteAppIconPicker ?? (_remoteAppIconPicker = new RemoteAppIconPicker());
         internal static RemoteAppCreateClientConnection RemoteAppCreateClientConnection =>
-            remoteAppCreateClientConnection ?? (remoteAppCreateClientConnection = new RemoteAppCreateClientConnection());
+            _remoteAppCreateClientConnection ?? (_remoteAppCreateClientConnection = new RemoteAppCreateClientConnection());
     }
 }

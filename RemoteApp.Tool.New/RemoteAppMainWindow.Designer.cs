@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace RemoteApp.Tool.New
 {
-    public partial class RemoteAppMainWindow : RemoteAppMainWindowBase
+    public partial class RemoteAppMainWindow : Form
     {
 
         // Form overrides dispose to clean up the component list.

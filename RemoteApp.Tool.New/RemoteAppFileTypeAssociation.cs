@@ -16,33 +16,33 @@ namespace RemoteApp.Tool.New
             _SetAssociationButton.Name = "SetAssociationButton";
         }
 
-        private RemoteAppLib.New.RemoteApp RemoteApp = new RemoteAppLib.New.RemoteApp();
+        private RemoteAppLib.New.RemoteApp _remoteApp = new RemoteAppLib.New.RemoteApp();
 
-        public RemoteAppLib.New.RemoteApp EditFileTypes(RemoteAppLib.New.RemoteApp SelectedRemoteApp)
+        public RemoteAppLib.New.RemoteApp EditFileTypes(RemoteAppLib.New.RemoteApp selectedRemoteApp)
         {
-            RemoteApp = SelectedRemoteApp;
-            Text = "File type associations for " + RemoteApp.Name;
+            _remoteApp = selectedRemoteApp;
+            Text = "File type associations for " + _remoteApp.Name;
             HelpSystem.SetupTips(this);
-            LoadFTAs();
+            LoadFtAs();
             ShowDialog();
             //Dispose();
-            return RemoteApp;
+            return _remoteApp;
         }
 
-        private void LoadFTAs()
+        private void LoadFtAs()
         {
             FTAListView.Items.Clear();
-            if (RemoteApp.FileTypeAssociations != null)
+            if (_remoteApp.FileTypeAssociations != null)
             {
-                foreach (RemoteAppLib.New.FileTypeAssociation fta in RemoteApp.FileTypeAssociations)
+                foreach (RemoteAppLib.New.FileTypeAssociation fta in _remoteApp.FileTypeAssociations)
                 {
                     var FTitem = new ListViewItem(fta.Extension);
                     string ftaStatus;
-                    if (LocalFtaModule.DoesFTAExist(fta.Extension))
+                    if (LocalFtaModule.DoesFtaExist(fta.Extension))
                     {
                         // FTA exists - created by another app
                         ftaStatus = "Existing";
-                        if (LocalFtaModule.IsFTAMine(fta.Extension))
+                        if (LocalFtaModule.IsFtaMine(fta.Extension))
                         {
                             // FTA exists - created by RemoteApp Tool
                             ftaStatus = "Yes";
@@ -66,39 +66,39 @@ namespace RemoteApp.Tool.New
 
         private void CreateButton_Click(object sender, EventArgs e)
         {
-            if (RemoteApp.FileTypeAssociations is null)
+            if (_remoteApp.FileTypeAssociations is null)
             {
-                var FTACol = new RemoteAppLib.New.FileTypeAssociationCollection();
-                RemoteApp.FileTypeAssociations = FTACol;
+                var ftaCol = new RemoteAppLib.New.FileTypeAssociationCollection();
+                _remoteApp.FileTypeAssociations = ftaCol;
             }
 
             _ = new RemoteAppLib.New.FileTypeAssociation();
-            RemoteAppLib.New.FileTypeAssociation FTA = Forms.RemoteAppIconPicker.ManageFTA(RemoteApp.IconPath, 0);
-            bool SameFTA = false;
-            if (FTA.Extension != null)
+            var fta = Forms.RemoteAppIconPicker.ManageFta(_remoteApp.IconPath, 0);
+            var sameFta = false;
+            if (fta.Extension != null)
             {
-                foreach (RemoteAppLib.New.FileTypeAssociation RAFTA in RemoteApp.FileTypeAssociations)
+                foreach (RemoteAppLib.New.FileTypeAssociation rafta in _remoteApp.FileTypeAssociations)
                 {
-                    if ((RAFTA.Extension ?? "") == (FTA.Extension ?? ""))
-                        SameFTA = true;
+                    if ((rafta.Extension ?? "") == (fta.Extension ?? ""))
+                        sameFta = true;
                 }
 
-                if (!SameFTA)
+                if (!sameFta)
                 {
-                    RemoteApp.FileTypeAssociations.Add(FTA);
+                    _remoteApp.FileTypeAssociations.Add(fta);
                 }
                 else
                 {
-                    MessageBox.Show("There is already an association for filetype: " + FTA.Extension, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show("There is already an association for filetype: " + fta.Extension, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
             }
 
-            LoadFTAs();
+            LoadFtAs();
         }
 
         private void FTAListView_DoubleClick(object sender, EventArgs e)
         {
-            EditFTA();
+            EditFta();
         }
 
         private void FTAListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -129,48 +129,48 @@ namespace RemoteApp.Tool.New
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            string FileType = FTAListView.SelectedItems[0].Text;
+            var FileType = FTAListView.SelectedItems[0].Text;
             if (MessageBox.Show("Are you sure you want to remove filetype:" + Environment.NewLine + "." + FileType + " ?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 _ = FTAListView.SelectedItems[0].SubItems[0].Text;
                 _ = FTAListView.SelectedItems[0].SubItems[1].Text;
-                var FTAtoRemove = new RemoteAppLib.New.FileTypeAssociation();
-                foreach (RemoteAppLib.New.FileTypeAssociation FTA in RemoteApp.FileTypeAssociations)
+                var ftAtoRemove = new RemoteAppLib.New.FileTypeAssociation();
+                foreach (RemoteAppLib.New.FileTypeAssociation fta in _remoteApp.FileTypeAssociations)
                 {
-                    if ((FTA.Extension ?? "") == (FileType ?? ""))
-                        FTAtoRemove = FTA;
+                    if ((fta.Extension ?? "") == (FileType ?? ""))
+                        ftAtoRemove = fta;
                 }
 
-                RemoteApp.FileTypeAssociations.Remove(FTAtoRemove);
+                _remoteApp.FileTypeAssociations.Remove(ftAtoRemove);
             }
 
-            LoadFTAs();
+            LoadFtAs();
         }
 
         private void EditButton_Click(object sender, EventArgs e)
         {
-            EditFTA();
+            EditFta();
         }
 
-        private void EditFTA()
+        private void EditFta()
         {
             _ = new RemoteAppLib.New.FileTypeAssociation();
-            RemoteAppLib.New.FileTypeAssociation FTA = Forms.RemoteAppIconPicker.ManageFTA(FTAListView.SelectedItems[0].SubItems[1].Text, (int)Math.Round(double.Parse(FTAListView.SelectedItems[0].SubItems[2].Text)), FTAListView.SelectedItems[0].Text, true);
-            if (FTA.Extension != null)
+            var fta = Forms.RemoteAppIconPicker.ManageFta(FTAListView.SelectedItems[0].SubItems[1].Text, (int)Math.Round(double.Parse(FTAListView.SelectedItems[0].SubItems[2].Text)), FTAListView.SelectedItems[0].Text, true);
+            if (fta.Extension != null)
             {
                 _ = FTAListView.SelectedItems[0].SubItems[0].Text;
                 _ = FTAListView.SelectedItems[0].SubItems[1].Text;
-                string FileType = FTAListView.SelectedItems[0].Text;
-                var FTAtoRemove = new RemoteAppLib.New.FileTypeAssociation();
-                foreach (RemoteAppLib.New.FileTypeAssociation FTA2 in RemoteApp.FileTypeAssociations)
+                var FileType = FTAListView.SelectedItems[0].Text;
+                var ftAtoRemove = new RemoteAppLib.New.FileTypeAssociation();
+                foreach (RemoteAppLib.New.FileTypeAssociation fta2 in _remoteApp.FileTypeAssociations)
                 {
-                    if ((FTA2.Extension ?? "") == (FileType ?? ""))
-                        FTAtoRemove = FTA2;
+                    if ((fta2.Extension ?? "") == (FileType ?? ""))
+                        ftAtoRemove = fta2;
                 }
 
-                RemoteApp.FileTypeAssociations.Remove(FTAtoRemove);
-                RemoteApp.FileTypeAssociations.Add(FTA);
-                LoadFTAs();
+                _remoteApp.FileTypeAssociations.Remove(ftAtoRemove);
+                _remoteApp.FileTypeAssociations.Add(fta);
+                LoadFtAs();
             }
         }
 
@@ -182,17 +182,17 @@ namespace RemoteApp.Tool.New
                 IconPath = FTAListView.SelectedItems[0].SubItems[1].Text,
                 IconIndex = FTAListView.SelectedItems[0].SubItems[2].Text
             };
-            if (LocalFtaModule.DoesFTAExist(fta.Extension))
+            if (LocalFtaModule.DoesFtaExist(fta.Extension))
             {
                 DialogResult MsgBoxResult;
                 // An existing association was found
-                if (!LocalFtaModule.IsFTAMine(fta.Extension))
+                if (!LocalFtaModule.IsFtaMine(fta.Extension))
                 {
                     // FTA found and belongs to another application (replace?)
                     MsgBoxResult = MessageBox.Show("An association already exists on the local computer for filetype. Would you like to replace it?" + Environment.NewLine + Environment.NewLine + "Warning: This association was created by another application. Replacing it can cause problems. If the existing association is working, there is no need to replace it.", "File Type Association", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
                     if (MsgBoxResult == DialogResult.Yes)
-                        LocalFtaModule.CreateFTA(fta, RemoteApp.Path, RemoteApp.Name, true);
+                        LocalFtaModule.CreateFta(fta, _remoteApp.Path, _remoteApp.Name, true);
                 }
                 else
                 {
@@ -200,11 +200,11 @@ namespace RemoteApp.Tool.New
                     MsgBoxResult = MessageBox.Show("Are you sure you want to remove this file type association on the local computer?", "File Type Association", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
                     if (MsgBoxResult == DialogResult.Yes)
-                        LocalFtaModule.DeleteFTA(fta.Extension);
+                        LocalFtaModule.DeleteFta(fta.Extension);
                 }
             }
             // FTA not found (create)
-            else if (LocalFtaModule.CreateFTA(fta, RemoteApp.Path, RemoteApp.Name))
+            else if (LocalFtaModule.CreateFta(fta, _remoteApp.Path, _remoteApp.Name))
             {
                 MessageBox.Show("File type association created for " + fta.Extension + ".", "File Type Association", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -213,7 +213,7 @@ namespace RemoteApp.Tool.New
                 MessageBox.Show("File type association not created. There was an error.", "File Type Association", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            LoadFTAs();
+            LoadFtAs();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)

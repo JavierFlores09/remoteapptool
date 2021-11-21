@@ -2,14 +2,14 @@
 {
     public class RemoteAppCollection : System.Collections.CollectionBase
     {
-        public void Add(RemoteApp RemoteApp)
+        public void Add(RemoteApp remoteApp)
         {
-            List.Add(RemoteApp);
+            List.Add(remoteApp);
         }
 
-        public void Remove(RemoteApp RemoteApp)
+        public void Remove(RemoteApp remoteApp)
         {
-            List.Remove(RemoteApp);
+            List.Remove(remoteApp);
         }
     }
 }

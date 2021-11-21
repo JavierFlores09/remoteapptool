@@ -2,28 +2,27 @@
 {
     public class FileTypeAssociationCollection : System.Collections.CollectionBase
     {
-        public void Add(FileTypeAssociation FileTypeAssociation)
+        public void Add(FileTypeAssociation fileTypeAssociation)
         {
-            List.Add(FileTypeAssociation);
+            List.Add(fileTypeAssociation);
         }
 
-        public void Remove(FileTypeAssociation FileTypeAssociation)
+        public void Remove(FileTypeAssociation fileTypeAssociation)
         {
-            List.Remove(FileTypeAssociation);
+            List.Remove(fileTypeAssociation);
         }
 
         public string GetFlatFileTypes()
         {
-            string GetFlatFileTypesRet = string.Empty;
-            if (List.Count > 0)
-            {
-                foreach (FileTypeAssociation listItem in List)
-                {
-                    GetFlatFileTypesRet = string.Join(",.", listItem.Extension);
-                }
+            var GetFlatFileTypesRet = string.Empty;
+            if (List.Count == 0) return GetFlatFileTypesRet;
 
-                GetFlatFileTypesRet = GetFlatFileTypesRet.Substring(1);
+            foreach (FileTypeAssociation listItem in List)
+            {
+                GetFlatFileTypesRet = string.Join(",.", listItem.Extension);
             }
+
+            GetFlatFileTypesRet = GetFlatFileTypesRet.Substring(1);
 
             return GetFlatFileTypesRet;
         }

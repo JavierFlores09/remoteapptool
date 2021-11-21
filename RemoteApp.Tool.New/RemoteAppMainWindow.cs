@@ -67,7 +67,7 @@ namespace RemoteApp.Tool.New
         public override void ReloadApps()
         {
             AppList.Clear();
-            RemoteAppCollection Apps = new SystemRemoteApps().GetAll();
+            var Apps = new SystemRemoteApps().GetAll();
             foreach (RemoteAppLib.New.RemoteApp App in Apps)
             {
                 SmallIcons.Images.RemoveByKey(App.Name);
@@ -121,10 +121,10 @@ namespace RemoteApp.Tool.New
             }
         }
 
-        private void EditRemoteApp(string AppName)
+        private void EditRemoteApp(string appName)
         {
             var sra = new SystemRemoteApps();
-            Forms.RemoteAppEditWindow.EditRemoteApp(sra.GetApp(AppName));
+            Forms.RemoteAppEditWindow.EditRemoteApp(sra.GetApp(appName));
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
@@ -133,11 +133,11 @@ namespace RemoteApp.Tool.New
             ReloadApps();
         }
 
-        private void DeleteRemoteApp(string AppName)
+        private void DeleteRemoteApp(string appName)
         {
-            if (MessageBox.Show("Are you sure you want to remove " + AppName + "?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure you want to remove " + appName + "?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                new SystemRemoteApps().DeleteApp(AppName);
+                new SystemRemoteApps().DeleteApp(appName);
             }
         }
 
@@ -149,28 +149,28 @@ namespace RemoteApp.Tool.New
 
         // System Menu Code (for about box)
         [DllImport("user32.dll", EntryPoint = "AppendMenuA")]
-        private static extern bool AppendMenu(IntPtr hMenu, int uFlags, IntPtr uIDNewItem, string lpNewItem);
+        private static extern bool AppendMenu(IntPtr hMenu, int uFlags, IntPtr uIdNewItem, string lpNewItem);
         [DllImport("user32.dll")]
         private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
-        private const int MF_STRING = 0x0;
-        private const int MF_SEPARATOR = 0x800;
-        private const int WM_SYSCOMMAND = 0x112;
+        private const int MfString = 0x0;
+        private const int MfSeparator = 0x800;
+        private const int WmSyscommand = 0x112;
 
         private void AddSysMenuItems()
         {
             // Get the System Menus Handle.
             var hSysMenu = GetSystemMenu(Handle, false);
             // Add a standard Separator Item.
-            AppendMenu(hSysMenu, MF_SEPARATOR, (IntPtr)1000, null);
+            AppendMenu(hSysMenu, MfSeparator, (IntPtr)1000, null);
             // Add an About Menu Item.
-            _ = AppendMenu(hSysMenu, MF_STRING, (IntPtr)1001, "About...");
+            _ = AppendMenu(hSysMenu, MfString, (IntPtr)1001, "About...");
         }
 
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
-            if (m.Msg == WM_SYSCOMMAND)
+            if (m.Msg == WmSyscommand)
             {
                 switch (m.WParam.ToInt32())
                 {
@@ -212,7 +212,7 @@ namespace RemoteApp.Tool.New
 
         private void RemoveUnusedFileTypeAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LocalFtaModule.RemoveUnusedFTAs();
+            LocalFtaModule.RemoveUnusedFtAs();
         }
 
         private void NewRemoteAppadvancedToolStripMenuItem_Click(object sender, EventArgs e)
@@ -227,9 +227,9 @@ namespace RemoteApp.Tool.New
             DialogResult = BackupSaveFileDialog.ShowDialog();
             if (DialogResult == DialogResult.OK)
             {
-                const string RemoteAppRegPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";
-                string BackupSavePath = BackupSaveFileDialog.FileName;
-                var StartInfo = new ProcessStartInfo("reg.exe", $"export \"{RemoteAppRegPath}\" \"{BackupSavePath}\" /y")
+                const string remoteAppRegPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";
+                var BackupSavePath = BackupSaveFileDialog.FileName;
+                var StartInfo = new ProcessStartInfo("reg.exe", $"export \"{remoteAppRegPath}\" \"{BackupSavePath}\" /y")
                 {
                     WindowStyle = ProcessWindowStyle.Hidden
                 };

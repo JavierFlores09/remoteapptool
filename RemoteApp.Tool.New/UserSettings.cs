@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Configuration;
 
 namespace RemoteApp.Tool.New
@@ -20,11 +19,11 @@ namespace RemoteApp.Tool.New
 
         public string SavedAltServerAddress { get; set; }
 
-        public bool SavedUseRDGateway { get; set; }
+        public bool SavedUseRdGateway { get; set; }
 
-        public string SavedRDGatewayAddress { get; set; }
+        public string SavedRdGatewayAddress { get; set; }
 
-        public bool SavedAttemptDirectRDGateway { get; set; }
+        public bool SavedAttemptDirectRdGateway { get; set; }
 
         public bool SavedMSIShortcutDesktop { get; set; }
 
@@ -38,11 +37,11 @@ namespace RemoteApp.Tool.New
 
         public bool SavedClientConnectionOptions { get; set; }
 
-        public bool SavedCreateRAWebIcon { get; set; }
+        public bool SavedCreateRaWebIcon { get; set; }
 
         public bool SavedMSIPerUser { get; set; }
 
-        public bool SavedDisableFTA { get; set; }
+        public bool SavedDisableFta { get; set; }
 
         public bool SavedSignRDP { get; set; }
 
@@ -53,10 +52,9 @@ namespace RemoteApp.Tool.New
         public static UserSettings Instance => Lazy.Value;
         private static readonly Lazy<UserSettings> Lazy = new Lazy<UserSettings>(() => new UserSettings());
 
-        private static NameValueCollection userSettingsCollection;
         private UserSettings()
         {
-            userSettingsCollection = ConfigurationManager.AppSettings;
+            var userSettingsCollection = ConfigurationManager.AppSettings;
 
             MainWindowWidth = int.Parse(userSettingsCollection["MainWindowWidth"]);
 
@@ -72,11 +70,11 @@ namespace RemoteApp.Tool.New
 
             SavedAltServerAddress = userSettingsCollection["SavedAltServerAddress"];
 
-            SavedUseRDGateway = bool.Parse(userSettingsCollection["SavedUseRDGateway"]);
+            SavedUseRdGateway = bool.Parse(userSettingsCollection["SavedUseRDGateway"]);
 
-            SavedRDGatewayAddress = userSettingsCollection["SavedRDGatewayAddress"];
+            SavedRdGatewayAddress = userSettingsCollection["SavedRDGatewayAddress"];
 
-            SavedAttemptDirectRDGateway = bool.Parse(userSettingsCollection["SavedAttemptDirectRDGateway"]);
+            SavedAttemptDirectRdGateway = bool.Parse(userSettingsCollection["SavedAttemptDirectRDGateway"]);
 
             SavedMSIShortcutDesktop = bool.Parse(userSettingsCollection["SavedMSIShortcutDesktop"]);
 
@@ -90,11 +88,11 @@ namespace RemoteApp.Tool.New
 
             SavedClientConnectionOptions = bool.Parse(userSettingsCollection["SavedClientConnectionOptions"]);
 
-            SavedCreateRAWebIcon = bool.Parse(userSettingsCollection["SavedCreateRAWebIcon"]);
+            SavedCreateRaWebIcon = bool.Parse(userSettingsCollection["SavedCreateRAWebIcon"]);
 
             SavedMSIPerUser = bool.Parse(userSettingsCollection["SavedMSIPerUser"]);
 
-            SavedDisableFTA = bool.Parse(userSettingsCollection["SavedDisableFTA"]);
+            SavedDisableFta = bool.Parse(userSettingsCollection["SavedDisableFTA"]);
 
             SavedSignRDP = bool.Parse(userSettingsCollection["SavedSignRDP"]);
 
