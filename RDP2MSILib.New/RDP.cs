@@ -21,7 +21,7 @@ namespace RDP2MSIlib.New
             set
             {
                 _rdpFilePath = value;
-                ReadRdPfile();
+                ReadRdpFile();
             }
         }
 
@@ -58,11 +58,11 @@ namespace RDP2MSIlib.New
             // If DestinationPath not defined then set the path to the same as the rdp file
             if (string.IsNullOrEmpty(destinationPath))
             {
-                destinationPath = rdpParentFolder + @"\" + _productBaseFileName + ".msi";
+                destinationPath = $@"{rdpParentFolder}\{_productBaseFileName}.msi";
             }
 
             // Set iconpath (whether it exists or not)
-            var IconFilePath = rdpParentFolder + @"\" + _productBaseFileName + ".ico";
+            var IconFilePath = $@"{rdpParentFolder}\{_productBaseFileName}.ico";
 
             // Check for icon, set "HasIcon" to true if found
             _hasIcon = File.Exists(IconFilePath);
@@ -73,15 +73,15 @@ namespace RDP2MSIlib.New
 
             // Define wix temp file paths
             var TempPath = Environment.GetEnvironmentVariable("TEMP");
-            var wxsPath = TempPath + @"\" + _productBaseFileName + ".wxs";
-            var wixobjPath = TempPath + @"\" + _productBaseFileName + ".wixobj";
-            var wixpdbPath = TempPath + @"\" + _productBaseFileName + ".wixpdb";
-            var msiPath = TempPath + @"\" + _productBaseFileName + ".msi";
-            var rdpTempPath = TempPath + @"\" + _productBaseFileName + ".rdp";
-            var icoTempPath = TempPath + @"\" + _productBaseFileName + ".ico";
+            var wxsPath = $@"{TempPath}\{_productBaseFileName}.wxs";
+            var wixobjPath = $@"{TempPath}\{_productBaseFileName}.wixobj";
+            var wixpdbPath = $@"{TempPath}\{_productBaseFileName}.wixpdb";
+            var msiPath = $@"{TempPath}\{_productBaseFileName}.msi";
+            var rdpTempPath = $@"{TempPath}\{_productBaseFileName}.rdp";
+            var icoTempPath = $@"{TempPath}\{_productBaseFileName}.ico";
 
             // Define temp files to delete
-            var FilesToDelete = new List<string>(new string[] { wxsPath, wixobjPath, wixpdbPath });
+            var FilesToDelete = new List<string>(new[] { wxsPath, wixobjPath, wixpdbPath });
             var LockCheck = new LockChecker.New.LockChecker();
             string FileLocked;
             var SkipFile = false;
@@ -103,7 +103,7 @@ namespace RDP2MSIlib.New
                     }
                     else
                     {
-                        MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{rdpTempPath}");
+                        _ = MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{rdpTempPath}");
                         SkipFile = true;
                         FileLocked = "No locks";
                     }
@@ -126,7 +126,7 @@ namespace RDP2MSIlib.New
                         }
                         else
                         {
-                            MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{icoTempPath}");
+                            _ = MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{icoTempPath}");
                             SkipFile = true;
                             FileLocked = "No locks";
                         }
@@ -143,8 +143,8 @@ namespace RDP2MSIlib.New
 
             // Save WXS file containing generated WXS string
             File.WriteAllText(wxsPath, GenerateWxsString());
-            var CandlePath = Path.Combine(WixPath(), "candle.exe ");
-            var LightPath = Path.Combine(WixPath(), "light.exe ");
+            var CandlePath = Path.Combine(GetWixPath(), "candle.exe ");
+            var LightPath = Path.Combine(GetWixPath(), "light.exe ");
 
             // Run Candle.exe and Light.exe to process wxs file
             var CandleExitCode = RunWait(CandlePath, $"-out \"{wixobjPath}\" \"{wxsPath}\"");
@@ -186,10 +186,10 @@ namespace RDP2MSIlib.New
 
         public bool WixInstalled()
         {
-            return !string.IsNullOrEmpty(WixPath());
+            return !string.IsNullOrEmpty(GetWixPath());
         }
 
-        private string WixPath()
+        private static string GetWixPath()
         {
             const string searchExe = "candle.exe";
             if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WIX")))
@@ -213,9 +213,8 @@ namespace RDP2MSIlib.New
             foreach (var dFile in filesToDelete)
             {
                 var LockCheck = new LockChecker.New.LockChecker();
-                string FileLocked;
                 var SkipFile = false;
-                FileLocked = LockCheck.CheckLock(dFile);
+                var FileLocked = LockCheck.CheckLock(dFile);
                 while (FileLocked != "No locks")
                 {
                     if (MessageBox.Show($"The file {dFile} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -237,7 +236,7 @@ namespace RDP2MSIlib.New
             }
         }
 
-        private void ReadRdPfile()
+        private void ReadRdpFile()
         {
             // Check if RDP file exists
             if (!File.Exists(_rdpFilePath))
@@ -281,7 +280,7 @@ namespace RDP2MSIlib.New
             // random or generated - maybe allow caller to define?
 
             // Check if ProductUpgradeRandom is true, create a random productcode if so, otherwise generate it from the productname
-            return ProductUpgradeRandom ? GenerateGuiDfromString(new Random().Next().ToString()) : GenerateGuiDfromString(_productName);
+            return ProductUpgradeRandom ? GenerateGuidFromString(new Random().Next().ToString()) : GenerateGuidFromString(_productName);
         }
 
         public string MakeProgId(string appName)
@@ -303,9 +302,9 @@ namespace RDP2MSIlib.New
                 RegRoot = "HKCU";
             }
 
-            var AppFilesGuid = GenerateGuiDfromString($"AppFiles{ProductUpgradeCode()}");
-            var AppStartShortcutsGuid = GenerateGuiDfromString($"AppStartShortcuts{ProductUpgradeCode()}");
-            var AppDeskShortcutsGuid = GenerateGuiDfromString($"AppDeskShortcuts{ProductUpgradeCode()}");
+            var AppFilesGuid = GenerateGuidFromString($"AppFiles{ProductUpgradeCode()}");
+            var AppStartShortcutsGuid = GenerateGuidFromString($"AppStartShortcuts{ProductUpgradeCode()}");
+            var AppDeskShortcutsGuid = GenerateGuidFromString($"AppDeskShortcuts{ProductUpgradeCode()}");
             var progId = MakeProgId(_productBaseFileName);
             var wxsString = new StringBuilder();
             wxsString.AppendLine("<?xml version=\"1.0\"?>");
@@ -325,7 +324,7 @@ namespace RDP2MSIlib.New
 
             if (!string.IsNullOrEmpty(ProductRemoteTag))
             {
-                ProductRemoteTag = " (" + ProductRemoteTag + ")";
+                ProductRemoteTag = $" ({ProductRemoteTag})";
             }
 
             wxsString.Append("<?define ProductRemoteTag = \"").Append(ProductRemoteTag).AppendLine("\"?>");
@@ -333,14 +332,7 @@ namespace RDP2MSIlib.New
             wxsString.AppendLine("   <Product Id=\"*\" UpgradeCode=\"$(var.ProductUpgradeCode)\" ");
             wxsString.AppendLine("            Name=\"$(var.ProductName)$(var.ProductRemoteTag)\" Version=\"$(var.ProductVersion)\" Manufacturer=\"$(var.ProductPublisher)\" Language=\"1033\">");
             wxsString.Append("      <Package InstallerVersion=\"200\" Compressed=\"yes\" Comments=\"Windows Installer Package\"");
-            if (!PerUser)
-            {
-                wxsString.Append(" InstallScope=\"perMachine\"");
-            }
-            else
-            {
-                wxsString.Append(" InstallPrivileges=\"limited\"");
-            }
+            wxsString.Append(!PerUser ? " InstallScope=\"perMachine\"" : " InstallPrivileges=\"limited\"");
 
             wxsString.AppendLine("/>");
             wxsString.AppendLine("      <Media Id=\"1\" Cabinet=\"rdp2msi.cab\" EmbedCab=\"yes\"/>");
@@ -357,14 +349,9 @@ namespace RDP2MSIlib.New
             wxsString.AppendLine("      <Condition Message=\"A newer version of this software is already installed.\">NOT NEWERVERSIONDETECTED</Condition>");
             wxsString.AppendLine("      <Property Id=\"MstscProperty\" Value=\"mstsc.exe\"/>");
             wxsString.AppendLine("      <Directory Id=\"TARGETDIR\" Name=\"SourceDir\">");
-            if (!PerUser)
-            {
-                wxsString.AppendLine("         <Directory Id=\"ProgramFilesFolder\">");
-            }
-            else
-            {
-                wxsString.AppendLine("         <Directory Id=\"LocalAppDataFolder\">");
-            }
+            wxsString.AppendLine(!PerUser
+                ? "         <Directory Id=\"ProgramFilesFolder\">"
+                : "         <Directory Id=\"LocalAppDataFolder\">");
 
             wxsString.AppendLine("            <Directory Id=\"INSTALLDIR\" Name=\"RemotePackages\">");
             wxsString.AppendLine("               <Component Id=\"ApplicationFiles\" Guid=\"$(var.AppFilesGuid)\">");
@@ -384,7 +371,6 @@ namespace RDP2MSIlib.New
                     wxsString.AppendLine("                <Verb Id=\"open\" Command=\"Open\" TargetProperty='MstscProperty' Argument='/REMOTEFILE:\"%1\" \"[INSTALLDIR]$(var.ProductBaseFileName).rdp\"' />");
                     wxsString.AppendLine("                </Extension>");
                     wxsString.AppendLine("                </ProgId>");
-                    // wxsString += "                 <RegistryValue Root=""$(var.RegRoot)"" Key=""SOFTWARE\Classes\remote.$(var.ProductProgID)." & FileType & "file"" Name=""FriendlyTypeName"" Value=""$(var.ProductName) " & FileType & " file"" Type=""string"" />"
                 }
             }
             // # End FTA code
@@ -500,7 +486,7 @@ namespace RDP2MSIlib.New
             return rdpValue;
         }
 
-        private string GenerateGuiDfromString(string theString)
+        private string GenerateGuidFromString(string theString)
         {
             var TheHash = GetMd5Hash(theString);
             var MyGuid = new Guid(TheHash);
@@ -510,7 +496,7 @@ namespace RDP2MSIlib.New
         private string GetMd5Hash(string strToHash)
         {
             var md5Obj = new System.Security.Cryptography.MD5CryptoServiceProvider();
-            var bytesToHash = System.Text.Encoding.ASCII.GetBytes(strToHash);
+            var bytesToHash = Encoding.ASCII.GetBytes(strToHash);
             bytesToHash = md5Obj.ComputeHash(bytesToHash);
             var strResult = "";
             foreach (var b in bytesToHash)
