@@ -76,9 +76,9 @@ namespace RDP2MSI.New
                 LogText("Error: Unable to find RDP file: " + rdpFilePath, true);
             if (!rdpFilePath.EndsWith(".rdp", StringComparison.OrdinalIgnoreCase))
                 LogText("Error: Input file must be an RDP file.", true);
-            var RDP = new RDP2MSIlib.RDP
+            var RDP = new RDP2MSIlib.New.RDP
             {
-                rdpPath = rdpFilePath
+                RDPFilePath = rdpFilePath
             };
             if (!RDP.WixInstalled())
                 LogText("Error: WiX Toolset not found. If you have just installed it, please reboot and try again.", true);

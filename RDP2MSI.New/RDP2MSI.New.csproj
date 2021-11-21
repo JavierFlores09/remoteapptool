@@ -39,9 +39,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RDP2MSILib\RDP2MSILib.vbproj">
-      <Project>{e1cb5f9c-230f-4967-8f19-335f8e4a4906}</Project>
-      <Name>RDP2MSILib</Name>
+    <ProjectReference Include="..\RDP2MSILib.New\RDP2MSILib.New.csproj">
+      <Project>{e18cf70f-e4f6-4a05-a58b-41cf7d98bf8b}</Project>
+      <Name>RDP2MSILib.New</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

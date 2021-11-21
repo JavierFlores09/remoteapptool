@@ -56,7 +56,7 @@ namespace RemoteApp.Tool.New
                 CreateRAWebIcon.Enabled = RDPRadioButton.Checked;
             }
 
-            var wx = new RDP2MSIlib.RDP();
+            var wx = new RDP2MSIlib.New.RDP();
             if (!wx.WixInstalled())
             {
                 RDPRadioButton.Checked = true;
@@ -302,9 +302,9 @@ namespace RemoteApp.Tool.New
             else
             {
                 // !!!!!!!  If it's an MSI
-                var RDP = new RDP2MSIlib.RDP();
+                var RDP = new RDP2MSIlib.New.RDP();
                 CreateRDPFile(RDPPath, RemoteApp);
-                RDP.rdpPath = RDPPath;
+                RDP.RDPFilePath = RDPPath;
                 RDP.ShortcutOnDesktop = ShortcutDesktopCheckBox.Checked;
                 RDP.ShortcutInStart = ShortcutStartCheckBox.Checked;
                 RDP.ShortcutSubfolderInStart = SubfolderRadioButton.Checked;
