@@ -64,7 +64,7 @@ namespace RemoteApp.Tool.New
             ReloadApps();
         }
 
-        public override void ReloadApps()
+        public void ReloadApps()
         {
             AppList.Clear();
             var Apps = new SystemRemoteApps().GetAll();
