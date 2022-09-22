@@ -59,7 +59,8 @@ namespace RemoteApp.Tool
             if (rx.IsMatch(theTextBox.Text))
             {
                 theTextBox.Text = rx.Replace(theTextBox.Text, "");
-                theTextBox.Select(cloc - 1, 0);
+                // Clamp: stripping a character at index 0 would call Select(-1, 0)
+                theTextBox.Select(Math.Max(cloc - 1, 0), 0);
             }
             else
             {
@@ -166,3 +167,4 @@ namespace RemoteApp.Tool
         }
     }
 }
+
