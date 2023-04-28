@@ -7,6 +7,7 @@ namespace RemoteApp.Tool
 {
     public partial class RemoteAppEditWindow
     {
+        private readonly SystemRemoteApps sra;
         public RemoteAppEditWindow()
         {
             InitializeComponent();
@@ -18,6 +19,8 @@ namespace RemoteApp.Tool
             _IconResetButton.Name = "IconResetButton";
             _IconIndexText.Name = "IconIndexText";
             _BrowsePath.Name = "BrowsePath";
+
+            sra = new SystemRemoteApps();
         }
 
         private RemoteAppLib.RemoteApp _remoteApp = new RemoteAppLib.RemoteApp();
@@ -154,11 +157,10 @@ namespace RemoteApp.Tool
 
         private void SaveRemoteApp(string shortName, string fullName, string path, string vPath, string commandLine, int commandLineSetting, string iconPath, int iconIndex, int showInTswa)
         {
-            var SysApps = new SystemRemoteApps();
             if (_remoteApp.Name != null && Text != "New RemoteApp")
             {
                 if ((_remoteApp.Name ?? "") != (shortName ?? ""))
-                    SysApps.RenameApp(_remoteApp.Name, shortName);
+                    sra.RenameApp(_remoteApp.Name, shortName);
             }
 
             _remoteApp.Name = shortName;
@@ -170,7 +172,7 @@ namespace RemoteApp.Tool
             _remoteApp.CommandLine = commandLine;
             _remoteApp.CommandLineOption = commandLineSetting;
             _remoteApp.TSWA = showInTswa != 0;
-            SysApps.SaveApp(_remoteApp);
+            sra.SaveApp(_remoteApp);
         }
 
         private bool DoesAppExist(string appName)

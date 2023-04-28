@@ -10,6 +10,8 @@ namespace RemoteApp.Tool
 {
     public partial class RemoteAppMainWindow
     {
+        private readonly SystemRemoteApps sra;
+
         public RemoteAppMainWindow()
         {
             InitializeComponent();
@@ -25,6 +27,7 @@ namespace RemoteApp.Tool
             _BackupAllRemoteAppsToolStripMenuItem.Name = "BackupAllRemoteAppsToolStripMenuItem";
             _WebsiteToolStripMenuItem.Name = "WebsiteToolStripMenuItem";
             _AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
+            sra = new SystemRemoteApps();
         }
 
         private void RemoteAppMainWindow_Disposed(object sender, EventArgs e)
@@ -39,7 +42,7 @@ namespace RemoteApp.Tool
 
         private void RemoteAppMainWindow_Load(object sender, EventArgs e)
         {
-            new SystemRemoteApps().Init();
+            sra.Init();
             try
             {
                 IconModule.TestIconLib();
@@ -67,17 +70,16 @@ namespace RemoteApp.Tool
         public void ReloadApps()
         {
             AppList.Clear();
-            var Apps = new SystemRemoteApps().GetAll();
+            var Apps = sra.GetAll();
             foreach (RemoteAppLib.RemoteApp App in Apps)
             {
                 SmallIcons.Images.RemoveByKey(App.Name);
-                Image TheBitmap = RemoteAppFunction.GetAppBitmap(App.Name);
                 var AppItem = new ListViewItem(App.Name)
                 {
                     ToolTipText = App.FullName,
                     ImageIndex = 0
                 };
-                SmallIcons.Images.Add(App.Name, TheBitmap);
+                SmallIcons.Images.Add(App.Name, RemoteAppFunction.GetAppBitmap(App.Name));
                 AppItem.ImageKey = App.Name;
                 AppList.Items.Add(AppItem);
             }
@@ -123,7 +125,6 @@ namespace RemoteApp.Tool
 
         private void EditRemoteApp(string appName)
         {
-            var sra = new SystemRemoteApps();
             Forms.RemoteAppEditWindow.EditRemoteApp(sra.GetApp(appName));
         }
 
@@ -137,7 +138,7 @@ namespace RemoteApp.Tool
         {
             if (MessageBox.Show("Are you sure you want to remove " + appName + "?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                new SystemRemoteApps().DeleteApp(appName);
+                sra.DeleteApp(appName);
             }
         }
 
@@ -185,7 +186,6 @@ namespace RemoteApp.Tool
 
         private void CreateClientConnection_Click(object sender, EventArgs e)
         {
-            var sra = new SystemRemoteApps();
             Forms.RemoteAppCreateClientConnection.CreateClientConnection(sra.GetApp(AppList.SelectedItems[0].Text));
         }
 

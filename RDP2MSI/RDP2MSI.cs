@@ -20,7 +20,7 @@ namespace RDP2MSI
                 case 1:
                     cmdRdpPath = args[0];
                     break;
-                case 2 when args[0].StartsWith("/"):
+                case 2 when args[0].StartsWith("/", StringComparison.Ordinal):
                     cmdSwitches = args[0];
                     cmdRdpPath = args[1];
                     break;
@@ -39,10 +39,9 @@ namespace RDP2MSI
                 }
             }
 
-            var relCmdRdpPath = Path.Combine(Directory.GetCurrentDirectory(), cmdRdpPath);
-            if (!cmdRdpPath.Contains(":"))
+            if (cmdRdpPath.IndexOf(':') == -1)
             {
-                cmdRdpPath = relCmdRdpPath;
+                cmdRdpPath = Path.Combine(Directory.GetCurrentDirectory(), cmdRdpPath);
             }
 
             if (!File.Exists(cmdRdpPath))
@@ -120,10 +119,10 @@ namespace RDP2MSI
             }
 
             LogText("Command line switches: " + cmdSwitches.ToUpper());
-            RDP.ShortcutInStart = cmdSwitches.Contains("S");
-            RDP.ShortcutOnDesktop = cmdSwitches.Contains("D");
-            RDP.ShortcutSubfolderInStart = !cmdSwitches.Contains("N");
-            var ShortcutLocations = new List<string>();
+            RDP.ShortcutInStart = cmdSwitches.IndexOf("S", StringComparison.OrdinalIgnoreCase) != -1;
+            RDP.ShortcutOnDesktop = cmdSwitches.IndexOf("D", StringComparison.OrdinalIgnoreCase) != -1;
+            RDP.ShortcutSubfolderInStart = cmdSwitches.IndexOf("N", StringComparison.OrdinalIgnoreCase) == -1;
+            var ShortcutLocations = new List<string>(10);
             if (RDP.ShortcutInStart)
             {
                 ShortcutLocations.Add(
@@ -137,15 +136,15 @@ namespace RDP2MSI
 
             LogText("Shortcut locations: " + string.Join(", ", ShortcutLocations));
 
-            RDP.ProductUpgradeRandom = !cmdSwitches.Contains("A");
+            RDP.ProductUpgradeRandom = cmdSwitches.IndexOf("A", StringComparison.OrdinalIgnoreCase) == -1;
             LogText($"MSI upgrade code: {RDP.ProductUpgradeCode()}");
 
-            if (cmdSwitches.Contains("T"))
+            if (cmdSwitches.IndexOf("T", StringComparison.OrdinalIgnoreCase) != -1)
             {
                 RDP.ProductRemoteTag = string.Empty;
             }
 
-            RDP.PerUser = cmdSwitches.Contains("U");
+            RDP.PerUser = cmdSwitches.IndexOf("U", StringComparison.OrdinalIgnoreCase) != -1;
             LogText(RDP.PerUser ? "MSI install context: User" : "MSI install context: Machine");
 
             var ShortcutTag = "NONE";

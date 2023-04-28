@@ -85,14 +85,13 @@ namespace RDPFileLib
 
         public void SaveRdpFile(string filePath, bool saveDefaultSettings = false)
         {
-            var LockCheck = new LockChecker.LockChecker();
             var SkipFile = false;
-            var FileLocked = LockCheck.CheckLock(filePath);
+            var FileLocked = LockChecker.LockChecker.CheckLock(filePath);
             while (FileLocked != "No locks")
             {
                 if (MessageBox.Show($"The file {filePath} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    FileLocked = LockCheck.CheckLock(filePath);
+                    FileLocked = LockChecker.LockChecker.CheckLock(filePath);
                 }
                 else
                 {
@@ -110,7 +109,7 @@ namespace RDPFileLib
 
         public string GetRdpString(bool saveDefaultSettings = false)
         {
-            var rdpString = new StringBuilder();
+            var rdpString = new StringBuilder(100);
             var DefaultRDP = new RDPFile();
             if (saveDefaultSettings || DefaultRDP.AdministrativeSession != AdministrativeSession)
             {

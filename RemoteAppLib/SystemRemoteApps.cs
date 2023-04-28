@@ -49,7 +49,7 @@ namespace RemoteAppLib
             App.CommandLine = (string)AppKey.GetValue("RequiredCommandLine", string.Empty);
             App.CommandLineOption = int.Parse(AppKey.GetValue("CommandLineSetting", "1").ToString());
             App.IconPath = (string)AppKey.GetValue("IconPath", string.Empty);
-            App.IconIndex = int.Parse(AppKey.GetValue("IconIndex", 0).ToString());        
+            App.IconIndex = int.Parse(AppKey.GetValue("IconIndex", 0).ToString());
             App.TSWA = AppKey.GetValue("ShowInTSWA", 0) != null && int.Parse(AppKey.GetValue("ShowInTSWA", 0).ToString()) == 1;
 
             var ftaKey = AppKey.OpenSubKey("Filetypes");

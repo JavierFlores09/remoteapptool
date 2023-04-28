@@ -67,7 +67,7 @@ namespace RemoteApp.Tool
             }
         }
 
-        public static object FixShortAppName(string theText)
+        public static string FixShortAppName(string theText)
         {
             if (string.IsNullOrEmpty(theText)) return theText.Trim();
             var rx = new Regex(@"[^\p{L}0-9\-_"" ""]");
@@ -102,10 +102,9 @@ namespace RemoteApp.Tool
             // FIX : Potential exception.
             var appKey = $@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications\{remoteAppShortName}";
             var registryKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(appKey);
-            var icon = IconModule.ReturnIcon("", 0).ToBitmap();
             if (registryKey is null)
             {
-                return icon;
+                return IconModule.ReturnIcon("", 0).ToBitmap();
             }
             var iconPath = registryKey.GetValue("IconPath", "");
             var iconIndex = (int)registryKey.GetValue("IconIndex", "");
@@ -124,16 +123,15 @@ namespace RemoteApp.Tool
         {
             foreach (var dFile in filesArray)
             {
-                var lockCheck = new LockChecker.LockChecker();
                 var skipFile = false;
-                var fileLocked = lockCheck.CheckLock(dFile);
+                var fileLocked = LockChecker.LockChecker.CheckLock(dFile);
                 while (fileLocked != "No locks")
                 {
                     var message = $"The file {dFile} is currently locked. Lock information: {fileLocked}{Environment.NewLine}Do you want to try again?";
                     if (MessageBox.Show(message, "File Locked", MessageBoxButtons.YesNo)
                         == DialogResult.Yes)
                     {
-                        fileLocked = lockCheck.CheckLock(dFile);
+                        fileLocked = LockChecker.LockChecker.CheckLock(dFile);
                     }
                     else
                     {

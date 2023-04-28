@@ -4,9 +4,9 @@
 
 namespace LockChecker
 {
-    public class LockChecker
+    public static class LockChecker
     {
-        public string CheckLock(string fileName)
+        public static string CheckLock(string fileName)
         {
             return LockCheckType.LockCheck(fileName);
         }

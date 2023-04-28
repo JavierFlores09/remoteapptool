@@ -68,8 +68,8 @@ namespace RDP2MSIlib
             _hasIcon = File.Exists(IconFilePath);
 
             // Get RemoteApp names (short and full) from RDP file contents
-            var RemoteAppFullName = ReadRDPProperty("remoteapplicationname");
-            var RemoteAppShortName = ReadRDPProperty("remoteapplicationprogram");
+            //var RemoteAppFullName = ReadRDPProperty("remoteapplicationname");
+            //var RemoteAppShortName = ReadRDPProperty("remoteapplicationprogram");
 
             // Define wix temp file paths
             var TempPath = Environment.GetEnvironmentVariable("TEMP");
@@ -77,12 +77,9 @@ namespace RDP2MSIlib
             var wixobjPath = $@"{TempPath}\{_productBaseFileName}.wixobj";
             var wixpdbPath = $@"{TempPath}\{_productBaseFileName}.wixpdb";
             var msiPath = $@"{TempPath}\{_productBaseFileName}.msi";
-            var rdpTempPath = $@"{TempPath}\{_productBaseFileName}.rdp";
-            var icoTempPath = $@"{TempPath}\{_productBaseFileName}.ico";
 
             // Define temp files to delete
             var FilesToDelete = new List<string>(new[] { wxsPath, wixobjPath, wixpdbPath });
-            var LockCheck = new LockChecker.LockChecker();
             string FileLocked;
             var SkipFile = false;
             // Check if rdp file is already in TEMP folder
@@ -94,16 +91,16 @@ namespace RDP2MSIlib
             // if RDP file not in temp, copy to temp
             if (!_rdpInTemp)
             {
-                FileLocked = LockCheck.CheckLock(rdpTempPath);
+                FileLocked = LockChecker.LockChecker.CheckLock($@"{TempPath}\{_productBaseFileName}.rdp");
                 while (FileLocked != "No locks")
                 {
-                    if (MessageBox.Show($"The file {rdpTempPath} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MessageBox.Show($"The file {$@"{TempPath}\{_productBaseFileName}.rdp"} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        FileLocked = LockCheck.CheckLock(rdpTempPath);
+                        FileLocked = LockChecker.LockChecker.CheckLock($@"{TempPath}\{_productBaseFileName}.rdp");
                     }
                     else
                     {
-                        _ = MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{rdpTempPath}");
+                        _ = MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{$@"{TempPath}\{_productBaseFileName}.rdp"}");
                         SkipFile = true;
                         FileLocked = "No locks";
                     }
@@ -111,22 +108,22 @@ namespace RDP2MSIlib
 
                 if (!SkipFile)
                 {
-                    File.Copy(_rdpFilePath, rdpTempPath, true);
+                    File.Copy(_rdpFilePath, $@"{TempPath}\{_productBaseFileName}.rdp", true);
                 }
 
-                FilesToDelete.Add(rdpTempPath);
+                FilesToDelete.Add($@"{TempPath}\{_productBaseFileName}.rdp");
                 if (_hasIcon)
                 {
-                    FileLocked = LockCheck.CheckLock(icoTempPath);
+                    FileLocked = LockChecker.LockChecker.CheckLock($@"{TempPath}\{_productBaseFileName}.ico");
                     while (FileLocked != "No locks")
                     {
-                        if (MessageBox.Show($"The file {icoTempPath} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        if (MessageBox.Show($"The file {$@"{TempPath}\{_productBaseFileName}.ico"} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            FileLocked = LockCheck.CheckLock(icoTempPath);
+                            FileLocked = LockChecker.LockChecker.CheckLock($@"{TempPath}\{_productBaseFileName}.ico");
                         }
                         else
                         {
-                            _ = MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{icoTempPath}");
+                            _ = MessageBox.Show($"The following file will not be deleted:{Environment.NewLine}{$@"{TempPath}\{_productBaseFileName}.ico"}");
                             SkipFile = true;
                             FileLocked = "No locks";
                         }
@@ -134,10 +131,10 @@ namespace RDP2MSIlib
 
                     if (!SkipFile)
                     {
-                        File.Copy(IconFilePath, icoTempPath, true);
+                        File.Copy(IconFilePath, $@"{TempPath}\{_productBaseFileName}.ico", true);
                     }
 
-                    FilesToDelete.Add(icoTempPath);
+                    FilesToDelete.Add($@"{TempPath}\{_productBaseFileName}.ico");
                 }
             }
 
@@ -161,12 +158,12 @@ namespace RDP2MSIlib
             }
 
             // Move MSI file to destination and delete temp files
-            FileLocked = LockCheck.CheckLock(destinationPath);
+            FileLocked = LockChecker.LockChecker.CheckLock(destinationPath);
             while (FileLocked != "No locks")
             {
                 if (MessageBox.Show($"The file {destinationPath} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    FileLocked = LockCheck.CheckLock(destinationPath);
+                    FileLocked = LockChecker.LockChecker.CheckLock(destinationPath);
                 }
                 else
                 {
@@ -208,18 +205,17 @@ namespace RDP2MSIlib
             return string.Empty;
         }
 
-        private void DeleteFiles(List<string> filesToDelete)
+        private static void DeleteFiles(List<string> filesToDelete)
         {
             foreach (var dFile in filesToDelete)
             {
-                var LockCheck = new LockChecker.LockChecker();
                 var SkipFile = false;
-                var FileLocked = LockCheck.CheckLock(dFile);
+                var FileLocked = LockChecker.LockChecker.CheckLock(dFile);
                 while (FileLocked != "No locks")
                 {
                     if (MessageBox.Show($"The file {dFile} is currently locked.  Lock information:{FileLocked}{Environment.NewLine}Do you want to try again?", "File Locked", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        FileLocked = LockCheck.CheckLock(dFile);
+                        FileLocked = LockChecker.LockChecker.CheckLock(dFile);
                     }
                     else
                     {
@@ -305,8 +301,7 @@ namespace RDP2MSIlib
             var AppFilesGuid = GenerateGuidFromString($"AppFiles{ProductUpgradeCode()}");
             var AppStartShortcutsGuid = GenerateGuidFromString($"AppStartShortcuts{ProductUpgradeCode()}");
             var AppDeskShortcutsGuid = GenerateGuidFromString($"AppDeskShortcuts{ProductUpgradeCode()}");
-            var progId = MakeProgId(_productBaseFileName);
-            var wxsString = new StringBuilder();
+            var wxsString = new StringBuilder(400);
             wxsString.AppendLine("<?xml version=\"1.0\"?>");
             wxsString.Append("<?define ProductVersion = \"").Append(ProductVersion).AppendLine("\"?>");
             wxsString.Append("<?define ProductUpgradeCode = \"").Append(ProductUpgradeCode()).AppendLine("\"?>");
@@ -319,7 +314,7 @@ namespace RDP2MSIlib
             wxsString.Append("<?define RegRoot = \"").Append(RegRoot).AppendLine("\"?>");
             if (!string.IsNullOrEmpty(FlatFileTypes))
             {
-                wxsString.Append("<?define ProductProgID = \"").Append(progId).AppendLine("\"?>");
+                wxsString.Append("<?define ProductProgID = \"").Append(MakeProgId(_productBaseFileName)).AppendLine("\"?>");
             }
 
             if (!string.IsNullOrEmpty(ProductRemoteTag))
@@ -438,7 +433,7 @@ namespace RDP2MSIlib
             wxsString.AppendLine("      <InstallExecuteSequence>");
             wxsString.AppendLine("         <RemoveExistingProducts After=\"InstallValidate\"/>");
             wxsString.AppendLine("      </InstallExecuteSequence>");
-            wxsString.AppendLine(" ");
+            wxsString.Append(' ').AppendLine();
             wxsString.AppendLine("      <Feature Id=\"DefaultFeature\" Level=\"1\">");
             wxsString.AppendLine("         <ComponentRef Id=\"ApplicationFiles\"/>");
             if (ShortcutInStart)
@@ -486,28 +481,30 @@ namespace RDP2MSIlib
             return rdpValue;
         }
 
-        private string GenerateGuidFromString(string theString)
+        private static string GenerateGuidFromString(string theString)
         {
             var TheHash = GetMd5Hash(theString);
             var MyGuid = new Guid(TheHash);
             return MyGuid.ToString();
         }
 
-        private string GetMd5Hash(string strToHash)
+        private static string GetMd5Hash(string strToHash)
         {
-            var md5Obj = new System.Security.Cryptography.MD5CryptoServiceProvider();
-            var bytesToHash = Encoding.ASCII.GetBytes(strToHash);
-            bytesToHash = md5Obj.ComputeHash(bytesToHash);
-            var strResult = "";
-            foreach (var b in bytesToHash)
+            using (var md5Obj = new System.Security.Cryptography.MD5CryptoServiceProvider())
             {
-                strResult += b.ToString("x2");
-            }
+                var bytesToHash = Encoding.ASCII.GetBytes(strToHash);
+                bytesToHash = md5Obj.ComputeHash(bytesToHash);
+                var strResult = "";
+                foreach (var b in bytesToHash)
+                {
+                    strResult += b.ToString("x2");
+                }
 
-            return strResult;
+                return strResult;
+            }
         }
 
-        private int RunWait(string app, string parameters)
+        private static int RunWait(string app, string parameters)
         {
             var proc = new Process();
             proc.StartInfo.CreateNoWindow = true;

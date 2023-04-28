@@ -24,7 +24,7 @@ namespace RemoteApp.Tool
         [DllImport("user32")]
         private static extern int DestroyIcon(int hIcon);
 
-        private int[] _mHIcons;
+        private readonly int[] _mHIcons;
 
         ~IconExtractor()
         {
@@ -35,7 +35,7 @@ namespace RemoteApp.Tool
 
         public List<Icon> ExtractIcons(string filePath, IntPtr hInst)
         {
-            var listIcons = new List<Icon>();
+            var listIcons = new List<Icon>(10);
             try
             {
                 var argphiconLarge = 0;
