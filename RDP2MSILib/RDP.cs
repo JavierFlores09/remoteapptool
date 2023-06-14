@@ -193,11 +193,12 @@ namespace RDP2MSIlib
             {
                 return $"{Environment.GetEnvironmentVariable("WIX")}bin";
             }
-            else if (Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wix", searchExe)))
+            // candle.exe is a file, not a directory
+            else if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wix", searchExe)))
             {
                 return Path.Combine(Directory.GetCurrentDirectory(), "wix");
             }
-            else if (Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wix", "bin", searchExe)))
+            else if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wix", "bin", searchExe)))
             {
                 return Path.Combine(Directory.GetCurrentDirectory(), "wix", "bin");
             }
@@ -517,4 +518,5 @@ namespace RDP2MSIlib
         }
     }
 }
+
 
