@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -82,7 +82,8 @@ namespace RemoteApp.Tool
         public static void ValidateDnsName(TextBox theTextBox)
         {
             // pattern matches any character that is NOT A-Z (allows upper and lower case alphabets)
-            var rx = new Regex(@"[^\p{L}LlUu0-9\-\._]");
+            // ':' is allowed so IPv6 addresses can be used (upstream issue #65)
+            var rx = new Regex(@"[^\p{L}LlUu0-9\-\._:]");
             if (!rx.IsMatch(theTextBox.Text)) return;
             theTextBox.Text = rx.Replace(theTextBox.Text, "");
             theTextBox.Select(theTextBox.Text.Length, 0);

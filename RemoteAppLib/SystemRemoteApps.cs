@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using System;
 
 namespace RemoteAppLib
@@ -42,6 +42,7 @@ namespace RemoteAppLib
         {
             var App = new RemoteApp();
             var AppKey = _baseKey.OpenSubKey(name);
+            if (AppKey == null) return null;
             App.Name = name;
             App.FullName = (string)AppKey.GetValue("Name", string.Empty);
             App.Path = (string)AppKey.GetValue("Path", string.Empty);
@@ -91,6 +92,21 @@ namespace RemoteAppLib
             var ftaKey = AppKey.OpenSubKey("Filetypes", true);
             foreach (FileTypeAssociation fta in remoteApp.FileTypeAssociations)
                 ftaKey.SetValue(fta.Extension, $"{fta.IconPath},{fta.IconIndex}", RegistryValueKind.String);
+        }
+
+        /// <summary>
+        ///     Creates a copy of an existing RemoteApp under the next free "&lt;name&gt; copy" alias.
+        /// </summary>
+        public void DuplicateApp(string name)
+        {
+            var NewApp = GetApp(name);
+            if (NewApp == null) return;
+
+            var NewName = NewApp.Name;
+            while (GetApp(NewName) != null) NewName += " copy";
+
+            NewApp.Name = NewName;
+            SaveApp(NewApp);
         }
 
         public void RenameApp(string remoteAppOldName, string remoteAppNewName)

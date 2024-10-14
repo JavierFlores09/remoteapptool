@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -69,26 +69,49 @@ namespace RemoteApp.Tool
 
         public void ReloadApps()
         {
+            var SelectedIndex = -1;
+            var SelectedName = "";
+            var ItemsCount = AppList.Items.Count;
+
+            // Remember the current selection so it can be restored after the reload
+            if (AppList.SelectedItems.Count > 0)
+            {
+                SelectedIndex = AppList.SelectedItems[0].Index;
+                SelectedName = AppList.SelectedItems[0].Text;
+            }
+
             AppList.Clear();
             var Apps = sra.GetAll();
             foreach (RemoteAppLib.RemoteApp App in Apps)
             {
-                SmallIcons.Images.RemoveByKey(App.Name);
+                // Only load the icon if it is not cached already (upstream issue #136)
+                if (!SmallIcons.Images.ContainsKey(App.Name))
+                {
+                    SmallIcons.Images.Add(App.Name, RemoteAppFunction.GetAppBitmap(App.Name));
+                }
+
                 var AppItem = new ListViewItem(App.Name)
                 {
                     ToolTipText = App.FullName,
-                    ImageIndex = 0
+                    ImageKey = App.Name
                 };
-                SmallIcons.Images.Add(App.Name, RemoteAppFunction.GetAppBitmap(App.Name));
-                AppItem.ImageKey = App.Name;
                 AppList.Items.Add(AppItem);
             }
 
-            NoAppsLabel.Visible = Apps.Count == 0;
+            // Restore the selection if an item was selected, the list did not shrink
+            // and the item at that position is still the same app
+            if (SelectedIndex > -1)
+            {
+                if (AppList.Items.Count >= ItemsCount)
+                {
+                    if (AppList.Items[SelectedIndex].Text == SelectedName)
+                    {
+                        AppList.Items[SelectedIndex].Selected = true;
+                    }
+                }
+            }
 
-            EditButton.Enabled = false;
-            DeleteButton.Enabled = false;
-            CreateClientConnection.Enabled = false;
+            UpdateWindowStateBasedOnSelection();
         }
 
         private void AppList_DoubleClick(object sender, EventArgs e)
@@ -101,18 +124,27 @@ namespace RemoteApp.Tool
 
         private void AppList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            UpdateWindowStateBasedOnSelection();
+        }
+
+        private void UpdateWindowStateBasedOnSelection()
+        {
             if (AppList.SelectedItems.Count == 1)
             {
                 EditButton.Enabled = true;
                 DeleteButton.Enabled = true;
                 CreateClientConnection.Enabled = true;
+                _DuplicateToolStripMenuItem.Enabled = true;
             }
             else
             {
                 EditButton.Enabled = false;
                 DeleteButton.Enabled = false;
                 CreateClientConnection.Enabled = false;
+                _DuplicateToolStripMenuItem.Enabled = false;
             }
+
+            NoAppsLabel.Visible = AppList.Items.Count == 0;
         }
 
         private void EditButton_Click(object sender, EventArgs e)
@@ -126,11 +158,20 @@ namespace RemoteApp.Tool
         private void EditRemoteApp(string appName)
         {
             Forms.RemoteAppEditWindow.EditRemoteApp(sra.GetApp(appName));
+            DeleteImage(appName);
+            ReloadApps();
+        }
+
+        private void DeleteImage(string appName)
+        {
+            if (SmallIcons.Images.ContainsKey(appName)) SmallIcons.Images.RemoveByKey(appName);
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            DeleteRemoteApp(AppList.SelectedItems[0].Text);
+            var appName = AppList.SelectedItems[0].Text;
+            DeleteRemoteApp(appName);
+            DeleteImage(appName);
             ReloadApps();
         }
 
@@ -219,6 +260,17 @@ namespace RemoteApp.Tool
         {
             Forms.RemoteAppEditWindow.CreateRemoteApp(true);
             ReloadApps();
+        }
+
+        private void DuplicateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DuplicateRemoteApp(AppList.SelectedItems[0].Text);
+            ReloadApps();
+        }
+
+        private void DuplicateRemoteApp(string appName)
+        {
+            sra.DuplicateApp(appName);
         }
 
         private void BackupAllRemoteAppsToolStripMenuItem_Click(object sender, EventArgs e)

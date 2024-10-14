@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -136,7 +136,8 @@ namespace RemoteApp.Tool
                 return !small ? Icon.FromHandle((IntPtr)bigIcon) : Icon.FromHandle((IntPtr)smallIcon);
             }
 
-            return ReturnIcon(RemoteAppFunction.GetSysDir() + @"\mstsc.exe", 0);
+            // user32.dll rather than mstsc.exe, so the RDP client feature is not required (upstream issue #128)
+            return ReturnIcon(RemoteAppFunction.GetSysDir() + @"\user32.dll", 0);
         }
     }
 }

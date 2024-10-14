@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using System.IO;
 using System.Text;
@@ -83,7 +83,23 @@ namespace RDPFileLib
         public int VideoPlaybackMode = 1;
         public string WindowPositionAsString = "0,3,0,0,800,600";
 
-        public void SaveRdpFile(string filePath, bool saveDefaultSettings = false)
+        // Options added upstream in 6.1 (issues #100 / #141) and options that
+        // newer .rdp files can contain. Defaults match an RDPFile with no options set.
+        public string CameraStoreDirect = string.Empty;
+        public int EncodeRedirectedVideoCapture = 1;
+        public int RedirectedVideoCaptureEncodingQuality;
+        public int RedirectLocation;
+        public int RedirectWebAuthn = 1;
+        public string SelectedMonitors = string.Empty;
+        public string SignScope = string.Empty;
+        public string WorkspaceId = string.Empty;
+
+        /// <summary>
+        ///     Raw text appended verbatim at the end of the generated .rdp file.
+        /// </summary>
+        public string AdditionalOptions = string.Empty;
+
+        public void SaveRdpFile(string filePath, bool includeDefaultSettings = false)
         {
             var SkipFile = false;
             var FileLocked = LockChecker.LockChecker.CheckLock(filePath);
@@ -103,382 +119,429 @@ namespace RDPFileLib
 
             if (!SkipFile)
             {
-                File.WriteAllText(filePath, GetRdpString(saveDefaultSettings));
+                File.WriteAllText(filePath, GetRdpString(includeDefaultSettings));
             }
         }
 
-        public string GetRdpString(bool saveDefaultSettings = false)
+        public string GetRdpString(bool includeDefaultSettings = false)
         {
             var rdpString = new StringBuilder(100);
             var DefaultRDP = new RDPFile();
-            if (saveDefaultSettings || DefaultRDP.AdministrativeSession != AdministrativeSession)
+            if (includeDefaultSettings || DefaultRDP.AdministrativeSession != AdministrativeSession)
             {
                 rdpString = rdpString.Append("administrative session:").Append(AdministrativeSession.GetTypeNameForRdp()).Append(':').AppendLine(AdministrativeSession.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.AllowDesktopComposition != AllowDesktopComposition)
+            if (includeDefaultSettings || DefaultRDP.AllowDesktopComposition != AllowDesktopComposition)
             {
                 rdpString = rdpString.Append("allow desktop composition:").Append(AllowDesktopComposition.GetTypeNameForRdp()).Append(':').AppendLine(AllowDesktopComposition.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.AllowFontSmoothing != AllowFontSmoothing)
+            if (includeDefaultSettings || DefaultRDP.AllowFontSmoothing != AllowFontSmoothing)
             {
                 rdpString = rdpString.Append("allow font smoothing:").Append(AllowFontSmoothing.GetTypeNameForRdp()).Append(':').AppendLine(AllowFontSmoothing.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.AlternateFullAddress ?? "") != (AlternateFullAddress ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.AlternateFullAddress ?? "") != (AlternateFullAddress ?? ""))
             {
                 rdpString = rdpString.Append("alternate full address:").Append(AlternateFullAddress.GetTypeNameForRdp()).Append(':').AppendLine(AlternateFullAddress);
             }
 
-            if (saveDefaultSettings || (DefaultRDP.AlternateShell ?? "") != (AlternateShell ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.AlternateShell ?? "") != (AlternateShell ?? ""))
             {
                 rdpString = rdpString.Append("alternate shell:").Append(AlternateShell.GetTypeNameForRdp()).Append(':').AppendLine(AlternateShell);
             }
 
-            if (saveDefaultSettings || DefaultRDP.AudioCaptureMode != AudioCaptureMode)
+            if (includeDefaultSettings || DefaultRDP.AudioCaptureMode != AudioCaptureMode)
             {
                 rdpString = rdpString.Append("audiocapturemode:").Append(AudioCaptureMode.GetTypeNameForRdp()).Append(':').AppendLine(AudioCaptureMode.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.AudioMode != AudioMode)
+            if (includeDefaultSettings || DefaultRDP.AudioMode != AudioMode)
             {
                 rdpString = rdpString.Append("audiomode:").Append(AudioMode.GetTypeNameForRdp()).Append(':').AppendLine(AudioMode.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.AudioQualityMode != AudioQualityMode)
+            if (includeDefaultSettings || DefaultRDP.AudioQualityMode != AudioQualityMode)
             {
                 rdpString = rdpString.Append("audioqualitymode:").Append(AudioQualityMode.GetTypeNameForRdp()).Append(':').AppendLine(AudioQualityMode.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.AuthenticationLevel != AuthenticationLevel)
+            if (includeDefaultSettings || DefaultRDP.AuthenticationLevel != AuthenticationLevel)
             {
                 rdpString = rdpString.Append("authentication level:").Append(AuthenticationLevel.GetTypeNameForRdp()).Append(':').AppendLine(AuthenticationLevel.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.AutoReconnectMaxRetries != AutoReconnectMaxRetries)
+            if (includeDefaultSettings || DefaultRDP.AutoReconnectMaxRetries != AutoReconnectMaxRetries)
             {
                 rdpString = rdpString.Append("autoreconnect max retries:").Append(AutoReconnectMaxRetries.GetTypeNameForRdp()).Append(':').AppendLine(AutoReconnectMaxRetries.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.AutoReconnectionEnabled != AutoReconnectionEnabled)
+            if (includeDefaultSettings || DefaultRDP.AutoReconnectionEnabled != AutoReconnectionEnabled)
             {
                 rdpString = rdpString.Append("autoreconnection enabled:").Append(AutoReconnectionEnabled.GetTypeNameForRdp()).Append(':').AppendLine(AutoReconnectionEnabled.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.BandwidthAutodetect != BandwidthAutodetect)
+            if (includeDefaultSettings || DefaultRDP.BandwidthAutodetect != BandwidthAutodetect)
             {
                 rdpString = rdpString.Append("bandwidthautodetect:").Append(BandwidthAutodetect.GetTypeNameForRdp()).Append(':').AppendLine(BandwidthAutodetect.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.BitmapCachePersistEnable != BitmapCachePersistEnable)
+            if (includeDefaultSettings || DefaultRDP.BitmapCachePersistEnable != BitmapCachePersistEnable)
             {
                 rdpString = rdpString.Append("bitmapcachepersistenable:").Append(BitmapCachePersistEnable.GetTypeNameForRdp()).Append(':').AppendLine(BitmapCachePersistEnable.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.BitmapCacheSize != BitmapCacheSize)
+            if (includeDefaultSettings || DefaultRDP.BitmapCacheSize != BitmapCacheSize)
             {
                 rdpString = rdpString.Append("bitmapcachesize:").Append(BitmapCacheSize.GetTypeNameForRdp()).Append(':').AppendLine(BitmapCacheSize.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.Compression != Compression)
+            if (includeDefaultSettings || DefaultRDP.Compression != Compression)
             {
                 rdpString = rdpString.Append("compression:").Append(Compression.GetTypeNameForRdp()).Append(':').AppendLine(Compression.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.ConnectToConsole != ConnectToConsole)
+            if (includeDefaultSettings || DefaultRDP.ConnectToConsole != ConnectToConsole)
             {
                 rdpString = rdpString.Append("connect to console:").Append(ConnectToConsole.GetTypeNameForRdp()).Append(':').AppendLine(ConnectToConsole.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.ConnectionType != ConnectionType)
+            if (includeDefaultSettings || DefaultRDP.ConnectionType != ConnectionType)
             {
                 rdpString = rdpString.Append("connection type:").Append(ConnectionType.GetTypeNameForRdp()).Append(':').AppendLine(ConnectionType.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DesktopSizeId != DesktopSizeId)
+            if (includeDefaultSettings || DefaultRDP.DesktopSizeId != DesktopSizeId)
             {
                 rdpString = rdpString.Append("desktop size id:").Append(DesktopSizeId.GetTypeNameForRdp()).Append(':').AppendLine(DesktopSizeId.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DesktopHeight != DesktopHeight)
+            if (includeDefaultSettings || DefaultRDP.DesktopHeight != DesktopHeight)
             {
                 rdpString = rdpString.Append("desktopheight:").Append(DesktopHeight.GetTypeNameForRdp()).Append(':').AppendLine(DesktopHeight.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DesktopWidth != DesktopWidth)
+            if (includeDefaultSettings || DefaultRDP.DesktopWidth != DesktopWidth)
             {
                 rdpString = rdpString.Append("desktopwidth:").Append(DesktopWidth.GetTypeNameForRdp()).Append(':').AppendLine(DesktopWidth.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.DeviceStoreDirect ?? "") != (DeviceStoreDirect ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.DeviceStoreDirect ?? "") != (DeviceStoreDirect ?? ""))
             {
                 rdpString = rdpString.Append("devicestoredirect:").Append(DeviceStoreDirect.GetTypeNameForRdp()).Append(':').AppendLine(DeviceStoreDirect);
             }
 
-            if (saveDefaultSettings || DefaultRDP.DisableCtrlAltDel != DisableCtrlAltDel)
+            if (includeDefaultSettings || DefaultRDP.DisableCtrlAltDel != DisableCtrlAltDel)
             {
                 rdpString = rdpString.Append("disable ctrl+alt+del:").Append(DisableCtrlAltDel.GetTypeNameForRdp()).Append(':').AppendLine(DisableCtrlAltDel.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DisableFullWindowDrag != DisableFullWindowDrag)
+            if (includeDefaultSettings || DefaultRDP.DisableFullWindowDrag != DisableFullWindowDrag)
             {
                 rdpString = rdpString.Append("disable full window drag:").Append(DisableFullWindowDrag.GetTypeNameForRdp()).Append(':').AppendLine(DisableFullWindowDrag.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DisableMenuAnims != DisableMenuAnims)
+            if (includeDefaultSettings || DefaultRDP.DisableMenuAnims != DisableMenuAnims)
             {
                 rdpString = rdpString.Append("disable menu anims:").Append(DisableMenuAnims.GetTypeNameForRdp()).Append(':').AppendLine(DisableMenuAnims.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DisableThemes != DisableThemes)
+            if (includeDefaultSettings || DefaultRDP.DisableThemes != DisableThemes)
             {
                 rdpString = rdpString.Append("disable themes:").Append(DisableThemes.GetTypeNameForRdp()).Append(':').AppendLine(DisableThemes.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DisableWallpaper != DisableWallpaper)
+            if (includeDefaultSettings || DefaultRDP.DisableWallpaper != DisableWallpaper)
             {
                 rdpString = rdpString.Append("disable wallpaper:").Append(DisableWallpaper.GetTypeNameForRdp()).Append(':').AppendLine(DisableWallpaper.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DisableConnectionSharing != DisableConnectionSharing)
+            if (includeDefaultSettings || DefaultRDP.DisableConnectionSharing != DisableConnectionSharing)
             {
                 rdpString = rdpString.Append("disableconnectionsharing:").Append(DisableConnectionSharing.GetTypeNameForRdp()).Append(':').AppendLine(DisableConnectionSharing.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DisableRemoteAppCapsCheck != DisableRemoteAppCapsCheck)
+            if (includeDefaultSettings || DefaultRDP.DisableRemoteAppCapsCheck != DisableRemoteAppCapsCheck)
             {
                 rdpString = rdpString.Append("disableremoteappcapscheck:").Append(DisableRemoteAppCapsCheck.GetTypeNameForRdp()).Append(':').AppendLine(DisableRemoteAppCapsCheck.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.DisplayConnectionBar != DisplayConnectionBar)
+            if (includeDefaultSettings || DefaultRDP.DisplayConnectionBar != DisplayConnectionBar)
             {
                 rdpString = rdpString.Append("displayconnectionbar:").Append(DisplayConnectionBar.GetTypeNameForRdp()).Append(':').AppendLine(DisplayConnectionBar.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.Domain ?? "") != (Domain ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.Domain ?? "") != (Domain ?? ""))
             {
                 rdpString = rdpString.Append("domain:").Append(Domain.GetTypeNameForRdp()).Append(':').AppendLine(Domain);
             }
 
-            if (saveDefaultSettings || (DefaultRDP.DriveStoreDirect ?? "") != (DriveStoreDirect ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.DriveStoreDirect ?? "") != (DriveStoreDirect ?? ""))
             {
                 rdpString = rdpString.Append("drivestoredirect:").Append(DriveStoreDirect.GetTypeNameForRdp()).Append(':').AppendLine(DriveStoreDirect);
             }
 
-            if (saveDefaultSettings || DefaultRDP.EnableCredsspSupport != EnableCredsspSupport)
+            if (includeDefaultSettings || DefaultRDP.EnableCredsspSupport != EnableCredsspSupport)
             {
                 rdpString = rdpString.Append("enablecredsspsupport:").Append(EnableCredsspSupport.GetTypeNameForRdp()).Append(':').AppendLine(EnableCredsspSupport.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.EnableSuperPan != EnableSuperPan)
+            if (includeDefaultSettings || DefaultRDP.EnableSuperPan != EnableSuperPan)
             {
                 rdpString = rdpString.Append("enablesuperpan:").Append(EnableSuperPan.GetTypeNameForRdp()).Append(':').AppendLine(EnableSuperPan.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.FullAddress ?? "") != (FullAddress ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.FullAddress ?? "") != (FullAddress ?? ""))
             {
                 rdpString = rdpString.Append("full address:").Append(FullAddress.GetTypeNameForRdp()).Append(':').AppendLine(FullAddress);
             }
 
-            if (saveDefaultSettings || DefaultRDP.GatewayCredentialsSource != GatewayCredentialsSource)
+            if (includeDefaultSettings || DefaultRDP.GatewayCredentialsSource != GatewayCredentialsSource)
             {
                 rdpString = rdpString.Append("gatewaycredentialssource:").Append(GatewayCredentialsSource.GetTypeNameForRdp()).Append(':').AppendLine(GatewayCredentialsSource.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.GatewayHostname ?? "") != (GatewayHostname ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.GatewayHostname ?? "") != (GatewayHostname ?? ""))
             {
                 rdpString = rdpString.Append("gatewayhostname:").Append(GatewayHostname.GetTypeNameForRdp()).Append(':').AppendLine(GatewayHostname);
             }
 
-            if (saveDefaultSettings || DefaultRDP.GatewayProfileUsageMethod != GatewayProfileUsageMethod)
+            if (includeDefaultSettings || DefaultRDP.GatewayProfileUsageMethod != GatewayProfileUsageMethod)
             {
                 rdpString = rdpString.Append("gatewayprofileusagemethod:").Append(GatewayProfileUsageMethod.GetTypeNameForRdp()).Append(':').AppendLine(GatewayProfileUsageMethod.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.GatewayUsageMethod != GatewayUsageMethod)
+            if (includeDefaultSettings || DefaultRDP.GatewayUsageMethod != GatewayUsageMethod)
             {
                 rdpString = rdpString.Append("gatewayusagemethod:").Append(GatewayUsageMethod.GetTypeNameForRdp()).Append(':').AppendLine(GatewayUsageMethod.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.KeyboardHook != KeyboardHook)
+            if (includeDefaultSettings || DefaultRDP.KeyboardHook != KeyboardHook)
             {
                 rdpString = rdpString.Append("keyboardhook:").Append(KeyboardHook.GetTypeNameForRdp()).Append(':').AppendLine(KeyboardHook.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.NegotiateSecurityLayer != NegotiateSecurityLayer)
+            if (includeDefaultSettings || DefaultRDP.NegotiateSecurityLayer != NegotiateSecurityLayer)
             {
                 rdpString = rdpString.Append("negotiate security layer:").Append(NegotiateSecurityLayer.GetTypeNameForRdp()).Append(':').AppendLine(NegotiateSecurityLayer.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.NetworkAutoDetect != NetworkAutoDetect)
+            if (includeDefaultSettings || DefaultRDP.NetworkAutoDetect != NetworkAutoDetect)
             {
                 rdpString = rdpString.Append("networkautodetect:").Append(NetworkAutoDetect.GetTypeNameForRdp()).Append(':').AppendLine(NetworkAutoDetect.ToString());
             }
             // If SaveDefaultSettings Or Not DefaultRDP.password_51 = password_51 Then RDPstring += "password 51" & ":" & password_51.GetType().ToString.Replace("System.", "").ToLower.Substring(0, 1) & ":" & password_51.ToString & vbCrLf
-            if (saveDefaultSettings || DefaultRDP.PinConnectionBar != PinConnectionBar)
+            if (includeDefaultSettings || DefaultRDP.PinConnectionBar != PinConnectionBar)
             {
                 rdpString = rdpString.Append("pinconnectionbar:").Append(PinConnectionBar.GetTypeNameForRdp()).Append(':').AppendLine(PinConnectionBar.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.PromptForCredentials != PromptForCredentials)
+            if (includeDefaultSettings || DefaultRDP.PromptForCredentials != PromptForCredentials)
             {
                 rdpString = rdpString.Append("prompt for credentials:").Append(PromptForCredentials.GetTypeNameForRdp()).Append(':').AppendLine(PromptForCredentials.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.PromptForCredentialsOnClient != PromptForCredentialsOnClient)
+            if (includeDefaultSettings || DefaultRDP.PromptForCredentialsOnClient != PromptForCredentialsOnClient)
             {
                 rdpString = rdpString.Append("prompt for credentials on client:").Append(PromptForCredentialsOnClient.GetTypeNameForRdp()).Append(':').AppendLine(PromptForCredentialsOnClient.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.PromptCredentialOnce != PromptCredentialOnce)
+            if (includeDefaultSettings || DefaultRDP.PromptCredentialOnce != PromptCredentialOnce)
             {
                 rdpString = rdpString.Append("promptcredentialonce:").Append(PromptCredentialOnce.GetTypeNameForRdp()).Append(':').AppendLine(PromptCredentialOnce.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.PublicMode != PublicMode)
+            if (includeDefaultSettings || DefaultRDP.PublicMode != PublicMode)
             {
                 rdpString = rdpString.Append("public mode:").Append(PublicMode.GetTypeNameForRdp()).Append(':').AppendLine(PublicMode.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.RedirectClipboard != RedirectClipboard)
+            if (includeDefaultSettings || DefaultRDP.RedirectClipboard != RedirectClipboard)
             {
                 rdpString = rdpString.Append("redirectclipboard:").Append(RedirectClipboard.GetTypeNameForRdp()).Append(':').AppendLine(RedirectClipboard.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.RedirectComPorts != RedirectComPorts)
+            if (includeDefaultSettings || DefaultRDP.RedirectComPorts != RedirectComPorts)
             {
                 rdpString = rdpString.Append("redirectcomports:").Append(RedirectComPorts.GetTypeNameForRdp()).Append(':').AppendLine(RedirectComPorts.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.RedirectDirectX != RedirectDirectX)
+            if (includeDefaultSettings || DefaultRDP.RedirectDirectX != RedirectDirectX)
             {
                 rdpString = rdpString.Append("redirectdirectx:").Append(RedirectDirectX.GetTypeNameForRdp()).Append(':').AppendLine(RedirectDirectX.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.RedirectDrives != RedirectDrives)
+            if (includeDefaultSettings || DefaultRDP.RedirectDrives != RedirectDrives)
             {
                 rdpString = rdpString.Append("redirectdrives:").Append(RedirectDrives.GetTypeNameForRdp()).Append(':').AppendLine(RedirectDrives.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.RedirectPosDevices != RedirectPosDevices)
+            if (includeDefaultSettings || DefaultRDP.RedirectPosDevices != RedirectPosDevices)
             {
                 rdpString = rdpString.Append("redirectposdevices:").Append(RedirectPosDevices.GetTypeNameForRdp()).Append(':').AppendLine(RedirectPosDevices.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.RedirectPrinters != RedirectPrinters)
+            if (includeDefaultSettings || DefaultRDP.RedirectPrinters != RedirectPrinters)
             {
                 rdpString = rdpString.Append("redirectprinters:").Append(RedirectPrinters.GetTypeNameForRdp()).Append(':').AppendLine(RedirectPrinters.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.RedirectSmartCards != RedirectSmartCards)
+            if (includeDefaultSettings || DefaultRDP.RedirectSmartCards != RedirectSmartCards)
             {
                 rdpString = rdpString.Append("redirectsmartcards:").Append(RedirectSmartCards.GetTypeNameForRdp()).Append(':').AppendLine(RedirectSmartCards.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.RemoteApplicationCmdline ?? "") != (RemoteApplicationCmdline ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.RemoteApplicationCmdline ?? "") != (RemoteApplicationCmdline ?? ""))
             {
                 rdpString = rdpString.Append("remoteapplicationcmdline:").Append(RemoteApplicationCmdline.GetTypeNameForRdp()).Append(':').AppendLine(RemoteApplicationCmdline);
             }
 
-            if (saveDefaultSettings || DefaultRDP.RemoteApplicationExpandCmdline != RemoteApplicationExpandCmdline)
+            if (includeDefaultSettings || DefaultRDP.RemoteApplicationExpandCmdline != RemoteApplicationExpandCmdline)
             {
                 rdpString = rdpString.Append("remoteapplicationexpandcmdline:").Append(RemoteApplicationExpandCmdline.GetTypeNameForRdp()).Append(':').AppendLine(RemoteApplicationExpandCmdline.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.RemoteApplicationExpandWorkingDir != RemoteApplicationExpandWorkingDir)
+            if (includeDefaultSettings || DefaultRDP.RemoteApplicationExpandWorkingDir != RemoteApplicationExpandWorkingDir)
             {
                 rdpString = rdpString.Append("remoteapplicationexpandworkingdir:").Append(RemoteApplicationExpandWorkingDir.GetTypeNameForRdp()).Append(':').AppendLine(RemoteApplicationExpandWorkingDir.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.RemoteApplicationFile ?? "") != (RemoteApplicationFile ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.RemoteApplicationFile ?? "") != (RemoteApplicationFile ?? ""))
             {
                 rdpString = rdpString.Append("remoteapplicationfile:").Append(RemoteApplicationFile.GetTypeNameForRdp()).Append(':').AppendLine(RemoteApplicationFile);
             }
 
-            if (saveDefaultSettings || (DefaultRDP.RemoteApplicationFileExtensions ?? "") != (RemoteApplicationFileExtensions ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.RemoteApplicationFileExtensions ?? "") != (RemoteApplicationFileExtensions ?? ""))
             {
                 rdpString = rdpString.Append("remoteapplicationfileextensions:").Append(RemoteApplicationFileExtensions.GetTypeNameForRdp()).Append(':').AppendLine(RemoteApplicationFileExtensions);
             }
 
-            if (saveDefaultSettings || (DefaultRDP.RemoteApplicationIcon ?? "") != (RemoteApplicationIcon ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.RemoteApplicationIcon ?? "") != (RemoteApplicationIcon ?? ""))
             {
                 rdpString = rdpString.Append("remoteapplicationicon:").Append(RemoteApplicationIcon.GetTypeNameForRdp()).Append(':').AppendLine(RemoteApplicationIcon);
             }
 
-            if (saveDefaultSettings || DefaultRDP.RemoteApplicationMode != RemoteApplicationMode)
+            if (includeDefaultSettings || DefaultRDP.RemoteApplicationMode != RemoteApplicationMode)
             {
                 rdpString = rdpString.Append("remoteapplicationmode:").Append(RemoteApplicationMode.GetTypeNameForRdp()).Append(':').AppendLine(RemoteApplicationMode.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.RemoteApplicationName ?? "") != (RemoteApplicationName ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.RemoteApplicationName ?? "") != (RemoteApplicationName ?? ""))
             {
                 rdpString = rdpString.Append("remoteapplicationname:").Append(RemoteApplicationName.GetTypeNameForRdp()).Append(':').AppendLine(RemoteApplicationName);
             }
 
-            if (saveDefaultSettings || (DefaultRDP.RemoteApplicationProgram ?? "") != (RemoteApplicationProgram ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.RemoteApplicationProgram ?? "") != (RemoteApplicationProgram ?? ""))
             {
                 rdpString = rdpString.Append("remoteapplicationprogram:").Append(RemoteApplicationProgram.GetTypeNameForRdp()).Append(':').AppendLine(RemoteApplicationProgram);
             }
 
-            if (saveDefaultSettings || DefaultRDP.ScreenModeId != ScreenModeId)
+            if (includeDefaultSettings || DefaultRDP.ScreenModeId != ScreenModeId)
             {
                 rdpString = rdpString.Append("screen mode id:").Append(ScreenModeId.GetTypeNameForRdp()).Append(':').AppendLine(ScreenModeId.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.ServerPort != ServerPort)
+            if (includeDefaultSettings || DefaultRDP.ServerPort != ServerPort)
             {
                 rdpString = rdpString.Append("server port:").Append(ServerPort.GetTypeNameForRdp()).Append(':').AppendLine(ServerPort.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.SessionBpp != SessionBpp)
+            if (includeDefaultSettings || DefaultRDP.SessionBpp != SessionBpp)
             {
                 rdpString = rdpString.Append("session bpp:").Append(SessionBpp.GetTypeNameForRdp()).Append(':').AppendLine(SessionBpp.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.ShellWorkingDirectory ?? "") != (ShellWorkingDirectory ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.ShellWorkingDirectory ?? "") != (ShellWorkingDirectory ?? ""))
             {
                 rdpString = rdpString.Append("shell working directory:").Append(ShellWorkingDirectory.GetTypeNameForRdp()).Append(':').AppendLine(ShellWorkingDirectory);
             }
 
-            if (saveDefaultSettings || DefaultRDP.SmartSizing != SmartSizing)
+            if (includeDefaultSettings || DefaultRDP.SmartSizing != SmartSizing)
             {
                 rdpString = rdpString.Append("smart sizing:").Append(SmartSizing.GetTypeNameForRdp()).Append(':').AppendLine(SmartSizing.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.SpanMonitors != SpanMonitors)
+            if (includeDefaultSettings || DefaultRDP.SpanMonitors != SpanMonitors)
             {
                 rdpString = rdpString.Append("span monitors:").Append(SpanMonitors.GetTypeNameForRdp()).Append(':').AppendLine(SpanMonitors.ToString());
             }
 
-            if (saveDefaultSettings || DefaultRDP.SuperPanAccelerationFactor != SuperPanAccelerationFactor)
+            if (includeDefaultSettings || DefaultRDP.SuperPanAccelerationFactor != SuperPanAccelerationFactor)
             {
                 rdpString = rdpString.Append("superpanaccelerationfactor:").Append(SuperPanAccelerationFactor.GetTypeNameForRdp()).Append(':').AppendLine(SuperPanAccelerationFactor.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.UsbDeviceStoreDirect ?? "") != (UsbDeviceStoreDirect ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.UsbDeviceStoreDirect ?? "") != (UsbDeviceStoreDirect ?? ""))
             {
                 rdpString = rdpString.Append("usbdevicestoredirect:").Append(UsbDeviceStoreDirect.GetTypeNameForRdp()).Append(':').AppendLine(UsbDeviceStoreDirect);
             }
 
-            if (saveDefaultSettings || DefaultRDP.UseMultimonitor != UseMultimonitor)
+            if (includeDefaultSettings || DefaultRDP.UseMultimonitor != UseMultimonitor)
             {
                 rdpString = rdpString.Append("use multimon:").Append(UseMultimonitor.GetTypeNameForRdp()).Append(':').AppendLine(UseMultimonitor.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.Username ?? "") != (Username ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.Username ?? "") != (Username ?? ""))
             {
                 rdpString = rdpString.Append("username:").Append(Username.GetTypeNameForRdp()).Append(':').AppendLine(Username);
             }
 
-            if (saveDefaultSettings || DefaultRDP.VideoPlaybackMode != VideoPlaybackMode)
+            if (includeDefaultSettings || DefaultRDP.VideoPlaybackMode != VideoPlaybackMode)
             {
                 rdpString = rdpString.Append("videoplaybackmode:").Append(VideoPlaybackMode.GetTypeNameForRdp()).Append(':').AppendLine(VideoPlaybackMode.ToString());
             }
 
-            if (saveDefaultSettings || (DefaultRDP.WindowPositionAsString ?? "") != (WindowPositionAsString ?? ""))
+            if (includeDefaultSettings || (DefaultRDP.WindowPositionAsString ?? "") != (WindowPositionAsString ?? ""))
             {
                 rdpString = rdpString.Append("winposstr:").Append(WindowPositionAsString.GetTypeNameForRdp()).Append(':').AppendLine(WindowPositionAsString);
+            }
+
+            // Options added upstream in 6.1 (issues #100 / #141)
+            if (includeDefaultSettings || (DefaultRDP.CameraStoreDirect ?? "") != (CameraStoreDirect ?? ""))
+            {
+                rdpString = rdpString.Append("camerastoredirect:").Append(CameraStoreDirect.GetTypeNameForRdp()).Append(':').AppendLine(CameraStoreDirect);
+            }
+
+            if (includeDefaultSettings || DefaultRDP.EncodeRedirectedVideoCapture != EncodeRedirectedVideoCapture)
+            {
+                rdpString = rdpString.Append("encode redirected video capture:").Append(EncodeRedirectedVideoCapture.GetTypeNameForRdp()).Append(':').AppendLine(EncodeRedirectedVideoCapture.ToString());
+            }
+
+            if (includeDefaultSettings || DefaultRDP.RedirectedVideoCaptureEncodingQuality != RedirectedVideoCaptureEncodingQuality)
+            {
+                rdpString = rdpString.Append("redirected video capture encoding quality:").Append(RedirectedVideoCaptureEncodingQuality.GetTypeNameForRdp()).Append(':').AppendLine(RedirectedVideoCaptureEncodingQuality.ToString());
+            }
+
+            if (includeDefaultSettings || DefaultRDP.RedirectLocation != RedirectLocation)
+            {
+                rdpString = rdpString.Append("redirectlocation:").Append(RedirectLocation.GetTypeNameForRdp()).Append(':').AppendLine(RedirectLocation.ToString());
+            }
+
+            if (includeDefaultSettings || DefaultRDP.RedirectWebAuthn != RedirectWebAuthn)
+            {
+                rdpString = rdpString.Append("redirectwebauthn:").Append(RedirectWebAuthn.GetTypeNameForRdp()).Append(':').AppendLine(RedirectWebAuthn.ToString());
+            }
+
+            if (includeDefaultSettings || (DefaultRDP.SelectedMonitors ?? "") != (SelectedMonitors ?? ""))
+            {
+                rdpString = rdpString.Append("selectedmonitors:").Append(SelectedMonitors.GetTypeNameForRdp()).Append(':').AppendLine(SelectedMonitors);
+            }
+
+            if (includeDefaultSettings || (DefaultRDP.SignScope ?? "") != (SignScope ?? ""))
+            {
+                rdpString = rdpString.Append("signscope:").Append(SignScope.GetTypeNameForRdp()).Append(':').AppendLine(SignScope);
+            }
+
+            if (includeDefaultSettings || (DefaultRDP.WorkspaceId ?? "") != (WorkspaceId ?? ""))
+            {
+                rdpString = rdpString.Append("workspaceid:").Append(WorkspaceId.GetTypeNameForRdp()).Append(':').AppendLine(WorkspaceId);
+            }
+
+            // Free-form options typed in the RDP options editor
+            if (!string.IsNullOrEmpty(AdditionalOptions))
+            {
+                rdpString.Append(AdditionalOptions);
             }
 
             return rdpString.ToString();
@@ -719,6 +782,31 @@ namespace RDPFileLib
                         break;
                     case "winposstr":
                         WindowPositionAsString = SplitLine[2];
+                        break;
+                    // Options added upstream in 6.1 (issues #100 / #141)
+                    case "camerastoredirect":
+                        CameraStoreDirect = SplitLine[2];
+                        break;
+                    case "encode redirected video capture":
+                        EncodeRedirectedVideoCapture = int.Parse(SplitLine[2]);
+                        break;
+                    case "redirected video capture encoding quality":
+                        RedirectedVideoCaptureEncodingQuality = int.Parse(SplitLine[2]);
+                        break;
+                    case "redirectlocation":
+                        RedirectLocation = int.Parse(SplitLine[2]);
+                        break;
+                    case "redirectwebauthn":
+                        RedirectWebAuthn = int.Parse(SplitLine[2]);
+                        break;
+                    case "selectedmonitors":
+                        SelectedMonitors = SplitLine[2];
+                        break;
+                    case "signscope":
+                        SignScope = SplitLine[2];
+                        break;
+                    case "workspaceid":
+                        WorkspaceId = SplitLine[2];
                         break;
                 }
             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -65,6 +65,8 @@ namespace RemoteApp.Tool
             FileToolStripMenuItem = new ToolStripMenuItem();
             _NewRemoteAppadvancedToolStripMenuItem = new ToolStripMenuItem();
             _NewRemoteAppadvancedToolStripMenuItem.Click += new EventHandler(NewRemoteAppadvancedToolStripMenuItem_Click);
+            _DuplicateToolStripMenuItem = new ToolStripMenuItem();
+            _DuplicateToolStripMenuItem.Click += new EventHandler(DuplicateToolStripMenuItem_Click);
             ToolStripSeparator2 = new ToolStripSeparator();
             _ExitToolStripMenuItem = new ToolStripMenuItem();
             _ExitToolStripMenuItem.Click += new EventHandler(ExitToolStripMenuItem_Click);
@@ -247,14 +249,14 @@ namespace RemoteApp.Tool
             _CreateClientConnection.AutoSize = true;
             _CreateClientConnection.BackColor = Color.WhiteSmoke;
             _CreateClientConnection.Enabled = false;
-            _CreateClientConnection.Font = new Font("Segoe UI", 9.0f);
             _CreateClientConnection.ImageIndex = 3;
             _CreateClientConnection.ImageList = SmallerIcons;
-            _CreateClientConnection.Location = new Point(239, 224);
+            _CreateClientConnection.Location = new Point(214, 223);
             _CreateClientConnection.Name = "_CreateClientConnection";
-            _CreateClientConnection.Size = new Size(183, 29);
+            _CreateClientConnection.Size = new Size(208, 30);
             _CreateClientConnection.TabIndex = 6;
             _CreateClientConnection.Text = "Create Client Connection...";
+            _CreateClientConnection.TextAlign = ContentAlignment.MiddleRight;
             _CreateClientConnection.TextImageRelation = TextImageRelation.ImageBeforeText;
             _CreateClientConnection.UseVisualStyleBackColor = false;
             // 
@@ -263,6 +265,7 @@ namespace RemoteApp.Tool
             ToolsMenuStrip.AllowMerge = false;
             ToolsMenuStrip.AutoSize = false;
             ToolsMenuStrip.BackColor = Color.Transparent;
+            ToolsMenuStrip.ImageScalingSize = new Size(20, 20);
             ToolsMenuStrip.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ToolsToolStripMenuItem, HelpToolStripMenuItem });
             ToolsMenuStrip.Location = new Point(0, 0);
             ToolsMenuStrip.Name = "ToolsMenuStrip";
@@ -272,7 +275,7 @@ namespace RemoteApp.Tool
             // 
             // FileToolStripMenuItem
             // 
-            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _NewRemoteAppadvancedToolStripMenuItem, ToolStripSeparator2, _ExitToolStripMenuItem });
+            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _NewRemoteAppadvancedToolStripMenuItem, _DuplicateToolStripMenuItem, ToolStripSeparator2, _ExitToolStripMenuItem });
             FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             FileToolStripMenuItem.Size = new Size(37, 20);
             FileToolStripMenuItem.Text = "File";
@@ -282,6 +285,13 @@ namespace RemoteApp.Tool
             _NewRemoteAppadvancedToolStripMenuItem.Name = "_NewRemoteAppadvancedToolStripMenuItem";
             _NewRemoteAppadvancedToolStripMenuItem.Size = new Size(235, 22);
             _NewRemoteAppadvancedToolStripMenuItem.Text = "New RemoteApp (advanced)...";
+            // 
+            // DuplicateToolStripMenuItem
+            // 
+            _DuplicateToolStripMenuItem.Enabled = false;
+            _DuplicateToolStripMenuItem.Name = "_DuplicateToolStripMenuItem";
+            _DuplicateToolStripMenuItem.Size = new Size(235, 22);
+            _DuplicateToolStripMenuItem.Text = "Duplicate RemoteApp";
             // 
             // ToolStripSeparator2
             // 
@@ -329,7 +339,7 @@ namespace RemoteApp.Tool
             HelpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _WebsiteToolStripMenuItem, ToolStripSeparator1, _AboutToolStripMenuItem });
             HelpToolStripMenuItem.Name = "HelpToolStripMenuItem";
             HelpToolStripMenuItem.Size = new Size(44, 20);
-            HelpToolStripMenuItem.Text = "Help";
+            HelpToolStripMenuItem.Text = "&Help";
             // 
             // WebsiteToolStripMenuItem
             // 
@@ -676,6 +686,7 @@ namespace RemoteApp.Tool
         }
 
         private ToolStripMenuItem _NewRemoteAppadvancedToolStripMenuItem;
+        private ToolStripMenuItem _DuplicateToolStripMenuItem;
 
         internal ToolStripMenuItem NewRemoteAppadvancedToolStripMenuItem
         {

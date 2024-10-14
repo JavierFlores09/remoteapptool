@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 
 namespace RemoteApp.Tool
@@ -48,6 +48,8 @@ namespace RemoteApp.Tool
         public bool SavedSignedAndUnsigned { get; set; }
 
         public int SavedCertSelected { get; set; }
+
+        public string SavedRdpOptions { get; set; } = string.Empty;
 
         public static UserSettings Instance => Lazy.Value;
         private static readonly Lazy<UserSettings> Lazy = new Lazy<UserSettings>(() => new UserSettings());
@@ -99,6 +101,9 @@ namespace RemoteApp.Tool
             SavedSignedAndUnsigned = bool.Parse(userSettingsCollection["SavedSignedAndUnsigned"]);
 
             SavedCertSelected = int.Parse(userSettingsCollection["SavedCertSelected"]);
+
+            SavedRdpOptions = userSettingsCollection["SavedRdpOptions"] ?? string.Empty;
         }
     }
 }
+

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Windows.Forms;
 using RemoteAppLib;
@@ -34,7 +34,8 @@ namespace RemoteApp.Tool
             HelpSystem.SetupTips(this);
             LoadValues();
             _ = ShowDialog();
-            Forms.RemoteAppMainWindow.ReloadApps();
+            // The caller (main window) reloads the list and its icon, see upstream issue #136
+            //Forms.RemoteAppMainWindow.ReloadApps();
             //Dispose();
             return _remoteApp;
         }

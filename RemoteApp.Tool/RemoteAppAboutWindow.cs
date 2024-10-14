@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -18,6 +18,7 @@ namespace RemoteApp.Tool
             Text = $"About {Application.ProductName}";
             TitleLabel.Text = Application.ProductName;
             VersionLabel.Text = $"Version {Application.ProductVersion}";
+            CopyrightLabel.Text = Application.CompanyName;
         }
 
         private void SiteLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

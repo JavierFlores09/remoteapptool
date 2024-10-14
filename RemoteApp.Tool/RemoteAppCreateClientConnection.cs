@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -105,6 +105,8 @@ namespace RemoteApp.Tool
             UserSettings.Instance.SavedSignRDP = false;
             UserSettings.Instance.SavedSignedAndUnsigned = false;
             UserSettings.Instance.SavedCertSelected = 0;
+            UserSettings.Instance.SavedRdpOptions = FlattenOptions(RDPOptionsWindow.RecommendedDefaults);
+            _additionalOptions = RDPOptionsWindow.RecommendedDefaults;
         }
 
         public void SaveCcWindowSettings()
@@ -128,6 +130,7 @@ namespace RemoteApp.Tool
             UserSettings.Instance.SavedSignRDP = CheckBoxSignRDPEnabled.Checked;
             UserSettings.Instance.SavedSignedAndUnsigned = CheckBoxCreateSignedAndUnsigned.Checked;
             UserSettings.Instance.SavedCertSelected = CertificateComboBox.SelectedIndex;
+            UserSettings.Instance.SavedRdpOptions = FlattenOptions(_additionalOptions);
         }
 
         public void SetCcWindowSettings()
@@ -198,6 +201,13 @@ namespace RemoteApp.Tool
                 CheckBoxCreateSignedAndUnsigned.Checked = false;
                 CertificateComboBox.Text = string.Empty;
             }
+
+            // Restore the additional .rdp options that were saved with the other window settings.
+            // On a first run there are none, so fall back to the recommended defaults, which is what
+            // the hard coded options in CreateRdpFile used to be.
+            _additionalOptions = string.IsNullOrEmpty(UserSettings.Instance.SavedRdpOptions)
+                ? RDPOptionsWindow.RecommendedDefaults
+                : UnflattenOptions(UserSettings.Instance.SavedRdpOptions);
         }
 
         private void UseRDGatewayCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -369,8 +379,8 @@ namespace RemoteApp.Tool
                 RemoteApplicationName = remoteApp.FullName,
                 RemoteApplicationProgram = "||" + remoteApp.Name,
                 RemoteApplicationMode = 1,
-                DisableRemoteAppCapsCheck = 1,
-                AlternateShell = "rdpinit.exe"
+                AlternateShell = "rdpinit.exe",
+                AdditionalOptions = ExportAdditionalOptionsRdpString()
             };
             if (UseRDGatewayCheckBox.Checked)
             {
@@ -379,16 +389,8 @@ namespace RemoteApp.Tool
                 rdPfile.GatewayProfileUsageMethod = 1;
             }
 
-            rdPfile.PromptForCredentialsOnClient = 1;
-            rdPfile.PromptCredentialOnce = 0;
-            rdPfile.DeviceStoreDirect = "*";
-            rdPfile.DriveStoreDirect = "*";
-            rdPfile.RedirectComPorts = 1;
-            rdPfile.RedirectDrives = 1;
-            rdPfile.AllowDesktopComposition = 1;
-            rdPfile.AllowFontSmoothing = 1;
-            rdPfile.SpanMonitors = 1;
-            rdPfile.UseMultimonitor = 1;
+            // These defaults moved into RDPOptionsWindow.RecommendedDefaults, which are written
+            // through AdditionalOptions below (upstream issue #100).
             rdPfile.RemoteApplicationFileExtensions = FlatFileTypes;
             rdPfile.SaveRdpFile(rdpPath);
             if (CheckBoxSignRDPEnabled.Checked)
@@ -499,6 +501,85 @@ namespace RemoteApp.Tool
             {
                 CheckBoxSignRDPEnabled.Checked = true;
             }
+        }
+
+        // Additional .rdp options edited through RDPOptionsWindow, as [name, key, type, value] rows.
+        private string[,] _additionalOptions = new string[0, 4];
+
+        private void RDPOptionsButton_Click(object sender, EventArgs e)
+        {
+            _additionalOptions = Forms.RDPOptionsWindow.EditAdditionalOptions(_additionalOptions);
+        }
+
+        /// <summary>
+        ///     Renders the selected options as the "key:type:value" lines appended to the .rdp file.
+        /// </summary>
+        private string ExportAdditionalOptionsRdpString()
+        {
+            if (_additionalOptions == null || _additionalOptions.GetLength(0) == 0)
+            {
+                return string.Empty;
+            }
+
+            var optionsString = string.Empty;
+            for (var row = 0; row < _additionalOptions.GetLength(0); row++)
+            {
+                optionsString += _additionalOptions[row, 1] + ":";
+                optionsString += _additionalOptions[row, 2] + ":";
+                optionsString += _additionalOptions[row, 3] + Environment.NewLine;
+            }
+
+            return optionsString.Trim();
+        }
+
+        /// <summary>
+        ///     Serialises the option table into the per-user settings value.
+        /// </summary>
+        internal static string FlattenOptions(string[,] options)
+        {
+            if (options == null || options.GetLength(0) == 0)
+            {
+                return string.Empty;
+            }
+
+            var lines = new List<string>();
+            for (var row = 0; row < options.GetLength(0); row++)
+            {
+                var lineValues = new List<string>();
+                for (var col = 0; col < options.GetLength(1); col++)
+                {
+                    lineValues.Add(options[row, col]);
+                }
+
+                lines.Add(string.Join("|", lineValues));
+            }
+
+            return string.Join(Environment.NewLine, lines);
+        }
+
+        /// <summary>
+        ///     Restores the option table from the per-user settings value.
+        /// </summary>
+        internal static string[,] UnflattenOptions(string flattened)
+        {
+            var lines = flattened.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length == 0)
+            {
+                return new string[0, 4];
+            }
+
+            var columns = lines[0].Split('|');
+            var result = new string[lines.Length, columns.Length];
+            for (var row = 0; row < lines.Length; row++)
+            {
+                var lineValues = lines[row].Split('|');
+                for (var col = 0; col < columns.Length && col < lineValues.Length; col++)
+                {
+                    result[row, col] = lineValues[col];
+                }
+            }
+
+            return result;
         }
     }
 }

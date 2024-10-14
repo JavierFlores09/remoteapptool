@@ -1,4 +1,4 @@
-﻿namespace RemoteApp.Tool
+namespace RemoteApp.Tool
 {
     // TODO: This is a workaround that substitutes My folder in VB.NET. These should not be singletons.
     internal static class Forms
@@ -10,6 +10,10 @@
         private static RemoteAppFileTypeAssociation _remoteAppFileTypeAssociation;
         private static RemoteAppHostOptions _remoteAppHostOptions;
         private static RemoteAppAboutWindow _remoteAppAboutWindow;
+        private static RDPOptionsWindow _rdpOptionsWindow;
+
+        internal static RDPOptionsWindow RDPOptionsWindow =>
+            _rdpOptionsWindow ?? (_rdpOptionsWindow = new RDPOptionsWindow());
 
         internal static RemoteAppAboutWindow RemoteAppAboutWindow =>
             _remoteAppAboutWindow ?? (_remoteAppAboutWindow = new RemoteAppAboutWindow());

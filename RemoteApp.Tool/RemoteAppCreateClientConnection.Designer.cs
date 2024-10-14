@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -96,6 +96,8 @@ namespace RemoteApp.Tool
             TabControl = new TabControl();
             HostTabPage = new TabPage();
             OptionsTabPage = new TabPage();
+            _RDPOptionsButton = new Button();
+            _RDPOptionsButton.Click += new EventHandler(RDPOptionsButton_Click);
             GatewayTabPage = new TabPage();
             FileTypesTabPage = new TabPage();
             MSIOptionsTabPage = new TabPage();
@@ -583,6 +585,20 @@ namespace RemoteApp.Tool
             OptionsTabPage.Text = "Options";
             OptionsTabPage.UseVisualStyleBackColor = true;
             // 
+            // RDPOptionsButton
+            // 
+            _RDPOptionsButton.BackColor = Color.WhiteSmoke;
+            _RDPOptionsButton.ImageIndex = 6;
+            _RDPOptionsButton.ImageList = SmallerIcons;
+            _RDPOptionsButton.Location = new Point(12, 69);
+            _RDPOptionsButton.Name = "_RDPOptionsButton";
+            _RDPOptionsButton.Size = new Size(118, 29);
+            _RDPOptionsButton.TabIndex = 5;
+            _RDPOptionsButton.Text = "RDP options...";
+            _RDPOptionsButton.TextImageRelation = TextImageRelation.ImageBeforeText;
+            _RDPOptionsButton.UseVisualStyleBackColor = false;
+            OptionsTabPage.Controls.Add(_RDPOptionsButton);
+            // 
             // GatewayTabPage
             // 
             GatewayTabPage.Controls.Add(AttemptDirectCheckBox);
@@ -974,6 +990,7 @@ namespace RemoteApp.Tool
         internal Label Label2;
         internal RadioButton TopLevelRadioButton;
         internal RadioButton SubfolderRadioButton;
+        internal Button _RDPOptionsButton;
         private Button _ResetButton;
 
         internal Button ResetButton
