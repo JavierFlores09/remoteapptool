@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Product installer for RemoteApp Tool (WiX v4/v5).
+
+  Build with installer/build-msi.ps1, or directly:
+
+    wix build installer\RemoteAppTool.wxs -ext WixToolset.UI.wixext ^
+      -d BuildDir=<repo>\RemoteApp.Tool\bin\Release ^
+      -d ProductVersion=6.1.1.0 -o RemoteApp.Tool.msi
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="RemoteApp Tool"
+           Manufacturer="The RemoteApp Tool developers"
+           Version="$(var.ProductVersion)"
+           Language="1033"
+           UpgradeCode="3B0A08A8-E72A-4AFD-AC75-93AC686CDC39"
+           Scope="perMachine"
+           Compressed="yes">
+
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+                  DowngradeErrorMessage="A newer version of RemoteApp Tool is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(sys.SOURCEFILEDIR)license.rtf" />
+
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.exe" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/kimmknight/remoteapptool" />
+    <Icon Id="AppIcon.exe" SourceFile="$(var.BuildDir)\RemoteApp.Tool.exe" />
+
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLFOLDER" Name="RemoteApp Tool" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="RemoteApp Tool" />
+    </StandardDirectory>
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Feature Id="MainFeature" Title="RemoteApp Tool" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Component Id="MainExecutable" Guid="*">
+        <File Id="RemoteAppToolExe" Source="$(var.BuildDir)\RemoteApp.Tool.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Name="RemoteApp Tool" Advertise="yes" Icon="AppIcon.exe" />
+          <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="RemoteApp Tool" Advertise="yes" Icon="AppIcon.exe" />
+        </File>
+        <RemoveFolder Id="RemoveApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
+      </Component>
+      <Component Id="MainExecutableConfig" Guid="*">
+        <File Source="$(var.BuildDir)\RemoteApp.Tool.exe.config" KeyPath="yes" />
+      </Component>
+      <Component Id="RemoteAppLibDll" Guid="*">
+        <File Source="$(var.BuildDir)\RemoteAppLib.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="IconLibDll" Guid="*">
+        <File Source="$(var.BuildDir)\IconLib.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="LockCheckerDll" Guid="*">
+        <File Source="$(var.BuildDir)\LockChecker.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="Rdp2MsiLibDll" Guid="*">
+        <File Source="$(var.BuildDir)\RDP2MSILib.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="RdpFileLibDll" Guid="*">
+        <File Source="$(var.BuildDir)\RDPFileLib.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="RdpSignDll" Guid="*">
+        <File Source="$(var.BuildDir)\RDPSign.dll" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

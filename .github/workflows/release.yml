@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version from tag and stamp assembly
+        id: version
+        shell: pwsh
+        run: |
+          $version = if ($env:GITHUB_REF_NAME -like 'v*') { $env:GITHUB_REF_NAME.Substring(1) } else { '6.1.1.0' }
+          $appVersion = (@($version.Split('.')) + @('0', '0', '0'))[0..3] -join '.'
+
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "app=$appVersion" >> $env:GITHUB_OUTPUT
+          "asset=$($version -replace '\.', '')" >> $env:GITHUB_OUTPUT
+
+          $file = 'RemoteApp.Tool/Properties/AssemblyInfo.cs'
+          (Get-Content $file) `
+            -replace '^\[assembly: AssemblyVersion\("[^"]+"\)\]', "[assembly: AssemblyVersion(`"$appVersion`")]" `
+            -replace '^\[assembly: AssemblyFileVersion\("[^"]+"\)\]', "[assembly: AssemblyFileVersion(`"$appVersion`")]" |
+            Set-Content $file
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Build solution
+        run: msbuild "RemoteApp Tool.sln" /t:Rebuild /p:Configuration=Release /v:minimal /nologo
+
+      - name: Build portable zip
+        shell: pwsh
+        run: |
+          $out = 'RemoteApp.Tool\bin\Release'
+          $files = @(
+            'RemoteApp.Tool.exe', 'RemoteApp.Tool.exe.config', 'RemoteAppLib.dll', 'IconLib.dll',
+            'LockChecker.dll', 'RDP2MSILib.dll', 'RDPFileLib.dll', 'RDPSign.dll'
+          ) | ForEach-Object { Join-Path $out $_ }
+
+          $missing = $files | Where-Object { -not (Test-Path $_) }
+          if ($missing) { throw "Missing build output: $($missing -join ', ')" }
+
+          New-Item dist -ItemType Directory -Force | Out-Null
+          Compress-Archive -Path $files -DestinationPath "dist\RemoteApp.Tool.${{ steps.version.outputs.asset }}.zip"
+
+      - name: Install WiX
+        run: |
+          dotnet tool install --tool-path .wix wix --version 5.0.2
+          .\.wix\wix.exe extension add -g WixToolset.UI.wixext/5.0.2
+
+      - name: Build MSI
+        shell: pwsh
+        run: |
+          .\.wix\wix.exe build installer\RemoteAppTool.wxs -ext WixToolset.UI.wixext `
+            -d BuildDir="${{ github.workspace }}\RemoteApp.Tool\bin\Release" `
+            -d ProductVersion="${{ steps.version.outputs.app }}" `
+            -o "dist\RemoteApp.Tool.${{ steps.version.outputs.asset }}.msi"
+          if (-not (Test-Path "dist\RemoteApp.Tool.${{ steps.version.outputs.asset }}.msi")) { throw 'MSI was not created' }
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: RemoteApp.Tool.${{ steps.version.outputs.version }}
+          path: dist/*
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: RemoteApp Tool ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            dist/*.msi
+            dist/*.zip
+
+
