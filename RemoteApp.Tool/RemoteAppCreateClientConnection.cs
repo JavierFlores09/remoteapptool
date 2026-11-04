@@ -345,7 +345,23 @@ namespace RemoteApp.Tool
                     RDP.FlatFileTypes = _remoteApp.FileTypeAssociations.GetFlatFileTypes();
                 }
 
-                RDP.CreateMSI(MSIPath);
+                try
+                {
+                    RDP.CreateMSI(MSIPath);
+                }
+                catch (Exception ex)
+                {
+                    // Creating the MSI shells out to candle.exe/light.exe, which is the usual failure
+                    // point (WiX not installed, or a WiX 4/5 install without those tools).
+                    MessageBox.Show(
+                        "The MSI could not be created." + Environment.NewLine + Environment.NewLine + ex.Message +
+                        Environment.NewLine + Environment.NewLine +
+                        "Creating MSI installers requires WiX Toolset v3 (candle.exe and light.exe).",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    RemoteAppFunction.DeleteFiles(FilesToDelete);
+                    return;
+                }
+
                 RemoteAppFunction.DeleteFiles(FilesToDelete);
                 Close();
             }

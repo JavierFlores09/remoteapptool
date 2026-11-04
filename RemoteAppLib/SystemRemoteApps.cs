@@ -8,13 +8,36 @@ namespace RemoteAppLib
         private bool _legacy32Bit;
         private string _registryPath = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";
         private bool _disposedValue;
-        private readonly RegistryKey _baseKey;
-        private readonly RegistryKey _baseKeyWrite;
+        private RegistryKey _baseKey;
+        private RegistryKey _baseKeyWrite;
 
         public SystemRemoteApps()
         {
-            _baseKey = Registry.LocalMachine.OpenSubKey(_registryPath);
-            _baseKeyWrite = Registry.LocalMachine.OpenSubKey(_registryPath, true);
+        }
+
+        /// <summary>
+        ///     Read handle, opened on demand. The key only exists after <see cref="Init"/> has run on a
+        ///     machine that never had a RemoteApp, so it must not be cached at construction time.
+        /// </summary>
+        private RegistryKey BaseKey
+        {
+            get
+            {
+                if (_baseKey == null) _baseKey = Registry.LocalMachine.OpenSubKey(_registryPath);
+                return _baseKey;
+            }
+        }
+
+        /// <summary>
+        ///     Writable handle, opened on demand. Null when the process is not elevated.
+        /// </summary>
+        private RegistryKey BaseKeyWrite
+        {
+            get
+            {
+                if (_baseKeyWrite == null) _baseKeyWrite = Registry.LocalMachine.OpenSubKey(_registryPath, true);
+                return _baseKeyWrite;
+            }
         }
 
         public void Init()
@@ -24,15 +47,21 @@ namespace RemoteAppLib
                 .CreateSubKey("Terminal Server")
                 .CreateSubKey("TSAppAllowList")
                 .CreateSubKey("Applications");
+
+            // The handles cached before the key existed are useless now; reopen them.
+            CloseKeys();
         }
 
         public RemoteAppCollection GetAll()
         {
             var SystemAppCollection = new RemoteAppCollection();
-            foreach (var App in _baseKey.GetSubKeyNames())
+            var baseKey = BaseKey;
+            if (baseKey == null) return SystemAppCollection;
+
+            foreach (var App in baseKey.GetSubKeyNames())
             {
                 var RemoteApp = GetApp(App);
-                SystemAppCollection.Add(RemoteApp);
+                if (RemoteApp != null) SystemAppCollection.Add(RemoteApp);
             }
 
             return SystemAppCollection;
@@ -41,7 +70,10 @@ namespace RemoteAppLib
         public RemoteApp GetApp(string name)
         {
             var App = new RemoteApp();
-            var AppKey = _baseKey.OpenSubKey(name);
+            var baseKey = BaseKey;
+            if (baseKey == null) return null;
+
+            var AppKey = baseKey.OpenSubKey(name);
             if (AppKey == null) return null;
             App.Name = name;
             App.FullName = (string)AppKey.GetValue("Name", string.Empty);
@@ -75,8 +107,15 @@ namespace RemoteAppLib
 
         public void SaveApp(RemoteApp remoteApp)
         {
-            _baseKeyWrite.CreateSubKey(remoteApp.Name);
-            var AppKey = _baseKey.OpenSubKey(remoteApp.Name, true);
+            var baseKeyWrite = BaseKeyWrite;
+            if (baseKeyWrite == null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot write RemoteApps: the TSAppAllowList registry key is not writable. Run RemoteApp Tool as administrator.");
+            }
+
+            baseKeyWrite.CreateSubKey(remoteApp.Name);
+            var AppKey = BaseKey.OpenSubKey(remoteApp.Name, true);
             AppKey.SetValue("Name", remoteApp.FullName, RegistryValueKind.String);
             AppKey.SetValue("Path", remoteApp.Path, RegistryValueKind.String);
             AppKey.SetValue("VPath", remoteApp.VPath, RegistryValueKind.String);
@@ -120,7 +159,7 @@ namespace RemoteAppLib
 
         public void DeleteApp(string name)
         {
-            _baseKeyWrite.DeleteSubKeyTree(name);
+            BaseKeyWrite?.DeleteSubKeyTree(name);
         }
 
         public bool WoW6432Node
@@ -137,7 +176,16 @@ namespace RemoteAppLib
                 if (_legacy32Bit)
                     PathStart = @"SOFTWARE\Wow6432Node";
                 _registryPath = PathStart + @"\Microsoft\Windows NT\CurrentVersion\Terminal Server\TSAppAllowList\Applications";
+                CloseKeys();
             }
+        }
+
+        private void CloseKeys()
+        {
+            _baseKey?.Close();
+            _baseKeyWrite?.Close();
+            _baseKey = null;
+            _baseKeyWrite = null;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -145,8 +193,7 @@ namespace RemoteAppLib
             if (_disposedValue) return;
             if (disposing)
             {
-                _baseKey.Close();
-                _baseKeyWrite.Close();
+                CloseKeys();
             }
 
             _disposedValue = true;
