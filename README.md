@@ -105,6 +105,18 @@ there, `-NoLaunch` builds without starting the app. Settings live in
 `%APPDATA%\RemoteApp Tool\settings.dat`, so a copy running from `bin\` and an installed copy share
 them.
 
+## WPF prototype (`src-v2`)
+
+`src-v2` holds stivencp32-ux's .NET 8 / WPF / Material Design rewrite, rebased onto this tree instead
+of the original VB.NET code. It is a separate solution and a work in progress: it covers the app list,
+per-app .rdp/.msi generation and client defaults, but not yet the .rdp options editor, file type
+associations, icon picking or signing. See [src-v2/README.md](src-v2/README.md) for the gap list and
+the plan to share one core between both front-ends.
+
+```powershell
+pwsh -File build-all.ps1             # both front-ends
+```
+
 ## Roadmap
 
 - [x] Convert every project to C#
