@@ -193,7 +193,7 @@ namespace RDP2MSIlib
             {
                 return $"{Environment.GetEnvironmentVariable("WIX")}bin";
             }
-            // candle.exe is a file, not a directory
+            // candle.exe is a file, not a directory (upstream fix for WiX detection, PR #84)
             else if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wix", searchExe)))
             {
                 return Path.Combine(Directory.GetCurrentDirectory(), "wix");
@@ -518,5 +518,3 @@ namespace RDP2MSIlib
         }
     }
 }
-
-

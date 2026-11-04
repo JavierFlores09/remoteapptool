@@ -58,9 +58,7 @@
     <ApplicationIcon>add-window.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IconLib, Version=0.74.3.0, Culture=neutral, PublicKeyToken=9c8a655eb595762a, processorArchitecture=MSIL">
-      <HintPath>..\packages\IconLib.0.74.3\lib\net40\IconLib.dll</HintPath>
-    </Reference>
+    <PackageReference Include="IconLib" Version="0.74.3" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -229,4 +227,3 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
-

@@ -59,7 +59,8 @@ namespace RemoteApp.Tool
             if (rx.IsMatch(theTextBox.Text))
             {
                 theTextBox.Text = rx.Replace(theTextBox.Text, "");
-                // Clamp: stripping a character at index 0 would call Select(-1, 0)
+                // Guard against a negative caret position when the character is stripped at index 0
+                // (matherm-aboehm's fix: Select(-1, 0) throws).
                 theTextBox.Select(Math.Max(cloc - 1, 0), 0);
             }
             else
@@ -167,4 +168,3 @@ namespace RemoteApp.Tool
         }
     }
 }
-

@@ -2,15 +2,54 @@
 
 # RemoteApp Tool
 
-## C# Fork
-This fork is solely based on converting the solution to C#. Because, I am experienced on C#, I needed a conversion. Currentlu only GUI is converted. It needs a huge refactor.
+## C# fork, updated to upstream 6.1.1
+
+This tree is [zbalkan's C# port](https://github.com/zbalkan/remoteapptool) (commit `ebed775`) brought
+back in line with upstream [kimmknight/remoteapptool](https://github.com/kimmknight/remoteapptool)
+`master` (`9c97cbd`, 2024-10-15, version 6.1.1). All seven projects are C#; the VB.NET originals are gone.
+
+Upstream work that this branch ports on top of the original conversion:
+
+* `RDPOptionsWindow` — the per-option .rdp editor (upstream issue #100) including the 2024 additions
+  from issue #141 (`enablerdsaadauth`, `kdcproxyname`, `targetisaadjoined`, `desktopscalefactor`,
+  `dynamic_resolution`, `maximizetocurrentdisplays`, `singlemoninwindowedmode`,
+  `remoteapplicationcmdline`). The .rdp serializer gained the matching options plus
+  `AdditionalOptions` for free-form entries.
+* Duplicate RemoteApp (issue #52), with the new alias `<name> copy`.
+* IPv6 addresses accepted in the address fields (issue #65).
+* Default RemoteApp icon taken from `user32.dll` instead of `mstsc.exe` (issue #128).
+* Per-app icon caching so icons are only re-read when an app is added or edited (issue #136).
+* WiX detection fixed (`candle.exe` is a file, not a directory; PR #84).
+* App selection preserved after add/edit, About window shows the company name, version 6.1.1.
+
+Defects of the original port that are fixed here:
+
+* `LockChecker` returned `"No locks\r\n"`, so every caller that compares against `"No locks"`
+  believed the target file was locked and skipped writing the .rdp/.msi.
+* `My.Settings` had no equivalent: settings were read from `App.config` and never written.
+  They are now persisted to `%APPDATA%\RemoteApp Tool\settings.dat`.
+* Leftover `*.New.csproj.bak` files removed, output assembly renamed from `RDP2MSILib.New` to `RDP2MSILib`.
+
+## Building
+
+Requires MSBuild (the Visual Studio 2022 Build Tools are enough). `IconLib` 0.74.3 comes from NuGet
+(PackageReference). If the .NET Framework 4.8 targeting pack is not installed, `build.ps1` falls back
+to the reference assemblies from the NuGet cache.
+
+```powershell
+pwsh -File build.ps1                 # Release build of the whole solution
+pwsh -File installer\build-msi.ps1   # optional: product MSI (needs the WiX tool, see the script)
+```
+
+`build.ps1` restores the NuGet packages itself, so no separate restore step is needed.
 
 ## Roadmap
-- [x] Convert GUI to C#
-- [ ] Write unit tests for libraries
-- [ ] Convert dependencies to C#
-- [ ] Refactor
-- [ ] Migrate to .NET 5 (Optionally)
+
+- [x] Convert every project to C#
+- [x] Catch up with upstream 6.1.1
+- [ ] Write unit tests for the libraries
+- [ ] Refactor the `My.*` shims (`Forms.cs`, `UserSettings.cs`)
+- [ ] Migrate the libraries to SDK-style projects and `net8.0-windows`
 
 ## Original Readme
 With Microsoft RemoteApp technology, you can seamlessly use an application that is running on another computer.
