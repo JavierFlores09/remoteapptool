@@ -6,7 +6,8 @@
 
 This tree is [zbalkan's C# port](https://github.com/zbalkan/remoteapptool) (commit `ebed775`) brought
 back in line with upstream [kimmknight/remoteapptool](https://github.com/kimmknight/remoteapptool)
-`master` (`9c97cbd`, 2024-10-15, version 6.1.1). All seven projects are C#; the VB.NET originals are gone.
+`master` (`9c97cbd`, 2024-10-15, version 6.1.1), plus the fixes listed below; this build reports itself as 6.1.1.1.
+All seven projects are C#; the VB.NET originals are gone.
 
 ## What changed in this branch
 
