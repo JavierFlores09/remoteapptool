@@ -91,11 +91,19 @@ Requires MSBuild (the Visual Studio 2022 Build Tools are enough). `IconLib` 0.74
 to the reference assemblies from the NuGet cache.
 
 ```powershell
-pwsh -File build.ps1                 # Release build of the whole solution
+pwsh -File run.ps1                   # incremental build, then launch from bin\ (no MSI needed)
+pwsh -File build.ps1                 # full Release build of the whole solution
 pwsh -File installer\build-msi.ps1   # optional: product MSI (needs the WiX tool, see the script)
 ```
 
 `build.ps1` restores the NuGet packages itself, so no separate restore step is needed.
+
+You do not have to install the MSI to try a change. `run.ps1` rebuilds incrementally — a couple of
+seconds when little changed — and starts `RemoteApp.Tool\bin\<Configuration>\RemoteApp.Tool.exe`
+elevated; installing is only needed to test the package itself. `-NoBuild` launches what is already
+there, `-NoLaunch` builds without starting the app. Settings live in
+`%APPDATA%\RemoteApp Tool\settings.dat`, so a copy running from `bin\` and an installed copy share
+them.
 
 ## Roadmap
 
@@ -163,3 +171,4 @@ Please note: The latest installer no longer works on Windows XP, use the Zip ins
 ![Screenshot 3](https://raw.githubusercontent.com/wiki/kimmknight/remoteapptool/images/screenshots/ss3.png)
 
 ![Screenshot 4](https://raw.githubusercontent.com/wiki/kimmknight/remoteapptool/images/screenshots/ss4.png)
+

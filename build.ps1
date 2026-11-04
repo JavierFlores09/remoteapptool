@@ -1,8 +1,11 @@
 # Builds the solution for .NET Framework 4.8 without requiring a full Visual Studio install.
-# Usage: pwsh -File build.ps1 [-Configuration Release]
+# Usage: pwsh -File build.ps1 [-Configuration Release] [-Incremental]
 param(
     [ValidateSet('Debug', 'Release')]
-    [string] $Configuration = 'Release'
+    [string] $Configuration = 'Release',
+
+    # Rebuild only what changed. Much faster while iterating; use a full build before shipping.
+    [switch] $Incremental
 )
 
 $ErrorActionPreference = 'Stop'
@@ -51,7 +54,8 @@ function Find-ReferenceAssemblies {
 }
 
 $msbuild = Find-MSBuild
-$arguments = @($solution, '/t:Rebuild', "/p:Configuration=$Configuration", '/v:m', '/nologo')
+$target = if ($Incremental) { '/t:Build' } else { '/t:Rebuild' }
+$arguments = @($solution, $target, "/p:Configuration=$Configuration", '/v:m', '/nologo')
 
 # IconLib comes from NuGet (PackageReference), so restore before building.
 Write-Host 'Restoring NuGet packages...'
@@ -70,3 +74,4 @@ else {
 & $msbuild @arguments
 if ($LASTEXITCODE -ne 0) { throw "Build failed with exit code $LASTEXITCODE" }
 Write-Host "Build succeeded ($Configuration)."
+
