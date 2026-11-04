@@ -8,27 +8,72 @@ This tree is [zbalkan's C# port](https://github.com/zbalkan/remoteapptool) (comm
 back in line with upstream [kimmknight/remoteapptool](https://github.com/kimmknight/remoteapptool)
 `master` (`9c97cbd`, 2024-10-15, version 6.1.1). All seven projects are C#; the VB.NET originals are gone.
 
-Upstream work that this branch ports on top of the original conversion:
+## What changed in this branch
+
+| commit | author | change |
+|---|---|---|
+| `4f873a9` | Kim Knight | Ports the upstream 6.1.1 UI and feature work to C# (RDP options editor, duplicate, IPv6, icons, …) |
+| `17998ba` | Daniel Sousa | Fixes WiX detection: `candle.exe` is a file, not a directory (upstream PR #84) |
+| `06a85ff` | JavierFlores09 | Fixes three defects in the original port (locked-file check, settings persistence, missing `InitializeComponent`) |
+| `8e016e7` | Andreas Böhm | Fixes the caret crash while typing in the address fields |
+| `9b7aadb` | wiggins | Adds a WiX product installer and a tag-driven release workflow |
+| `b1dc13c` | JavierFlores09 | Makes the build self-contained (`build.ps1`, PackageReference, MSI helper) |
+
+Each commit keeps its original author and date; the upstream work is referenced by source SHA in the
+commit bodies.
+
+### Upstream work ported onto the original conversion
 
 * `RDPOptionsWindow` — the per-option .rdp editor (upstream issue #100) including the 2024 additions
   from issue #141 (`enablerdsaadauth`, `kdcproxyname`, `targetisaadjoined`, `desktopscalefactor`,
   `dynamic_resolution`, `maximizetocurrentdisplays`, `singlemoninwindowedmode`,
   `remoteapplicationcmdline`). The .rdp serializer gained the matching options plus
-  `AdditionalOptions` for free-form entries.
+  `AdditionalOptions` for free-form entries. The 76-entry option catalogue is generated from the
+  upstream VB table so the wording is identical.
 * Duplicate RemoteApp (issue #52), with the new alias `<name> copy`.
 * IPv6 addresses accepted in the address fields (issue #65).
 * Default RemoteApp icon taken from `user32.dll` instead of `mstsc.exe` (issue #128).
 * Per-app icon caching so icons are only re-read when an app is added or edited (issue #136).
-* WiX detection fixed (`candle.exe` is a file, not a directory; PR #84).
+* WiX detection fixed (PR #84).
 * App selection preserved after add/edit, About window shows the company name, version 6.1.1.
 
-Defects of the original port that are fixed here:
+### Defects of the original port fixed here
 
 * `LockChecker` returned `"No locks\r\n"`, so every caller that compares against `"No locks"`
-  believed the target file was locked and skipped writing the .rdp/.msi.
-* `My.Settings` had no equivalent: settings were read from `App.config` and never written.
-  They are now persisted to `%APPDATA%\RemoteApp Tool\settings.dat`.
+  believed the target file was locked and skipped writing the .rdp/.msi. This made saving look
+  broken; found by calling the built assemblies, not by reading the code.
+* `My.Settings` had no equivalent: settings were read from `App.config` and never written, so window
+  size and connection defaults were lost on every exit. They are now persisted to
+  `%APPDATA%\RemoteApp Tool\settings.dat`.
+* `RDPOptionsWindow` never called `InitializeComponent`. VB does that implicitly for
+  `DesignerGenerated` forms, C# does not, so the dialog opened blank.
 * Leftover `*.New.csproj.bak` files removed, output assembly renamed from `RDP2MSILib.New` to `RDP2MSILib`.
+
+## Packaging
+
+`installer\RemoteAppTool.wxs` builds a per-machine MSI (Start-menu and desktop shortcuts, ARP icon,
+major upgrade). `installer\build-msi.ps1` builds it locally; `.github/workflows/release.yml` stamps
+the version from a `v*` tag, builds both the portable zip and the MSI and publishes them as a
+release. The MSI was verified to build and contain the executable, its config and the five
+dependencies.
+
+## Where this came from
+
+The work was assembled from a survey of the upstream forks:
+
+* [`zbalkan/remoteapptool`](https://github.com/zbalkan/remoteapptool) — the C# conversion this branch starts from.
+* `kimmknight/remoteapptool` — upstream work, re-implemented in C# rather than merged, so the deleted
+  VB.NET projects do not come back.
+* `danielb7390` (PR #84) — WiX detection fix.
+* [`matherm-aboehm/remoteapptool`](https://github.com/matherm-aboehm/remoteapptool) — caret crash fix.
+* [`wiggins-kong/remoteapptool`](https://github.com/wiggins-kong/remoteapptool) — WiX installer layout and
+  the release workflow. Its Simplified-Chinese string replacement was not taken: that belongs in
+  satellite resources rather than replacing the English text.
+* `KaneGreen` (IconLib as source) and `rob89m` (net48, no committed signing key, IconLib 0.74.3) are
+  already covered by this tree.
+
+A separate WPF / .NET 8 front-end built on this same base lives on the `modernize/wpf-on-csharp`
+branch under `src-v2`.
 
 ## Building
 
