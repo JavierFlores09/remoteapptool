@@ -10,33 +10,6 @@ back in line with upstream [kimmknight/remoteapptool](https://github.com/kimmkni
 
 ## What changed in this branch
 
-| commit | author | change |
-|---|---|---|
-| `4f873a9` | Kim Knight | Ports the upstream 6.1.1 UI and feature work to C# (RDP options editor, duplicate, IPv6, icons, …) |
-| `17998ba` | Daniel Sousa | Fixes WiX detection: `candle.exe` is a file, not a directory (upstream PR #84) |
-| `06a85ff` | JavierFlores09 | Fixes three defects in the original port (locked-file check, settings persistence, missing `InitializeComponent`) |
-| `8e016e7` | Andreas Böhm | Fixes the caret crash while typing in the address fields |
-| `9b7aadb` | wiggins | Adds a WiX product installer and a tag-driven release workflow |
-| `b1dc13c` | JavierFlores09 | Makes the build self-contained (`build.ps1`, PackageReference, MSI helper) |
-| `e873580` | JavierFlores09 | Fixes the first-run crash on a host without the RemoteApp registry key |
-
-## Requirements
-
-| | |
-|---|---|
-| OS | Windows 7 SP1 / Server 2008 R2 or later (the tool manages the local RDS host) |
-| Runtime | .NET Framework 4.8 |
-| Privileges | Administrator — the app relaunches itself elevated and writes `HKLM\...\Terminal Server\TSAppAllowList` |
-| Per-app MSI generation | **WiX Toolset v3** (`candle.exe`, `light.exe`). WiX 4/5 does not ship those tools; the product MSI in `installer\` does use WiX 5 |
-| RDP signing (optional) | `rdpsign.exe` from the Windows SDK |
-
-Publishing a RemoteApp only works on a Windows edition that can host them (Server, or a client with
-the RDS/RemoteApp feature). On Windows Home the tool runs and writes the registry entries, but the
-client connection will fail.
-
-Each commit keeps its original author and date; the upstream work is referenced by source SHA in the
-commit bodies.
-
 ### Upstream work ported onto the original conversion
 
 * `RDPOptionsWindow` — the per-option .rdp editor (upstream issue #100) including the 2024 additions
@@ -62,7 +35,27 @@ commit bodies.
   `%APPDATA%\RemoteApp Tool\settings.dat`.
 * `RDPOptionsWindow` never called `InitializeComponent`. VB does that implicitly for
   `DesignerGenerated` forms, C# does not, so the dialog opened blank.
+* `SystemRemoteApps` cached both registry handles before `Init()` created the
+  `TSAppAllowList\Applications` key, so the first `GetAll()` threw a `NullReferenceException` on any
+  host that never had a RemoteApp — the common first run. The handles are now opened on demand
+  (upstream has the same shape).
+* A failed MSI build (missing `candle.exe`, WiX 4/5 without those tools) escaped the click handler
+  as an unhandled exception; it now shows a message naming the WiX v3 requirement.
 * Leftover `*.New.csproj.bak` files removed, output assembly renamed from `RDP2MSILib.New` to `RDP2MSILib`.
+
+## Requirements
+
+| | |
+|---|---|
+| OS | Windows 7 SP1 / Server 2008 R2 or later (the tool manages the local RDS host) |
+| Runtime | .NET Framework 4.8 |
+| Privileges | Administrator — the app relaunches itself elevated and writes `HKLM\...\Terminal Server\TSAppAllowList` |
+| Per-app MSI generation | **WiX Toolset v3** (`candle.exe`, `light.exe`). WiX 4/5 does not ship those tools; the product MSI in `installer\` does use WiX 5 |
+| RDP signing (optional) | `rdpsign.exe` from the Windows SDK |
+
+Publishing a RemoteApp only works on a Windows edition that can host them (Server, or a client with
+the RDS/RemoteApp feature). On Windows Home the tool runs and writes the registry entries, but the
+client connection will fail.
 
 ## Packaging
 
@@ -120,7 +113,7 @@ If you want your RemoteApps to appear in the Start Menu of your clients, or via 
 
 If you have questions, comments or suggestions about RemoteApp Tool, please visit the [forum](https://groups.google.com/forum/embed/?place=forum/remoteapptool).
 
-## Features
+### Features
 
 * Create and manage RemoteApps on Windows desktops and servers
 * Generate RDP files
@@ -132,7 +125,7 @@ If you have questions, comments or suggestions about RemoteApp Tool, please visi
 * Sign RDP files
 * Backup RemoteApps
 
-## Requirements
+### Requirements
 
 * Microsoft .Net Framework 4
 * [WiX Toolset](http://wixtoolset.org/) (If you want to create MSIs. Reboot after installing.)
@@ -140,7 +133,7 @@ If you have questions, comments or suggestions about RemoteApp Tool, please visi
 
 **Note:** If you try to host RemoteApps on an incompatible edition of Windows (eg. Windows 10 Home), the tool will run but RemoteApps ***will not work***. The RDP client will appear to be connecting, then just disappear with no error shown.
 
-## Download
+### Download
 
 **Latest:**
 
@@ -156,11 +149,11 @@ Please note: The latest installer no longer works on Windows XP, use the Zip ins
 
 [RemoteApp Tool 5.3.0.0 Zip](http://www.kimknight.net/remoteapptool/remoteapptool5300.zip)
 
-## User guide
+### User guide
 
 [How to create a RemoteApp and use it on another computer](https://github.com/kimmknight/remoteapptool/wiki/Create-a-RemoteApp-and-use-it-on-another-computer)
 
-## Screenshots
+### Screenshots
 
 ![Screenshot 1](https://raw.githubusercontent.com/wiki/kimmknight/remoteapptool/images/screenshots/ss1.png)
 
