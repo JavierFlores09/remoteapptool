@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace RemoteApp.Tool
@@ -16,6 +16,9 @@ namespace RemoteApp.Tool
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new RemoteAppMainWindow());
+
+            // Persist settings on the normal way out as well (VB used to do this for us).
+            UserSettings.Instance.Save();
         }
     }
 }

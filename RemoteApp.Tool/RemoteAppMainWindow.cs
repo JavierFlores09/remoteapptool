@@ -38,6 +38,7 @@ namespace RemoteApp.Tool
             }
             UserSettings.Instance.MainWindowWidth = Width;
             UserSettings.Instance.MainWindowHeight = Height;
+            UserSettings.Instance.Save();
         }
 
         private void RemoteAppMainWindow_Load(object sender, EventArgs e)
@@ -243,6 +244,7 @@ namespace RemoteApp.Tool
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            UserSettings.Instance.Save();
             Environment.Exit(0);
         }
 

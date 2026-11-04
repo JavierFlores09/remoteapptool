@@ -131,6 +131,7 @@ namespace RemoteApp.Tool
             UserSettings.Instance.SavedSignedAndUnsigned = CheckBoxCreateSignedAndUnsigned.Checked;
             UserSettings.Instance.SavedCertSelected = CertificateComboBox.SelectedIndex;
             UserSettings.Instance.SavedRdpOptions = FlattenOptions(_additionalOptions);
+            UserSettings.Instance.Save();
         }
 
         public void SetCcWindowSettings()

@@ -1,4 +1,4 @@
-﻿// code sample taken from:
+// code sample taken from:
 // https://code.msdn.microsoft.com/windowsapps/How-to-know-the-process-170ed5f3/sourcecode?fileId=151114&pathId=1558127374
 // Modified to suit the needs of this application
 using System;
@@ -61,7 +61,8 @@ namespace LockChecker
                     else
                     {
                         // Console.WriteLine("The specified file '{0}' is not locked by any process", resources(0))
-                        result.AppendLine("No locks");
+                        // No trailing newline: callers compare the result to exactly "No locks".
+                        result.Append("No locks");
                     }
                 }
                 else
