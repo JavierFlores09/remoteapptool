@@ -18,6 +18,21 @@ back in line with upstream [kimmknight/remoteapptool](https://github.com/kimmkni
 | `8e016e7` | Andreas Böhm | Fixes the caret crash while typing in the address fields |
 | `9b7aadb` | wiggins | Adds a WiX product installer and a tag-driven release workflow |
 | `b1dc13c` | JavierFlores09 | Makes the build self-contained (`build.ps1`, PackageReference, MSI helper) |
+| `e873580` | JavierFlores09 | Fixes the first-run crash on a host without the RemoteApp registry key |
+
+## Requirements
+
+| | |
+|---|---|
+| OS | Windows 7 SP1 / Server 2008 R2 or later (the tool manages the local RDS host) |
+| Runtime | .NET Framework 4.8 |
+| Privileges | Administrator — the app relaunches itself elevated and writes `HKLM\...\Terminal Server\TSAppAllowList` |
+| Per-app MSI generation | **WiX Toolset v3** (`candle.exe`, `light.exe`). WiX 4/5 does not ship those tools; the product MSI in `installer\` does use WiX 5 |
+| RDP signing (optional) | `rdpsign.exe` from the Windows SDK |
+
+Publishing a RemoteApp only works on a Windows edition that can host them (Server, or a client with
+the RDS/RemoteApp feature). On Windows Home the tool runs and writes the registry entries, but the
+client connection will fail.
 
 Each commit keeps its original author and date; the upstream work is referenced by source SHA in the
 commit bodies.
